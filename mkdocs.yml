@@ -17,7 +17,7 @@ site_author: The Lupaxa Project
 #
 # This is used when MkDocs generates canonical links, feeds and other absolute
 # URLs. It should end with a trailing slash.
-site_url: https://the-lupaxa-internal-toolbox.github.io/lupaxa-github-repo-sync/
+site_url: https://github-repo-sync.thelupaxaproject.org/
 
 # =============================================================================
 # Source Repository
