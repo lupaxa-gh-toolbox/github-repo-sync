@@ -4,83 +4,103 @@ title: Reference
 
 # Reference
 
-The **Reference** section contains detailed technical information intended to complement the task-oriented guides found elsewhere in the documentation.
+The **Reference** section provides detailed technical information for **Lupaxa GitHub Repository Sync**.
 
-Where the **Getting Started**, **Configuration**, **Usage**, and **Concepts** sections explain *how* to use the application, the Reference section focuses on *specific technical details* that you may need during day-to-day use or troubleshooting.
+Unlike the previous sections, which focus on concepts and workflows, the Reference section serves as a technical lookup for users, administrators and contributors.
 
-These pages are designed to be consulted as required rather than read from beginning to end.
+You can use this section whenever you need precise information about commands, configuration, exit codes or application behaviour.
 
----
+## Topics Covered
 
-## What's Included
+The Reference documentation is organised into the following guides.
 
-The Reference section currently contains the following documents.
+### Command Reference
+
+Provides detailed information about every supported command, including:
+
+- Command syntax.
+- Available options.
+- Arguments.
+- Examples.
+- Typical usage.
+
+This guide is intended as the primary command-line reference.
 
 ### Exit Codes
 
-A complete list of application exit codes, their meanings, and the situations in which they are returned.
-
-This document is particularly useful when:
-
-- Writing automation.
-- Integrating with CI/CD pipelines.
-- Creating monitoring or alerting systems.
-- Diagnosing failed synchronisation runs.
-
----
-
-### Troubleshooting
-
-Guidance for diagnosing and resolving common problems.
+Documents every exit code returned by the application.
 
 Topics include:
 
-- Configuration issues.
-- Git authentication.
-- Repository validation failures.
-- Clone failures.
-- Synchronisation problems.
-- Performance considerations.
+- Successful execution.
+- Validation failures.
+- Configuration errors.
+- Synchronisation failures.
+- Unexpected application errors.
 
-Where possible, each issue includes likely causes and recommended solutions.
+Understanding exit codes is particularly useful when integrating the application into automation or Continuous Integration (CI) systems.
 
----
+### Troubleshooting
+
+Provides solutions to common problems encountered when installing, configuring or running the application.
+
+Examples include:
+
+- Configuration errors.
+- Authentication failures.
+- Repository access problems.
+- Git-related issues.
+- Network connectivity problems.
+
+Whenever possible, troubleshooting guidance includes both the likely cause of the problem and the recommended resolution.
 
 ### Frequently Asked Questions
 
-Answers to common questions about the application, its behaviour, and its design philosophy.
+Answers the questions most commonly asked by users.
 
-This section explains why certain design decisions were made and clarifies behaviour that may differ from other Git synchronisation tools.
+Typical topics include:
 
----
+- Configuration.
+- Synchronisation behaviour.
+- Authentication.
+- Repository management.
+- Automation.
+- Best practices.
 
-## When to Use This Section
+## Using the Reference
 
-The Reference section is most useful when you need a specific piece of information quickly.
+The Reference section is intended to complement the rest of the documentation.
 
-Typical scenarios include:
+A typical workflow is:
 
-- Looking up an exit code.
-- Understanding an error message.
-- Investigating an unexpected synchronisation result.
-- Finding the recommended solution to a common problem.
-- Clarifying how a particular feature behaves.
+1. Use **Getting Started** to install the application.
+2. Read **Configuration** to create a valid configuration file.
+3. Learn the synchronisation process in **Usage**.
+4. Review **Concepts** to understand the application's design.
+5. Return to the **Reference** section whenever detailed technical information is required.
 
----
+## Audience
 
-## Related Documentation
+The Reference documentation is intended for:
 
-Depending on your question, you may also find the following sections useful.
+- End users.
+- System administrators.
+- Automation engineers.
+- DevOps engineers.
+- Contributors.
+- Maintainers.
 
-| If you want to... | See... |
-| ----------------- | ------- |
-| Install the application | Getting Started |
-| Create a configuration | Configuration |
-| Learn the available commands | Usage |
-| Understand repository safety | Concepts |
+Each guide is designed to answer specific technical questions without requiring the reader to work through the entire documentation.
 
----
+## Conventions
+
+Throughout the Reference documentation:
+
+- Commands are shown exactly as they should be entered.
+- Command-line options are written using their full names where appropriate.
+- Paths are shown using standard platform conventions.
+- Examples focus on common, real-world scenarios.
 
 ## Next Steps
 
-Continue to the **Exit Codes** reference for a complete description of the application's exit codes and how they can be used within automation and scripting environments.
+Continue to **Command Reference** for detailed information about every command supported by Lupaxa GitHub Repository Sync.

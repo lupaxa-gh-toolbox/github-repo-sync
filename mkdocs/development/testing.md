@@ -4,219 +4,201 @@ title: Testing
 
 # Testing
 
-Testing is an important part of maintaining the quality, reliability, and long-term maintainability of **Lupaxa GitHub Repository Sync**.
+Testing is an essential part of the development process for **Lupaxa GitHub Repository Sync**.
 
-Every change should be validated before it is committed, whether it is a bug fix, a new feature, a refactoring, or a documentation update.
+A comprehensive test suite helps ensure that new features behave as expected, existing functionality continues to work correctly and regressions are detected before release.
 
-This document describes the project's testing philosophy, recommended workflow, and the tools used to verify code quality.
+All code changes should be accompanied by appropriate automated tests wherever practical.
 
----
+## Testing Objectives
 
-# Testing Philosophy
+The project's testing strategy aims to:
 
-The project aims to ensure that every change is:
+- Verify application behaviour.
+- Detect regressions early.
+- Validate new functionality.
+- Ensure consistent behaviour across supported platforms.
+- Increase confidence when refactoring existing code.
 
-- Correct.
-- Predictable.
-- Repeatable.
-- Well documented.
-- Backwards compatible where appropriate.
+Automated testing complements, but does not replace, manual testing.
 
-Testing should provide confidence that new functionality behaves as expected without introducing regressions elsewhere in the application.
+## Test Structure
 
----
+Tests are organised beneath the `tests` directory.
 
-# Types of Testing
+```text
+tests/
+├── unit/
+├── integration/
+├── fixtures/
+└── conftest.py
+```
 
-Several forms of testing are used throughout the project.
+The exact layout may evolve as the project grows, but tests should remain organised by purpose.
 
-## Unit Testing
+## Unit Tests
 
-Unit tests verify the behaviour of individual functions, classes, and modules in isolation.
+Unit tests verify the behaviour of individual components in isolation.
 
 Typical candidates include:
 
 - Configuration parsing.
 - Validation logic.
 - Utility functions.
-- Repository state detection.
-- Git command wrappers.
+- Data models.
+- Command-line argument processing.
 
-Unit tests should be fast, deterministic, and independent of external services wherever possible.
+Unit tests should:
 
----
+- Execute quickly.
+- Be independent of one another.
+- Avoid external dependencies wherever possible.
+- Produce deterministic results.
 
-## Integration Testing
+## Integration Tests
 
-Integration tests verify that multiple components work together correctly.
+Integration tests verify that multiple components work correctly together.
 
 Examples include:
 
 - Loading and validating configuration files.
-- End-to-end synchronisation workflows.
-- Repository cloning.
-- Repository updates.
-- Summary reporting.
+- Repository discovery.
+- Synchronisation workflows.
+- Git operations.
+- Command execution.
 
-Integration tests provide confidence that the application behaves correctly as a whole.
+Integration tests provide confidence that the application behaves correctly under realistic conditions.
 
----
+## Test Fixtures
 
-## Manual Testing
+Shared test data should be stored within the `fixtures` directory.
 
-Some functionality is most effectively verified manually.
+Fixtures may include:
 
-Examples include:
+- Example configuration files.
+- Temporary repositories.
+- Mock responses.
+- Sample data.
 
-- Console output.
-- Progress indicators.
-- Terminal formatting.
-- Platform-specific behaviour.
-- Authentication workflows.
+Keeping fixtures separate from test logic improves readability and encourages reuse.
 
-Manual testing complements the automated test suite and helps identify issues that may not be captured by unit tests alone.
+## Running the Test Suite
 
----
-
-# Running the Test Suite
-
-Run all tests using:
+Execute the complete test suite.
 
 ```bash
 pytest
 ```
 
-To run a specific test module:
+Run a specific test module.
 
 ```bash
-pytest tests/test_validation.py
+pytest tests/unit/test_configuration.py
 ```
 
-To run a single test:
+Run an individual test.
 
 ```bash
-pytest tests/test_validation.py::test_valid_configuration
+pytest tests/unit/test_configuration.py::test_load_configuration
 ```
 
----
-
-# Code Quality Checks
-
-Before submitting changes, run the project's code quality tools.
-
-## Ruff
-
-Check for linting issues.
+Run tests matching a keyword.
 
 ```bash
-ruff check .
+pytest -k configuration
 ```
 
-Automatically apply supported fixes.
+## Measuring Test Coverage
+
+Coverage reports help identify areas of the application that are not adequately tested.
+
+Generate a coverage report.
 
 ```bash
-ruff check --fix .
+pytest --cov=lupaxa.github_repo_sync
 ```
 
-Format the source code.
+Generate an HTML coverage report.
 
 ```bash
-ruff format .
+pytest --cov=lupaxa.github_repo_sync --cov-report=html
 ```
 
----
+Coverage percentage should be treated as a useful indicator rather than a goal in itself.
 
-## Type Checking
+Well-designed tests are more valuable than achieving an arbitrary coverage target.
 
-Where type checking is enabled, run:
+## Writing Effective Tests
 
-```bash
-mypy .
-```
+Good tests should be:
 
-Type hints help catch many classes of errors before runtime and improve the overall readability of the codebase.
+- Easy to understand.
+- Independent.
+- Repeatable.
+- Fast.
+- Focused on a single behaviour.
+- Easy to maintain.
 
----
+Tests should clearly describe the behaviour they verify.
 
-# Test Data
+## Mocking External Dependencies
 
-Where practical, tests should use dedicated test data rather than relying on real repositories or production configuration files.
+Where appropriate, external dependencies should be mocked.
 
-Keeping test data isolated helps ensure that tests remain reliable and reproducible.
+Examples include:
 
----
+- GitHub API responses.
+- Network communication.
+- File system operations.
+- Git commands.
+- Time-dependent functionality.
 
-# Writing Tests
+Mocking reduces execution time and improves test reliability.
 
-When adding new functionality:
+## Regression Testing
 
-- Add unit tests for new behaviour.
-- Update existing tests where appropriate.
-- Keep tests small and focused.
-- Use descriptive test names.
+Whenever a defect is fixed:
+
+1. Create a test that reproduces the issue.
+2. Confirm the test fails.
+3. Implement the fix.
+4. Confirm the test passes.
+
+Adding regression tests helps ensure that resolved issues do not reappear in future releases.
+
+## Continuous Integration
+
+The project's Continuous Integration workflows execute the automated test suite whenever changes are proposed.
+
+Typical CI validation includes:
+
+- Installing project dependencies.
+- Running static analysis.
+- Executing automated tests.
+- Building documentation.
+- Verifying package integrity.
+
+Every change should pass all automated checks before it is merged.
+
+## Best Practices
+
+When contributing to the project:
+
+- Write tests for all new functionality.
+- Update existing tests when behaviour changes.
+- Keep tests simple and focused.
 - Avoid unnecessary duplication.
+- Remove obsolete tests when functionality is removed.
+- Ensure all tests pass before submitting a pull request.
 
-Tests should describe behaviour rather than implementation details.
+Following these practices helps maintain a reliable and maintainable test suite.
 
----
+## Summary
 
-# Continuous Integration
+Testing is a fundamental part of maintaining the quality of Lupaxa GitHub Repository Sync.
 
-The project is intended to run automated quality checks as part of its continuous integration workflow.
+By combining unit tests, integration tests and regression tests, contributors can confidently develop new functionality whilst ensuring existing behaviour remains stable.
 
-Typical pipeline stages include:
+## Next Steps
 
-1. Install dependencies.
-2. Run the formatter.
-3. Run the linter.
-4. Run type checking.
-5. Execute the test suite.
-6. Publish test results.
-
-Automated testing helps ensure that every change is validated consistently.
-
----
-
-# Before Opening a Pull Request
-
-Before submitting a contribution, it is recommended to complete the following checklist.
-
-- The project installs successfully.
-- All tests pass.
-- Code formatting has been applied.
-- Linting reports no issues.
-- Type checking passes.
-- Documentation has been updated where necessary.
-- New functionality includes appropriate tests.
-
-Completing these steps helps simplify the review process and improves the overall quality of contributions.
-
----
-
-# Reporting Test Failures
-
-If you encounter a failing test that you believe is incorrect:
-
-1. Confirm that your development environment is up to date.
-2. Verify that all dependencies are installed.
-3. Re-run the test to confirm the failure.
-4. Capture the relevant output.
-5. Include the details when reporting the issue.
-
-Providing reproducible failures makes investigation significantly easier.
-
----
-
-# Summary
-
-Testing is a shared responsibility.
-
-By running the project's quality checks and test suite before submitting changes, contributors help maintain the reliability and stability of **Lupaxa GitHub Repository Sync** for everyone.
-
----
-
-# Next Steps
-
-You have now reached the end of the documentation.
-
-If you are looking for a quick overview of the project, return to the **Home** page. For day-to-day usage, refer to the **Configuration** and **Usage** sections as needed.
+Continue to **Contributing** to learn about the project's coding standards, contribution workflow and pull request process.

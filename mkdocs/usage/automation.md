@@ -4,200 +4,133 @@ title: Automation
 
 # Automation
 
-One of the strengths of **Lupaxa GitHub Repository Sync** is that it has been designed from the outset to run unattended.
+Lupaxa GitHub Repository Sync has been designed to operate reliably in both interactive and unattended environments.
 
-Once a configuration has been created and validated, repository synchronisation can be scheduled to run automatically, ensuring local repository collections remain up to date with minimal manual intervention.
+Its predictable behaviour, comprehensive validation and meaningful exit codes make it well suited for scheduled execution, Continuous Integration (CI) systems and other automated workflows.
 
-Typical automation targets include:
+## Before Automating
 
-- Development workstations.
-- Build servers.
-- Continuous Integration (CI) runners.
-- Shared development environments.
-- Self-hosted GitHub Actions runners.
-- Dedicated maintenance systems.
+Before scheduling synchronisation jobs, ensure that:
 
----
+- The configuration file has been validated.
+- Git authentication is configured correctly.
+- The destination directory is accessible.
+- The account running the job has the required filesystem permissions.
+- The account has access to all required GitHub repositories.
 
-# Why Automate?
+Automated jobs should always run using a dedicated service account or user account where appropriate.
 
-Regular synchronisation offers several advantages over manually updating repositories.
+## Default Configuration
 
-Automated synchronisation can:
+Unless another configuration file is specified, the application automatically loads:
 
-- Keep repositories current throughout the day.
-- Reduce the size of individual updates.
-- Detect repository issues earlier.
-- Ensure build environments remain consistent.
-- Prepare repositories before scheduled tasks or builds.
-
-Because the application only performs safe updates, unattended execution is well suited to routine maintenance.
-
----
-
-# General Recommendations
-
-Before enabling automation, ensure that:
-
-- The configuration validates successfully.
-- Git authentication is already configured.
-- The clone directory is accessible.
-- The account running the task has sufficient permissions.
-- Repository safety checks are understood.
-
-A failed authentication or inaccessible directory cannot be corrected automatically.
-
----
-
-# Running from Cron (Linux and macOS)
-
-A common approach is to schedule synchronisation using `cron`.
-
-For example, to synchronise repositories every morning at 06:00:
-
-```cron
-0 6 * * * github-repo-sync --quiet
+```text
+~/.github-repo-sync.json5
 ```
 
-The `--quiet` option reduces console output, making it more suitable for unattended execution.
+This allows scheduled jobs to run without repeatedly specifying the configuration location.
 
-For environments where logging is required, redirect the output to a log file.
+If multiple configurations are maintained, the appropriate configuration file can be supplied on the command line.
+
+## Scheduled Execution
+
+The application can be executed using any operating system scheduler.
+
+Common examples include:
+
+- cron (Linux)
+- launchd (macOS)
+- Windows Task Scheduler
+- Continuous Integration systems
+- Build servers
+- Self-hosted automation platforms
+
+Because the application is non-interactive, it is well suited to unattended execution.
+
+## Example Cron Job
+
+The following example executes the synchronisation every morning at 02:00.
 
 ```cron
-0 6 * * * github-repo-sync --quiet >> ~/logs/github-repo-sync.log 2>&1
+0 2 * * * grs sync
 ```
 
----
+Ensure that the scheduled environment has access to:
 
-# Running from Windows Task Scheduler
+- Python.
+- Git.
+- The `grs` executable.
+- Git authentication credentials.
+- The configuration file.
 
-On Windows, synchronisation can be scheduled using **Task Scheduler**.
+## Logging
 
-Typical configuration:
+When running unattended, it is recommended that output is redirected to a log file.
 
-| Setting | Value |
-| ------- | ----- |
-| Trigger | Daily |
-| Action | Start a Program |
-| Program | `github-repo-sync.exe` or `python` |
-| Arguments | `--quiet` |
-| Start In | Configuration directory |
+For example:
 
-Scheduling details will vary depending on how Python and the application were installed.
+```bash
+grs sync > sync.log 2>&1
+```
 
----
+Retaining historical logs makes it easier to investigate failures and identify recurring issues.
 
-# Continuous Integration
+## Exit Codes
 
-The application may also be used within CI environments to prepare repositories before build or deployment tasks.
+Every command returns an exit code describing the overall result.
 
-Typical workflow:
+Automation platforms should always check the exit code to determine whether synchronisation completed successfully.
 
-1. Validate the configuration.
-2. Synchronise repositories.
-3. Execute build or testing tasks.
+Typical outcomes include:
 
-Keeping repository synchronisation separate from the build process simplifies troubleshooting and improves visibility.
+- Successful completion.
+- Configuration validation failure.
+- Synchronisation failure.
+- Unexpected application error.
 
----
+A complete list of exit codes is provided in the **Reference** section.
 
-# Self-Hosted GitHub Actions Runners
+## Authentication
 
-For organisations using self-hosted GitHub Actions runners, repository synchronisation can be performed as part of the runner maintenance schedule.
+The application uses your existing Git authentication.
 
-This helps ensure that shared repositories remain current without requiring manual intervention.
+Depending on your environment, this may include:
 
-Depending on the environment, synchronisation may be performed:
+- SSH keys.
+- Personal Access Tokens (PATs).
+- Git Credential Manager.
+- Operating system credential stores.
 
-- Before each workflow run.
-- On a fixed schedule.
-- During maintenance windows.
+Before enabling unattended execution, verify that repositories can be cloned and updated without requiring interactive authentication.
 
----
+## Best Practices
 
-# Logging
-
-When running unattended, retaining logs is recommended.
-
-Typical log information includes:
-
-- Execution time.
-- Number of repositories processed.
-- Clone operations.
-- Updated repositories.
-- Skipped repositories.
-- Errors encountered.
-
-These logs can assist with troubleshooting and provide a history of synchronisation activity.
-
----
-
-# Notifications
-
-The application itself does not currently send notifications.
-
-If notifications are required, consider using your scheduling platform to report:
-
-- Failed executions.
-- Non-zero exit codes.
-- Repository errors.
-- Validation failures.
-
-This keeps notification behaviour consistent with the surrounding automation environment.
-
----
-
-# Scheduling Frequency
-
-There is no universally correct synchronisation interval.
-
-The most appropriate schedule depends on how frequently repositories change.
-
-Typical examples include:
-
-| Environment | Suggested Frequency |
-| ----------- | ------------------- |
-| Personal workstation | Daily |
-| Active development machine | Every few hours |
-| Build server | Before each build |
-| Shared development server | Hourly |
-| Self-hosted runner | Before scheduled workflows |
-
-Choose a schedule that balances repository freshness with network and system usage.
-
----
-
-# Best Practices
-
-When automating synchronisation, consider the following recommendations.
+For reliable unattended execution:
 
 - Validate configuration changes before deployment.
-- Use `--quiet` for unattended execution.
-- Capture logs for troubleshooting.
+- Use a dedicated account where appropriate.
 - Monitor exit codes.
-- Review skipped repositories regularly.
-- Ensure Git authentication remains valid.
-- Keep configuration files under version control.
+- Retain execution logs.
+- Keep Git credentials up to date.
+- Periodically review synchronisation results.
 
-Following these practices helps ensure reliable long-term operation.
+Following these recommendations will help ensure reliable and predictable operation over time.
 
----
+## Continuous Integration
 
-# Future Enhancements
+Lupaxa GitHub Repository Sync can also be incorporated into Continuous Integration workflows.
 
-Future releases may introduce additional automation-related features, such as:
+Typical uses include:
 
-- Machine-readable output formats.
-- Structured logging.
-- Enhanced exit codes.
-- Repository filtering.
-- Parallel synchronisation.
-- Integration with external monitoring systems.
+- Preparing development environments.
+- Synchronising shared repository collections.
+- Validating configuration files.
+- Updating local mirrors.
+- Supporting scheduled maintenance tasks.
 
-These capabilities will build on the existing automation model while maintaining the application's safety-first philosophy.
+The application's predictable behaviour makes it suitable for integration with a wide range of automation platforms.
 
----
+## Next Steps
 
-# Next Steps
-
-Continue to the **Concepts** section to learn more about the design principles behind the application, including the repository safety model, repository states, and overall architecture.
+Once you are familiar with the command-line interface and synchronisation process, continue to the **Concepts** section to learn more about the application's
+safety model, repository processing and internal architecture.

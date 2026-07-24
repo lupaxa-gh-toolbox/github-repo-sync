@@ -3,231 +3,100 @@ title: Home
 ---
 
 <p align="center">
-    <img src="assets/images/logo.png" alt="Lupaxa GitHub Repository Sync Logo" width="320" />
+  <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/organisations/the-lupaxa-blueprints/readme-logo.png" alt="Logo" />
 </p>
 
 <h1 align="center">Lupaxa GitHub Repository Sync</h1>
 
-<p align="center">
-    Safely clone and synchronise large collections of GitHub repositories from a single declarative configuration.
-</p>
+Welcome to the official documentation for **Lupaxa GitHub Repository Sync**.
 
-<p align="center">
-    Clone missing repositories, fast-forward existing repositories, and protect repositories that are not safe to update automatically.
-</p>
+Lupaxa GitHub Repository Sync is a command-line application designed to safely clone, organise and synchronise collections of GitHub repositories from a
+single declarative configuration file.
 
----
+Rather than manually cloning and maintaining repositories individually, the application reads a configuration file describing the organisations and
+repositories you wish to manage, then performs the required synchronisation operations automatically whilst protecting existing repositories and local changes.
 
-## Welcome
+The project has been designed with reliability, predictability and safety as its primary goals, making it suitable for individual developers, teams and
+organisations managing anything from a handful of repositories to hundreds or even thousands.
 
-Welcome to the documentation for **Lupaxa GitHub Repository Sync**.
+## Features
 
-This project provides a safe and repeatable way to clone, organise, and synchronise large collections of GitHub repositories. Rather than assuming every repository can be updated automatically, each repository is inspected before any Git operation is performed. Repositories that are safe are updated, while repositories that require manual attention are left untouched and reported to the user.
+Some of the key capabilities include:
 
-Whether you are maintaining a handful of repositories or several hundred across multiple GitHub organisations, the application is designed to make repository management predictable, reliable, and safe.
-
----
-
-## Why This Project Exists
-
-Many synchronisation tools simply iterate through a directory and execute `git pull` in every repository they find.
-
-Whilst this approach is simple, it assumes that every repository:
-
-- is a valid Git repository
-- uses the correct remote
-- has a clean working tree
-- is attached to a branch
-- has not diverged from its upstream branch
-- can be updated safely
-
-In practice, these assumptions are often incorrect.
-
-A single repository with local changes, an incorrect remote, or an interrupted clone can cause synchronisation failures or, in the worst case, unexpected modifications to active development work.
-
-Lupaxa GitHub Repository Sync takes a different approach.
-
-Every repository is inspected before synchronisation begins, ensuring that only repositories confirmed to be safe are updated automatically.
-
----
-
-## Key Features
-
-- Safe repository inspection before every update.
-- Automatic cloning of missing repositories.
-- Fast-forward updates for repositories that are safe to modify.
-- Support for both HTTPS and SSH clone protocols.
-- Organisation-based repository grouping.
 - Declarative JSON5 configuration.
-- Rich terminal output with progress bars and summary tables.
-- Cross-platform support for macOS, Linux, and Windows.
-- Fully typed modern Python implementation.
+- Safe repository synchronisation.
+- Automatic cloning of missing repositories.
+- Fast-forward updates of existing repositories.
+- Protection against overwriting local changes.
+- Validation before synchronisation begins.
+- Comprehensive progress reporting.
+- Clear error messages and exit codes.
+- Cross-platform operation.
+- Strongly typed implementation.
+- Modular architecture.
+- Suitable for automation and scheduled execution.
 
----
+## Documentation Structure
 
-## Typical Repository Layout
-
-Repositories are organised beneath a single clone directory and grouped by GitHub organisation.
-
-```text
-~/Development/
-├── the-lupaxa-project/
-│   ├── brand-assets/
-│   ├── github/
-│   └── workflows/
-│
-├── lupaxa-security-toolbox/
-│   ├── certtool/
-│   ├── scanner/
-│   └── hash-tool/
-│
-└── lupaxa-devops-toolbox/
-    ├── docker-helper/
-    ├── kubernetes-helper/
-    └── terraform-helper/
-```
-
-This structure remains consistent regardless of how many organisations or repositories are configured.
-
----
-
-## Repository Safety
-
-One of the primary goals of the project is to protect local development work.
-
-The application will never automatically:
-
-- discard local changes
-- reset repositories
-- clean untracked files
-- delete branches
-- rebase branches
-- rewrite repository history
-- resolve merge conflicts
-- delete existing repositories
-
-If a repository cannot be updated safely, it is skipped and included in the final report.
-
-For a detailed explanation, see the **Repository Safety Model**.
-
----
-
-## Documentation
-
-The documentation is organised into several sections.
+The documentation is organised into the following sections.
 
 ### Getting Started
 
-Learn how to install the application, create your first configuration, and perform your first synchronisation.
+Learn how to install the application, configure your environment and perform your first synchronisation.
 
-- Installation
-- Quick Start
-
----
+Recommended for all new users.
 
 ### Configuration
 
-Learn how to configure organisations, repositories, clone protocols, and destination directories.
-
-- Configuration Guide
-- Configuration Reference
-- Configuration Examples
-
----
+Learn how configuration files are structured, what options are available and how to organise larger synchronisation projects.
 
 ### Usage
 
-Understand the available commands, synchronisation process, and recommended automation workflows.
-
-- Command Reference
-- Synchronisation
-- Automation
-
----
+Detailed information about the available commands, synchronisation behaviour and automation.
 
 ### Concepts
 
-Learn about the design principles that underpin the application.
-
-- Repository Safety Model
-- Repository States
-- Architecture
-
----
+Background information explaining how the application works internally, including the safety model, repository states and overall architecture.
 
 ### Reference
 
-Detailed reference documentation.
-
-- Exit Codes
-- Troubleshooting
-- Frequently Asked Questions
-
----
+Reference material including exit codes, troubleshooting guidance and answers to frequently asked questions.
 
 ### Development
 
-Information for contributors and maintainers.
+Information for contributors, including development setup, testing and contribution guidelines.
 
-- Contributing
-- Testing
+## Requirements
 
----
+Lupaxa GitHub Repository Sync requires:
 
-## Example
+- Python 3.11 or later.
+- Git installed and available on the system PATH.
+- Access to the repositories being synchronised.
+- Appropriate authentication for private repositories.
 
-A minimal configuration consists of only a clone directory and one or more organisations.
+## Design Principles
 
-```json5
-{
-  clone_path: "~/Development",
+The application has been built around a small number of core principles.
 
-  organisations: [
+- Safety before convenience.
+- Predictable behaviour.
+- Clear validation.
+- Strong typing.
+- Separation of responsibilities.
+- Maintainable architecture.
+- Consistent user experience.
 
-    {
-      name: "the-lupaxa-project",
+These principles influence every stage of the synchronisation process, from configuration loading through to repository updates and reporting.
 
-      repositories: [
+## Getting Help
 
-        {
-          name: "brand-assets"
-        },
+If you encounter problems or have questions about using the application, consult the following sections:
 
-        {
-          name: "github"
-        },
-
-        {
-          name: "workflows"
-        }
-
-      ]
-    }
-
-  ]
-}
-```
-
-Synchronising repositories is then as simple as:
-
-```bash
-github-repo-sync
-```
-
-or
-
-```bash
-grs
-```
-
----
+- **Getting Started** for installation and initial setup.
+- **Configuration** for configuration file guidance.
+- **Reference** for troubleshooting and frequently asked questions.
 
 ## Next Steps
 
-If this is your first time using the application, continue with the **Getting Started** guide.
-
-Experienced users may prefer to jump directly to the **Configuration Guide** or **Command Reference**.
-
----
-
-*Lupaxa GitHub Repository Sync is part of **The Lupaxa Project**, a collection of open-source tools, reusable workflows, and supporting resources for software engineering, automation, DevOps, and infrastructure.*
+If you are new to the application, continue with **Getting Started** to install Lupaxa GitHub Repository Sync and perform your first synchronisation.

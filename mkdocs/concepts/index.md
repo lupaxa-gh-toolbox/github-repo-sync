@@ -4,156 +4,82 @@ title: Concepts
 
 # Concepts
 
-Understanding how **Lupaxa GitHub Repository Sync** works internally will help you get the most from the application.
+This section explains the concepts and design principles that underpin **Lupaxa GitHub Repository Sync**.
 
-While the earlier sections of this documentation focus on installation, configuration, and day-to-day usage, this section explains the design principles that influence how the application behaves.
+While the **Getting Started**, **Configuration** and **Usage** sections describe how to use the application, the **Concepts** section explains *why* it behaves the way it does.
 
-These concepts are fundamental to the project and explain why the application often behaves differently from traditional repository synchronisation tools.
+Understanding these concepts is particularly useful for administrators, maintainers and contributors who want a deeper understanding of the application's design and decision-making process.
 
----
+## Why Concepts Matter
 
-## Philosophy
+Lupaxa GitHub Repository Sync has been designed around a number of core principles:
 
-Lupaxa GitHub Repository Sync was designed around a simple principle:
+- Safety before convenience.
+- Predictable behaviour.
+- Clear validation.
+- Separation of responsibilities.
+- Non-destructive synchronisation.
+- Maintainable architecture.
 
-> **Protect local repositories first, synchronise them second.**
+These principles influence every stage of execution, from loading the configuration file through to updating repositories and reporting results.
 
-Many repository management tools prioritise keeping repositories up to date, sometimes at the expense of local changes or repository integrity.
+## Topics Covered
 
-This application takes the opposite approach.
+The Concepts section is divided into three areas.
 
-Every synchronisation decision is made with the goal of preserving local work and avoiding unexpected repository modifications.
+### Safety Model
 
----
-
-## Core Design Principles
-
-Several principles guide the design of the application.
-
-### Safety First
-
-Repositories are never modified unless they have been confirmed to be in a safe state.
-
-If there is any uncertainty, the repository is skipped and reported to the user.
-
----
-
-### Predictable Behaviour
-
-Running the application multiple times with the same configuration should produce consistent and repeatable results.
-
-The application avoids hidden behaviour and makes every significant decision visible through its console output and summary reporting.
-
----
-
-### Explicit Over Implicit
-
-Configuration is intentionally explicit.
-
-Repositories are managed because they have been declared in the configuration file, not because they happen to exist on disk.
-
-This keeps synchronisation deterministic and makes configuration files the single source of truth.
-
----
-
-### Conservative Git Operations
-
-Only non-destructive Git operations are performed automatically.
-
-Potentially destructive operations always require manual intervention.
-
-Examples include:
-
-- Hard resets.
-- Force checkouts.
-- Cleaning untracked files.
-- Rebasing.
-- History rewriting.
-
----
-
-### Scalable by Design
-
-Whether managing ten repositories or several hundred, the synchronisation process remains the same.
-
-Repositories are processed independently, allowing large synchronisation runs to remain reliable even when individual repositories encounter problems.
-
----
-
-## Documentation in This Section
-
-The Concepts section is divided into three documents.
-
-### Repository Safety Model
-
-Explains the safety checks performed before any repository is modified.
+Explains how the application protects existing repositories and local changes.
 
 Topics include:
 
 - Repository inspection.
-- Safe and unsafe repository states.
-- Why repositories are skipped.
-- Design decisions behind the safety model.
+- Safe update decisions.
+- Non-destructive operations.
+- When repositories are skipped.
+- Manual intervention.
 
----
+This section is recommended for anyone wanting to understand why the application may choose not to update a repository.
 
 ### Repository States
 
-Describes the different states a repository may be in during synchronisation and how those states influence the actions taken by the application.
+Describes the various states a repository can be in when inspected by the application and how those states influence synchronisation.
 
-Examples include:
-
-- Missing repositories.
-- Clean repositories.
-- Dirty repositories.
-- Detached HEAD states.
-- Diverged branches.
-- Invalid repositories.
-
----
+Understanding repository states makes it easier to interpret synchronisation results and determine why a particular repository was cloned, updated or skipped.
 
 ### Architecture
 
-Provides an overview of the internal architecture of the application.
+Provides an overview of the application's internal design.
 
 Topics include:
 
-- High-level design.
+- High-level architecture.
 - Configuration loading.
 - Validation.
-- Synchronisation pipeline.
+- Synchronisation workflow.
 - Git operations.
-- Console output.
+- Error handling.
 - Extensibility.
 
-This document is particularly useful for contributors and anyone wishing to understand how the application is structured internally.
+This section is primarily intended for contributors and maintainers.
 
----
+## Relationship Between Sections
 
-## Recommended Reading Order
+The documentation is organised so that each section builds upon the previous one.
 
-The documents in this section are intended to be read in the following order:
+- **Getting Started** explains how to install and run the application.
+- **Configuration** explains what should be synchronised.
+- **Usage** explains how synchronisation works.
+- **Concepts** explains why the application behaves as it does.
+- **Reference** provides detailed technical information.
+- **Development** describes how the application is developed and maintained.
 
-1. Repository Safety Model
-2. Repository States
-3. Architecture
+## Recommended Reading
 
-This order introduces the core design philosophy before exploring how those principles are implemented within the application.
+Most users will only need the **Safety Model** and **Repository States** sections.
 
----
-
-## Who Should Read This Section?
-
-This section is recommended for:
-
-- Power users.
-- System administrators.
-- Contributors.
-- Developers extending the application.
-- Anyone interested in understanding the reasoning behind the application's behaviour.
-
----
+Contributors and maintainers are encouraged to read all three concept guides, as they explain many of the architectural decisions used throughout the codebase.
 
 ## Next Steps
 
-Continue to the **Repository Safety Model** to learn why repository safety is central to the design of **Lupaxa GitHub Repository Sync** and how the application determines whether a repository can be updated safely.
+Continue to **Safety Model** to learn how Lupaxa GitHub Repository Sync protects your repositories during synchronisation.

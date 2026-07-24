@@ -1,69 +1,183 @@
+# =============================================================================
+# Site Information
+# =============================================================================
+#
+# Basic metadata used in the page title, HTML metadata, search results and
+# social previews.
+
 site_name: Lupaxa GitHub Repository Sync
+
 site_description: >-
   Safely clone and synchronise large collections of GitHub repositories
   from a single declarative configuration.
+
 site_author: The Lupaxa Project
+
+# Canonical public URL of the generated documentation site.
+#
+# This is used when MkDocs generates canonical links, feeds and other absolute
+# URLs. It should end with a trailing slash.
 site_url: https://the-lupaxa-internal-toolbox.github.io/lupaxa-github-repo-sync/
 
+# =============================================================================
+# Source Repository
+# =============================================================================
+#
+# Repository information displayed by the Material theme and used to construct
+# the View and Edit page links.
+
+# Short repository name displayed in the site header.
 repo_name: the-lupaxa-internal-toolbox/lupaxa-github-repo-sync
+
+# Full URL of the source repository.
 repo_url: https://github.com/the-lupaxa-internal-toolbox/lupaxa-github-repo-sync
+
+# Path appended to repo_url when constructing page-edit links.
+#
+# Documentation is stored in the mkdocs directory on the master branch.
 edit_uri: edit/master/mkdocs/
 
-copyright: >-
-  Copyright &copy; The Lupaxa Project
+# =============================================================================
+# Copyright and Footer Branding
+# =============================================================================
+#
+# Material displays this content in the site footer.
+#
+# The HTML footer image links back to the main Lupaxa Project organisation.
 
+copyright: |
+  <p align="center">
+    <a href="https://github.com/the-lupaxa-project">
+      <img
+        src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/components/footer-for-child-orgs.svg"
+        alt="The Lupaxa Project Footer"
+        width="60%"
+      />
+    </a>
+  </p>
+
+# =============================================================================
+# Source and Build Directories
+# =============================================================================
+
+# Directory containing the documentation Markdown and supporting assets.
 docs_dir: mkdocs
+
+# Directory into which the generated static site is written.
+#
+# This directory should remain excluded by .gitignore.
 site_dir: site
 
+# Treat MkDocs warnings as build failures.
+#
+# This helps detect broken links, missing navigation files and configuration
+# problems before documentation is published.
 strict: true
 
+# =============================================================================
+# Material Theme
+# =============================================================================
+
 theme:
+  # Use Material for MkDocs.
   name: material
 
+  # Language used by theme-generated interface text.
   language: en
 
-  logo: assets/images/logo.png
-  favicon: assets/images/favicon.png
+  # Main logo displayed in the site header and navigation drawer.
+  logo: https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/organisations/the-lupaxa-blueprints/readme-logo-320.png
 
+  # Browser tab and bookmark icon.
+  favicon: https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/organisations/the-lupaxa-blueprints/readme-logo-128.png
+
+  # Use the GitHub brand icon for the repository link.
   icon:
     repo: fontawesome/brands/github
 
+  # ---------------------------------------------------------------------------
+  # Theme Features
+  # ---------------------------------------------------------------------------
+
   features:
-    - announce.dismiss
+    # Add an Edit this page action linked through edit_uri.
     - content.action.edit
+
+    # Add a View source action for each page.
     - content.action.view
-    - content.code.annotate
+
+    # Add a copy-to-clipboard button to fenced code blocks.
     - content.code.copy
-    - content.tabs.link
+
+    # Add Previous and Next page links to the footer.
     - navigation.footer
+
+    # Allow section index pages, such as configuration/index.md, to act as
+    # clickable section landing pages.
     - navigation.indexes
+
+    # Load internal pages without performing a complete browser refresh.
     - navigation.instant
-    - navigation.instant.prefetch
+
+    # Display breadcrumb-style navigation showing the current page location.
     - navigation.path
+
+    # Render navigation groups as visually separated sections.
     - navigation.sections
+
+    # Display top-level navigation groups as tabs in the site header.
     - navigation.tabs
+
+    # Display a Back to top button after the reader scrolls down a page.
     - navigation.top
+
+    # Highlight search terms on the selected result page.
     - search.highlight
-    - search.share
+
+    # Display search suggestions while the reader types.
     - search.suggest
+
+    # Keep the active table-of-contents entry aligned with the section
+    # currently visible on screen.
     - toc.follow
+
+  # ---------------------------------------------------------------------------
+  # Colour Schemes
+  # ---------------------------------------------------------------------------
+  #
+  # Provide light and dark colour schemes based on the visitor's operating
+  # system preference. The toggle allows the visitor to switch manually.
+  #
+  # The custom primary and accent colours are defined in css/palette.css.
 
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      primary: blue
-      accent: light blue
+      primary: custom
+      accent: custom
+
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
 
     - media: "(prefers-color-scheme: dark)"
       scheme: slate
-      primary: blue
-      accent: light blue
+      primary: custom
+      accent: custom
+
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
+
+# =============================================================================
+# Site Navigation
+# =============================================================================
+#
+# Defines the order and hierarchy of pages shown in the top navigation,
+# navigation drawer and page-to-page footer links.
+#
+# Entries containing only a path use the page's own title.
+# Named entries override the title displayed in navigation.
 
 nav:
   - Home: index.md
@@ -93,85 +207,114 @@ nav:
 
   - Reference:
       - reference/index.md
+      - Command Reference: reference/command-reference.md
       - Exit Codes: reference/exit-codes.md
       - Troubleshooting: reference/troubleshooting.md
       - Frequently Asked Questions: reference/faq.md
 
   - Development:
       - development/index.md
-      - Contributing: development/contributing.md
+      - Development Environment: development/development-environment.md
+      - Project Structure: development/project-structure.md
       - Testing: development/testing.md
+      - Contributing: development/contributing.md
+      - Release Process: development/release-process.md
+
+# =============================================================================
+# Plugins
+# =============================================================================
 
 plugins:
+  # Build the client-side documentation search index.
   - search:
+      # Apply English-language word processing and search behaviour.
       lang: en
 
-markdown_extensions:
-  - abbr
+# =============================================================================
+# Markdown Extensions
+# =============================================================================
+#
+# Extend standard Markdown with features used by the documentation.
+#
+# Unused specialist extensions have deliberately been omitted to keep the
+# configuration focused and make the accepted Markdown syntax predictable.
 
+markdown_extensions:
+  # Support admonition blocks such as:
+  #
+  # !!! warning
+  #     Warning text.
   - admonition
 
+  # Allow attributes, classes and identifiers to be attached to Markdown
+  # elements. This is also useful for Material layout and image features.
   - attr_list
 
-  - def_list
-
-  - footnotes
-
+  # Allow Markdown syntax inside supported HTML elements.
   - md_in_html
 
+  # Enable Markdown tables.
   - tables
 
+  # Generate the page table of contents from headings.
   - toc:
+      # Add a permanent-link icon beside each heading.
       permalink: true
+
+      # Accessible label applied to heading permalink controls.
       permalink_title: Link to this section
+
+      # Include H2 and H3 headings in the page table of contents.
       toc_depth: 3
 
-  - pymdownx.betterem:
-      smart_enable: all
-
-  - pymdownx.caret
-
+  # Allow collapsible admonitions using ??? and ???+ syntax.
   - pymdownx.details
 
+  # Provide syntax highlighting and enhanced fenced code blocks.
   - pymdownx.highlight:
+      # Allow direct links to highlighted line numbers.
       anchor_linenums: true
+
+      # Wrap code lines in spans for styling and annotation support.
       line_spans: __span
+
+      # Add the code language as a CSS class.
       pygments_lang_class: true
 
+  # Support inline syntax-highlighted code.
   - pymdownx.inlinehilite
 
-  - pymdownx.keys
-
-  - pymdownx.mark
-
-  - pymdownx.smartsymbols
-
+  # Resolve external Markdown snippets when explicitly included by a page.
   - pymdownx.snippets:
+      # Fail when a configured snippet path cannot be found.
       check_paths: true
 
+  # Support nested fenced code and content blocks.
+  #
+  # This is required for reliably nesting code blocks inside admonitions,
+  # lists and other extended Markdown structures.
   - pymdownx.superfences
 
+  # Support tabbed blocks for alternative commands, platforms or examples.
   - pymdownx.tabbed:
+      # Use Material's current tab presentation.
       alternate_style: true
 
-  - pymdownx.tasklist:
-      custom_checkbox: true
-
-  - pymdownx.tilde
+# =============================================================================
+# Additional Theme Settings
+# =============================================================================
 
 extra:
+  # Remove the "Made with Material for MkDocs" footer text.
   generator: false
 
-  social:
-    - icon: fontawesome/brands/github
-      link: https://github.com/the-lupaxa-internal-toolbox
-      name: The Lupaxa Internal Toolbox on GitHub
-
-  version:
-    provider: mike
+# =============================================================================
+# Custom Stylesheets
+# =============================================================================
+#
+# Paths are relative to docs_dir, so this resolves to:
+#
+#   mkdocs/css/palette.css
 
 extra_css:
-  - assets/stylesheets/extra.css
-
-watch:
-  - README.md
+  - css/palette.css

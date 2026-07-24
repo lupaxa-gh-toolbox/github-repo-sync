@@ -4,215 +4,90 @@ title: Configuration
 
 # Configuration
 
-The configuration system is the heart of **Lupaxa GitHub Repository Sync**.
+The behaviour of **Lupaxa GitHub Repository Sync** is controlled by a JSON5 configuration file.
 
-Rather than relying on long command-line arguments or interactive prompts, the application uses a declarative **JSON5** configuration file to describe exactly which repositories should be managed and how they should be synchronised.
+Rather than supplying numerous command-line arguments each time the application is executed, all synchronisation settings are stored in a single,
+human-readable configuration file. This approach makes configurations easier to understand, maintain and version alongside other project assets.
 
-This approach makes configurations:
+## Default Configuration Location
 
-- Easy to read.
-- Easy to maintain.
-- Easy to version control.
-- Suitable for automation.
-- Reusable across multiple machines.
+Unless another configuration file is specified on the command line, the application automatically loads:
 
-Whether you are managing five repositories or several hundred, the configuration file becomes the single source of truth for your local repository layout.
+```text
+~/.github-repo-sync.json5
+```
 
----
+A different configuration file can be specified when running the application, allowing multiple synchronisation configurations to be maintained for different environments or projects.
 
-## Configuration Philosophy
+## Why JSON5?
 
-The configuration system has been designed around a few simple principles.
+Lupaxa GitHub Repository Sync uses **JSON5** rather than standard JSON because it provides several features that improve readability and maintainability.
 
-### Human Readable
+These include:
 
-Configuration files should be understandable at a glance.
+- Comments.
+- Trailing commas.
+- Unquoted object keys.
+- Single or double quoted strings.
+- More forgiving formatting.
 
-JSON5 allows comments, trailing commas, and unquoted property names, making configurations significantly easier to maintain than strict JSON.
-
----
-
-### Declarative
-
-The configuration describes the desired end state rather than the steps required to achieve it.
-
-For example, instead of instructing the application to clone individual repositories, you simply declare which repositories should exist locally.
-
-The application determines the work required to achieve that state.
-
----
-
-### Safe by Default
-
-Configuration options are intentionally conservative.
-
-The application will never perform destructive operations simply because they appear in the configuration.
-
-Repository safety checks always take precedence over synchronisation.
-
----
-
-### Hierarchical
-
-Settings can be defined at multiple levels.
-
-In general, values inherit from their parent unless explicitly overridden.
-
-This allows large configurations to remain concise while still supporting repository-specific behaviour where required.
-
----
+This makes larger configuration files significantly easier to manage.
 
 ## Configuration Structure
 
-A configuration file consists of several logical layers.
+A configuration file typically contains:
 
-```text
-Configuration
-│
-├── Global Settings
-│
-├── Organisations
-│   │
-│   ├── Organisation Settings
-│   │
-│   └── Repositories
-│       │
-│       └── Repository Settings
-│
-└── Future Extensions
-```
+- Global application settings.
+- The local directory used to store repositories.
+- One or more GitHub organisations.
+- The repositories that belong to each organisation.
+- Repository-specific options where required.
 
-Each layer provides progressively more specific configuration options.
+The application validates the entire configuration before performing any synchronisation.
 
----
+If validation fails, no repository operations are performed.
 
-## Global Configuration
+## Validation
 
-Global settings apply to every organisation and repository unless overridden.
+Before synchronisation begins, the configuration is checked for problems including:
 
-Typical examples include:
+- Missing required properties.
+- Invalid property values.
+- Incorrect data types.
+- Duplicate entries.
+- Invalid repository definitions.
+- Invalid organisation definitions.
 
-- Clone directory.
-- Default clone protocol.
-- Output preferences.
-- Validation behaviour.
-- Future global options.
+This validation process helps identify configuration errors before any changes are made to local repositories.
 
----
+## Configuration Guides
 
-## Organisation Configuration
-
-Organisation settings allow repositories belonging to the same GitHub organisation to share common behaviour.
-
-Examples include:
-
-- Organisation name.
-- Local destination directory.
-- Clone protocol.
-- Repository list.
-
-These settings remove the need to repeat common values for every repository.
-
----
-
-## Repository Configuration
-
-Repository settings describe an individual GitHub repository.
-
-Repository-specific options always take precedence over inherited values.
-
-Typical settings include:
-
-- Repository name.
-- Local destination directory.
-- Clone protocol override.
-- Future repository-specific options.
-
----
-
-## Configuration Validation
-
-Every configuration is validated before synchronisation begins.
-
-Validation includes checks such as:
-
-- Required properties.
-- Invalid property types.
-- Duplicate organisations.
-- Duplicate repositories.
-- Missing repository names.
-- Invalid configuration hierarchy.
-
-If validation fails, synchronisation does not begin.
-
-This helps identify configuration problems before any repositories are modified.
-
----
-
-## Configuration Files
-
-The application can load configuration files from a user-specified location.
-
-For example:
-
-```bash
-github-repo-sync --config config.json5
-```
-
-Multiple configuration files can also be maintained for different environments, such as:
-
-- Personal development.
-- Work projects.
-- Continuous integration.
-- Build servers.
-- Testing environments.
-
----
-
-## Documentation in This Section
-
-The Configuration section is divided into three guides.
+This section is divided into three parts.
 
 ### Configuration Guide
 
-A detailed walkthrough of every configuration level and how settings interact.
-
-Recommended reading for all users.
-
----
+Explains the overall configuration structure, recommended practices and how larger configurations should be organised.
 
 ### Configuration Reference
 
-A complete reference for every supported configuration option, including default values, accepted types, and inheritance behaviour.
-
-Useful when looking up individual properties.
-
----
+Provides a complete reference for every supported configuration property, including expected data types, defaults and validation rules.
 
 ### Examples
 
-A collection of practical configuration examples covering common deployment scenarios, including:
+Contains practical configuration examples ranging from simple personal setups through to larger multi-organisation environments.
 
-- Single organisation.
-- Multiple organisations.
-- HTTPS and SSH combinations.
-- Custom directory layouts.
-- Large repository collections.
+## Best Practices
 
----
+For most users, the following recommendations are worth following:
 
-## Recommended Reading Order
-
-If you are new to the configuration system, read the documents in the following order:
-
-1. Configuration Guide
-2. Configuration Reference
-3. Configuration Examples
-
-This introduces concepts first before moving on to the complete reference documentation.
-
----
+- Keep related repositories together within the same organisation.
+- Add comments describing non-obvious configuration choices.
+- Use meaningful directory names.
+- Validate the configuration before synchronising repositories.
+- Keep configuration files under version control where appropriate.
 
 ## Next Steps
 
-Continue to the **Configuration Guide** to learn how configuration files are structured and how settings are inherited throughout the application.
+If you are creating a configuration for the first time, continue to the **Configuration Guide**.
+
+If you are looking for a specific property or option, refer to the **Configuration Reference**.

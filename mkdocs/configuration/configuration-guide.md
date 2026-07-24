@@ -4,338 +4,142 @@ title: Configuration Guide
 
 # Configuration Guide
 
-This guide explains how to configure **Lupaxa GitHub Repository Sync** using a JSON5 configuration file.
+Lupaxa GitHub Repository Sync is configured using a single JSON5 configuration file.
 
-The configuration file defines the repositories that should exist on your local machine and how they should be organised. Rather than executing individual clone or update commands, you describe the desired state and allow the application to determine the actions required to achieve it safely.
+The configuration defines which GitHub organisations and repositories should be synchronised, where they should be stored locally and how the synchronisation process should behave.
 
-This document introduces the overall structure of the configuration file, explains how settings are inherited, and provides guidance on organising configurations for projects of different sizes.
+Using a declarative configuration makes synchronisation repeatable, easy to review and suitable for both interactive and automated use.
 
----
+## Configuration File Location
+
+By default, the application looks for the following file:
+
+```text
+~/.github-repo-sync.json5
+```
+
+A different configuration file may be specified using the appropriate command-line option.
+
+This allows multiple configurations to be maintained for different environments, teams or projects.
 
 ## Why JSON5?
 
-The application uses **JSON5** rather than standard JSON.
+The application uses JSON5 instead of standard JSON because it is considerably easier to maintain.
 
-JSON5 offers several quality-of-life improvements that make configuration files easier to write and maintain, including:
+JSON5 supports features including:
 
 - Comments.
 - Trailing commas.
 - Unquoted property names.
-- Single or double quoted strings.
-- Improved readability for larger files.
+- Single-quoted strings.
+- Improved readability.
 
-For example:
+This makes configuration files significantly easier to edit, particularly as they grow larger.
 
-```json5
-{
-  // Where repositories will be cloned
-  clone_path: "~/Development",
+## Overall Structure
 
-  organisations: [
+At a high level, a configuration consists of:
 
-    {
-      name: "the-lupaxa-project",
+- Global application settings.
+- A local repository root.
+- One or more GitHub organisations.
+- One or more repositories within each organisation.
+- Optional repository-specific settings.
 
-      repositories: [
-
-        {
-          name: "github",
-        },
-
-      ],
-    },
-
-  ],
-}
-```
-
----
-
-## Configuration Hierarchy
-
-Configuration is organised into three levels.
+A simplified structure looks like this:
 
 ```text
-Global Configuration
+Configuration
 │
-├── Organisation
-│   │
-│   ├── Repository
-│   ├── Repository
-│   └── Repository
+├── Global Settings
 │
-├── Organisation
-│   │
-│   ├── Repository
-│   └── Repository
+├── Repository Root
 │
-└── Organisation
+└── Organisations
+    │
+    ├── Organisation
+    │   ├── Repository
+    │   ├── Repository
+    │   └── Repository
+    │
+    └── Organisation
+        ├── Repository
+        └── Repository
 ```
 
-Each level can define settings that are inherited by the levels beneath it.
+The exact configuration properties are documented in the **Configuration Reference**.
 
----
+## Validation
 
-## Global Configuration
-
-Global settings apply to every organisation and repository unless explicitly overridden.
-
-Typical global settings include:
-
-- Clone directory.
-- Default clone protocol.
-- Default output behaviour.
-- Validation settings.
-
-Example:
-
-```json5
-{
-  clone_path: "~/Development",
-  clone_protocol: "https",
-}
-```
-
-These values become the defaults used throughout the configuration.
-
----
-
-## Organisations
-
-Repositories are grouped by GitHub organisation.
-
-Each organisation contains:
-
-- The GitHub organisation name.
-- Optional organisation-wide settings.
-- A list of repositories.
-
-Example:
-
-```json5
-{
-  name: "the-lupaxa-project",
-
-  repositories: [
-
-    {
-      name: "github",
-    },
-
-    {
-      name: "workflows",
-    },
-
-  ],
-}
-```
-
-The application creates one local directory for each organisation.
-
-For example:
-
-```text
-~/Development/
-└── the-lupaxa-project/
-```
-
----
-
-## Repositories
-
-Each repository entry represents a single GitHub repository.
-
-The smallest valid repository definition is simply:
-
-```json5
-{
-  name: "github",
-}
-```
-
-Additional options may be specified when required.
-
-Repositories inherit settings from both the global configuration and their parent organisation.
-
----
-
-## Configuration Inheritance
-
-Inheritance keeps configuration files concise.
-
-Rather than repeating the same values for every repository, common settings are defined once and inherited automatically.
-
-For example:
-
-```json5
-{
-  clone_protocol: "https",
-
-  organisations: [
-
-    {
-      name: "the-lupaxa-project",
-
-      repositories: [
-
-        {
-          name: "github",
-        },
-
-        {
-          name: "workflows",
-        },
-
-      ],
-    },
-
-  ],
-}
-```
-
-Both repositories inherit the HTTPS clone protocol.
-
----
-
-## Overriding Inherited Values
-
-Inherited values can be overridden whenever necessary.
-
-For example, one organisation may use SSH while another continues to use HTTPS.
-
-```json5
-{
-  clone_protocol: "https",
-
-  organisations: [
-
-    {
-      name: "private-tools",
-      clone_protocol: "ssh",
-
-      repositories: [
-
-        {
-          name: "internal-library",
-        },
-
-      ],
-    },
-
-  ],
-}
-```
-
-Repository-level settings always take precedence over organisation and global values.
-
----
-
-## Local Directory Names
-
-By default, local directories use the same names as their corresponding GitHub organisations and repositories.
-
-For example:
-
-```text
-~/Development/
-└── the-lupaxa-project/
-    └── workflows/
-```
-
-However, custom directory names may be specified if preferred.
-
-This can be useful when:
-
-- Preserving historical directory structures.
-- Shortening long names.
-- Matching existing local layouts.
-
----
-
-## Multiple Organisations
-
-A single configuration file may manage repositories from any number of GitHub organisations.
-
-For example:
-
-```json5
-{
-  organisations: [
-
-    {
-      name: "the-lupaxa-project",
-
-      repositories: [
-        { name: "github" },
-        { name: "workflows" },
-      ],
-    },
-
-    {
-      name: "lupaxa-security-toolbox",
-
-      repositories: [
-        { name: "certtool" },
-        { name: "scanner" },
-      ],
-    },
-
-  ],
-}
-```
-
-Each organisation receives its own directory beneath the configured clone path.
-
----
-
-## Configuration Validation
-
-Before synchronisation begins, the configuration is validated.
+Before any repository operations begin, the entire configuration is validated.
 
 Validation checks include:
 
 - Required properties.
+- Property types.
 - Duplicate organisations.
 - Duplicate repositories.
-- Invalid property types.
-- Unsupported configuration values.
-- Invalid hierarchy.
+- Invalid values.
+- Invalid configuration structure.
 
-If validation fails, synchronisation does not continue.
+If validation fails, synchronisation does not begin.
 
----
+This ensures configuration problems are detected before any changes are made to local repositories.
 
-## Keeping Configurations Organised
+## Organisation Layout
 
-For small collections of repositories, a single configuration file is usually sufficient.
+Repositories are grouped by GitHub organisation.
 
-As deployments grow, consider grouping repositories logically.
+This keeps larger configurations organised and makes it easy to manage multiple organisations from a single configuration file.
 
 For example:
 
-- Open source projects.
-- Internal tooling.
-- Client repositories.
-- Build infrastructure.
-- Documentation.
+```text
+Development
+├── the-lupaxa-project
+├── lupaxa-actions-toolbox
+├── lupaxa-security-toolbox
+└── lupaxa-devops-toolbox
+```
 
-A well-organised configuration is easier to maintain and review over time.
+Each organisation contains one or more repositories that will be synchronised beneath the configured local repository root.
 
----
+## Repository Definitions
 
-## Best Practices
+Each repository definition identifies a GitHub repository that should be managed by the application.
 
-When creating configuration files, the following recommendations are encouraged.
+Depending on the configuration, repositories may be:
 
-- Keep related repositories together.
-- Avoid duplicate repository definitions.
-- Use inheritance wherever possible.
-- Add comments to explain unusual configuration choices.
-- Validate the configuration before synchronising.
-- Store configuration files in version control where appropriate.
+- Cloned if they do not already exist.
+- Updated if they already exist locally.
+- Skipped if synchronisation would not be safe.
 
----
+The application never blindly overwrites existing repositories.
+
+## Comments
+
+One of the advantages of JSON5 is the ability to include comments.
+
+Comments are strongly recommended for larger configurations as they make the purpose of organisations, repositories and configuration choices much easier to understand.
+
+## Maintaining Large Configurations
+
+For larger environments, consider the following recommendations:
+
+- Group repositories by GitHub organisation.
+- Keep repository names alphabetically ordered where practical.
+- Remove repositories that are no longer required.
+- Add comments explaining unusual configuration choices.
+- Validate the configuration after making changes.
+
+These practices make configuration files easier to review and maintain over time.
+
+## Configuration Reference
+
+This guide introduces the overall configuration structure.
+
+For detailed information about every supported configuration property, including data types, defaults and validation rules, continue to the **Configuration Reference**.
 
 ## Next Steps
 
-Now that you understand how configuration files are structured, continue to the **Configuration Reference** for a complete description of every supported configuration option and its behaviour.
+Continue to the **Configuration Reference** for a complete description of every supported configuration option.

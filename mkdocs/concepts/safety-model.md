@@ -1,224 +1,134 @@
 ---
-title: Repository Safety Model
+title: Safety Model
 ---
 
-# Repository Safety Model
+# Safety Model
 
-The repository safety model is the foundation of **Lupaxa GitHub Repository Sync**.
+One of the primary design goals of **Lupaxa GitHub Repository Sync** is to protect your repositories from unintended or destructive changes.
 
-Every design decision within the application ultimately supports one primary objective:
+Unlike tools that blindly execute Git commands, Lupaxa GitHub Repository Sync evaluates the state of every repository before deciding whether it is safe to perform a synchronisation.
 
-> **Never modify a repository unless it is safe to do so.**
+If the application cannot safely determine what action should be taken, it will stop processing that repository and report the reason to the user.
 
-This philosophy influences every stage of the synchronisation process, from configuration validation through to Git operations.
+## Design Principles
 
-Unlike many synchronisation tools that assume every repository can simply be updated, Lupaxa GitHub Repository Sync performs a series of safety checks before deciding whether any action should be taken.
+The safety model is built around a small number of principles.
 
----
+- Never overwrite local work.
+- Never assume a repository is in a valid state.
+- Validate before performing actions.
+- Make every decision predictable.
+- Prefer skipping a repository over risking data loss.
+- Clearly report why an action was or was not taken.
 
-## Why Safety Matters
+These principles apply throughout every synchronisation run.
 
-A Git repository often contains far more than committed source code.
+## Repository Inspection
 
-It may also contain:
+Before performing any Git operations, the application inspects each repository.
 
-- Uncommitted work.
-- Experimental changes.
-- Work in progress.
-- Temporary branches.
-- Debugging changes.
-- Local configuration.
-- Generated files.
-- Untracked content.
+Typical checks may include:
 
-Automatically updating repositories without understanding their current state can lead to merge conflicts, interrupted development, or even accidental data loss.
+- Whether the repository exists.
+- Whether the directory is a valid Git repository.
+- The configured remote repository.
+- The current branch.
+- The working tree status.
+- The availability of the remote repository.
 
-Protecting local work is therefore considered more important than keeping every repository up to date.
+Only after these checks have completed can the application determine the appropriate action.
 
----
+## Safe Decision Making
 
-## Safety Before Synchronisation
+Every repository is evaluated independently.
 
-Every repository passes through the same decision-making process.
+Depending on its current state, the application may decide to:
 
-```text
-Repository Found
-        │
-        ▼
-Inspect Repository
-        │
-        ▼
-Safe?
-   │        │
-  Yes       No
-   │        │
-   ▼        ▼
-Update     Skip
-```
+- Clone the repository.
+- Update the repository.
+- Leave the repository unchanged.
+- Skip the repository.
+- Report an error.
 
-Only repositories that successfully pass every required safety check are updated automatically.
+The decision made for one repository does not affect the processing of any other repository.
 
-All others are left untouched.
+## Non-Destructive Behaviour
 
----
+The application has been designed to avoid destructive Git operations.
 
-## Safety Checks
+For example, it does not automatically:
 
-Before performing any Git operation, the application evaluates a number of conditions.
-
-Typical checks include:
-
-- Does the directory exist?
-- Is the directory a valid Git repository?
-- Does the configured remote exist?
-- Does the remote match the expected repository?
-- Is the working tree clean?
-- Are there untracked files?
-- Is the repository attached to a branch?
-- Does an upstream branch exist?
-- Has the latest remote information been fetched?
-- Has the local branch diverged from the remote?
-
-These checks provide confidence that a fast-forward update can be performed safely.
-
----
-
-## Safe Repository States
-
-Examples of repositories considered safe include:
-
-- Newly cloned repositories.
-- Clean repositories with no local changes.
-- Repositories that are already up to date.
-- Repositories that can be fast-forwarded without conflict.
-
-These repositories may be synchronised automatically.
-
----
-
-## Unsafe Repository States
-
-Repositories may be skipped for a variety of reasons.
-
-Examples include:
-
-- Local modifications.
-- Untracked files.
-- Detached `HEAD`.
-- Missing upstream branch.
-- Diverged history.
-- Invalid Git repository.
-- Incorrect remote configuration.
-- Failed fetch operation.
-
-Rather than attempting to resolve these situations automatically, the application reports them for manual review.
-
----
-
-## Why Repositories Are Skipped
-
-Skipping a repository should not be considered an error.
-
-In many cases it is evidence that the safety model has worked exactly as intended.
-
-For example:
-
-- A developer may be working on a feature branch.
-- Local changes may not yet have been committed.
-- A repository may have been repointed to another remote intentionally.
-- The repository may require manual intervention before it can be updated safely.
-
-Automatically modifying these repositories would introduce unnecessary risk.
-
----
-
-## Operations That Are Never Performed Automatically
-
-The application deliberately avoids potentially destructive Git operations.
-
-It will never automatically:
-
-- Discard local changes.
-- Perform a hard reset.
-- Delete branches.
 - Delete repositories.
-- Rewrite Git history.
-- Rebase commits.
-- Resolve merge conflicts.
+- Reset local branches.
 - Force checkout another branch.
-- Clean untracked files.
-- Execute force pushes.
+- Force push changes.
+- Discard local commits.
+- Remove untracked files.
 
-If any of these actions are required, they must be performed manually by the user.
+Any operation that could potentially result in data loss is intentionally avoided.
 
----
+## Validation Before Action
+
+Safety begins before repository processing.
+
+The application validates the configuration before attempting to access any repositories.
+
+If configuration validation fails:
+
+- Repository processing does not begin.
+- No repositories are modified.
+- Validation errors are reported to the user.
+
+This helps prevent problems caused by invalid or incomplete configuration files.
 
 ## Repository Isolation
 
-Each repository is processed independently.
+Repositories are processed independently.
 
-If one repository cannot be synchronised safely, it does not prevent the remaining repositories from being processed.
+If one repository encounters an error, the application attempts to continue processing the remaining repositories wherever possible.
 
-For example:
+This provides two important benefits:
 
-```text
-Repository A    ✓ Updated
-Repository B    ✓ Updated
-Repository C    Skipped
-Repository D    ✓ Updated
-Repository E    ✓ Updated
-```
+- A single failure does not necessarily terminate the entire synchronisation.
+- The final summary provides a complete picture of the overall synchronisation.
 
-This isolation improves reliability when synchronising large collections of repositories.
+## Clear Reporting
 
----
-
-## Transparency
-
-The application attempts to make every important decision visible.
-
-When a repository is skipped, the reason is reported to the user.
+Whenever the application decides not to perform an operation, it reports the reason.
 
 Examples include:
 
-- Working tree is not clean.
-- Repository has diverged.
-- Invalid remote configuration.
-- Detached `HEAD`.
-- Fetch failed.
+- Validation errors.
+- Repository access failures.
+- Authentication problems.
+- Repository state prevents synchronisation.
+- Network failures.
+- Git operation failures.
 
-Providing clear explanations helps users resolve issues without needing to inspect every repository manually.
+Providing clear feedback helps users resolve problems without having to investigate the application's internal behaviour.
 
----
+## Why Repositories May Be Skipped
 
-## Designing for Trust
+Skipping a repository should not be considered a failure.
 
-One of the long-term goals of the project is that users should be able to run synchronisation without wondering what has changed behind the scenes.
+Instead, it indicates that the application determined that automatic synchronisation could not be completed safely.
 
-If the application reports that a repository has been updated, users should have confidence that:
+Typical reasons include:
 
-- The repository was inspected.
-- Safety checks passed.
-- The update was non-destructive.
-- No unexpected Git operations were performed.
+- Manual intervention is required.
+- The repository is not in an expected state.
+- A required resource is unavailable.
+- An operation could not be completed safely.
 
-Predictable behaviour builds confidence, particularly when managing large repository collections.
-
----
+Once the underlying issue has been resolved, the repository can be synchronised during the next run.
 
 ## Summary
 
-The repository safety model can be summarised in four principles:
+The safety model is central to the design of Lupaxa GitHub Repository Sync.
 
-1. Inspect every repository.
-2. Update only when safe.
-3. Skip anything uncertain.
-4. Never perform destructive Git operations automatically.
-
-These principles underpin every synchronisation performed by **Lupaxa GitHub Repository Sync**.
-
----
+By validating configuration, inspecting every repository and avoiding destructive Git operations, the application provides a predictable and reliable way to
+manage large collections of GitHub repositories while protecting existing local work.
 
 ## Next Steps
 
-Continue to **Repository States** to learn about the individual repository states recognised by the application and how each state influences the synchronisation process.
+Continue to **Repository States** to learn how the application classifies repositories and how those classifications influence synchronisation decisions.

@@ -4,269 +4,254 @@ title: Frequently Asked Questions
 
 # Frequently Asked Questions
 
-This page answers some of the most common questions about **Lupaxa GitHub Repository Sync**.
+This guide answers some of the questions most commonly asked by users of **Lupaxa GitHub Repository Sync**.
 
-Many of these questions relate to design decisions that intentionally differ from other Git repository management tools.
+If you cannot find the answer to your question here, refer to the **Troubleshooting** guide or the command-line help.
 
----
+## General
 
-# General Questions
+### What is Lupaxa GitHub Repository Sync?
 
-## What is Lupaxa GitHub Repository Sync?
+Lupaxa GitHub Repository Sync is a command-line application for managing and synchronising collections of GitHub repositories from a single configuration file.
 
-Lupaxa GitHub Repository Sync is a command-line application for cloning, organising, and safely synchronising GitHub repositories.
-
-It is designed to manage anything from a handful of repositories to several hundred across multiple GitHub organisations while protecting local development work.
+It is designed to simplify the management of large numbers of repositories whilst providing safe, predictable and repeatable synchronisation.
 
 ---
 
-## Why does the application use a configuration file?
+### Who is the application intended for?
 
-The configuration file acts as the single source of truth.
+The application is suitable for:
 
-Rather than discovering repositories automatically, you explicitly define which repositories should be managed.
-
-This makes synchronisation:
-
-- Predictable.
-- Repeatable.
-- Easy to review.
-- Easy to version control.
-- Suitable for automation.
+- Individual developers.
+- Open source maintainers.
+- Development teams.
+- DevOps engineers.
+- System administrators.
+- Organisations managing multiple GitHub repositories.
 
 ---
 
-## Why JSON5 instead of JSON?
+### Does the application only work with GitHub?
 
-JSON5 is significantly easier to maintain by hand.
+The current version is designed specifically for GitHub.
 
-It supports:
+Future versions may introduce support for additional Git hosting platforms.
+
+---
+
+## Configuration
+
+### Where is the configuration file stored?
+
+By default, the application uses:
+
+```text
+~/.github-repo-sync.json5
+```
+
+An alternative configuration file can be specified using the `--config` option.
+
+---
+
+### Why does the application use JSON5 instead of JSON?
+
+JSON5 provides a more user-friendly configuration format by supporting features such as:
 
 - Comments.
 - Trailing commas.
-- Unquoted property names.
-- Single-quoted strings.
+- Unquoted object keys.
+- Improved readability.
 
-These features make large configuration files easier to read and edit.
-
----
-
-# Repository Safety
-
-## Why was my repository skipped?
-
-Repositories are skipped whenever the application cannot guarantee that an automatic update would be safe.
-
-Typical reasons include:
-
-- Local modifications.
-- Untracked files.
-- Detached `HEAD`.
-- Diverged branches.
-- Missing upstream branches.
-- Incorrect remote configuration.
-
-Skipping a repository is considered normal behaviour and is an important part of the application's safety model.
+These features make larger configuration files significantly easier to maintain.
 
 ---
 
-## Why doesn't the application automatically resolve merge conflicts?
-
-Resolving merge conflicts requires human judgement.
-
-Automatically attempting to resolve them could overwrite local work or produce unexpected results.
-
-Instead, the application reports the issue and leaves the repository unchanged.
-
----
-
-## Why doesn't the application use `git reset --hard`?
-
-A hard reset permanently discards local changes.
-
-Because protecting local work is one of the primary goals of the project, destructive Git operations are intentionally excluded from automatic synchronisation.
-
----
-
-## Why aren't untracked files deleted automatically?
-
-Untracked files may represent:
-
-- Work in progress.
-- Generated files.
-- Local configuration.
-- Temporary experiments.
-
-Automatically deleting them could result in accidental data loss.
-
----
-
-# Configuration
-
-## Can I manage multiple GitHub organisations?
+### Can I maintain multiple configurations?
 
 Yes.
 
-A single configuration file can manage repositories belonging to any number of GitHub organisations.
+You can create multiple configuration files and specify which one to use when running the application.
 
-Each organisation is synchronised independently.
+For example:
 
----
-
-## Can I use both HTTPS and SSH?
-
-Yes.
-
-Clone protocols may be specified:
-
-- Globally.
-- Per organisation.
-- Per repository.
-
-Repository settings always take precedence over inherited values.
+```bash
+grs --config work.json5 sync
+```
 
 ---
 
-## Can I change the local directory names?
+## Synchronisation
 
-Yes.
-
-Both organisations and repositories support custom destination names.
-
-This allows local directory structures to differ from GitHub repository names where required.
-
----
-
-# Synchronisation
-
-## Does the application delete repositories?
+### Will the application overwrite my local work?
 
 No.
 
-Repositories are never deleted automatically.
+Protecting existing repositories is a fundamental design goal of the application.
 
-If a repository is removed from the configuration, it simply stops being managed.
-
-The local repository remains untouched.
+Repositories are inspected before synchronisation, and operations that could result in unintended data loss are intentionally avoided.
 
 ---
 
-## Does the application remove local branches?
+### Does the application delete repositories?
 
 No.
 
-The application never deletes branches automatically.
+Repositories are never deleted automatically during synchronisation.
+
+Repository removal remains a manual operation.
 
 ---
 
-## Does the application rewrite Git history?
-
-No.
-
-History rewriting operations such as rebasing or force pushes are never performed automatically.
-
----
-
-## Can the application update repositories with local changes?
-
-No.
-
-Repositories containing local modifications are skipped until they are returned to a safe state.
-
----
-
-## Does synchronisation stop if one repository fails?
-
-No.
+### What happens if one repository fails?
 
 Repositories are processed independently.
 
-A failure affecting one repository does not prevent other repositories from being synchronised.
+Where possible, synchronisation continues with the remaining repositories, and a summary is displayed when processing has completed.
 
 ---
 
-# Automation
+### Why was a repository skipped?
 
-## Can I run the application from cron?
+Repositories are skipped whenever the application determines that synchronisation cannot be completed safely.
+
+Common reasons include:
+
+- Authentication problems.
+- Repository configuration issues.
+- Repository state requiring manual intervention.
+- Network failures.
+
+The application reports the reason whenever possible.
+
+---
+
+## Authentication
+
+### Does the application manage GitHub credentials?
+
+No.
+
+Authentication is handled using your existing Git configuration and authentication mechanism.
+
+This may include:
+
+- SSH keys.
+- Personal Access Tokens (PATs).
+- Git Credential Manager.
+- Operating system credential stores.
+
+---
+
+### Can I use SSH instead of HTTPS?
 
 Yes.
 
-The application is well suited to scheduled execution using:
+The application supports whichever repository URLs are defined in your configuration.
 
-- Cron.
+If your configuration uses SSH repository URLs, Git will authenticate using your configured SSH credentials.
+
+---
+
+## Automation
+
+### Can the application run unattended?
+
+Yes.
+
+The application has been designed for unattended execution and integrates well with:
+
+- cron.
+- launchd.
 - Windows Task Scheduler.
-- CI/CD systems.
-- Self-hosted GitHub Actions runners.
+- Continuous Integration systems.
+- Automation platforms.
 
 ---
 
-## Is unattended synchronisation safe?
-
-Provided the repository safety model aligns with your workflow, yes.
-
-Repositories that require manual attention are skipped rather than modified automatically.
-
----
-
-# Development
-
-## Is the project open source?
+### Can I use the application in CI pipelines?
 
 Yes.
 
-The project is part of **The Lupaxa Project** and is developed in the open.
+The application returns meaningful exit codes, making it suitable for automation and Continuous Integration workflows.
+
+Automation should evaluate exit codes rather than parsing console output.
 
 ---
 
-## How can I contribute?
+## Performance
 
-See the **Development** section of this documentation for guidance on contributing, testing, and development workflows.
+### Can the application synchronise hundreds of repositories?
 
----
+Yes.
 
-## Where can I report bugs?
+The application has been designed to process repositories individually, making it suitable for synchronising large repository collections.
 
-Issues, feature requests, and suggestions should be reported through the project's GitHub repository.
+The overall execution time depends primarily on:
 
-When reporting an issue, include:
-
-- Application version.
-- Python version.
-- Git version.
-- Operating system.
-- Relevant console output.
-- Steps required to reproduce the issue.
+- Repository count.
+- Repository size.
+- Network performance.
+- GitHub responsiveness.
+- Local storage performance.
 
 ---
 
-# Future Development
+### Why does synchronisation sometimes take longer?
 
-## Will additional Git hosting providers be supported?
+Longer execution times are usually caused by external factors, such as:
 
-The architecture has been designed to support future expansion.
+- Large repositories.
+- Slow network connections.
+- Authentication delays.
+- GitHub service performance.
 
-While GitHub is currently the primary focus, the modular design allows support for additional Git hosting platforms to be considered in future releases.
-
----
-
-## Will parallel synchronisation be supported?
-
-Potentially.
-
-Parallel processing is a planned enhancement for future versions, provided it can be implemented without compromising the application's safety model or predictability.
+This behaviour is generally expected.
 
 ---
 
-## Will plugin support be added?
+## Troubleshooting
 
-The modular architecture has been designed with extensibility in mind.
+### The application reports a validation error. What should I do?
 
-Although plugin support is not currently implemented, the project structure has been organised to make future expansion practical.
+Run configuration validation independently.
+
+```bash
+grs validate
+```
+
+Correct all reported validation errors before attempting synchronisation.
 
 ---
 
-# Still Have a Question?
+### The application cannot access GitHub.
 
-If your question is not answered here, please consult the relevant section of the documentation or open an issue in the project's GitHub repository.
+Verify:
 
-Feedback, suggestions, and contributions are always welcome.
+- Internet connectivity.
+- Git authentication.
+- Repository permissions.
+- Repository URLs.
+
+You can also verify authentication independently using standard Git commands.
+
+---
+
+### Where can I get more help?
+
+If the documentation does not answer your question:
+
+1. Review the **Troubleshooting** guide.
+2. Check the command-line help.
+3. Confirm you are using the latest version.
+4. Gather diagnostic information before reporting an issue.
+
+Providing clear reproduction steps and complete error messages makes issues much easier to diagnose.
+
+## Related Documentation
+
+See also:
+
+- **Troubleshooting**
+- **Command Reference**
+- **Exit Codes**
+- **Configuration Guide**

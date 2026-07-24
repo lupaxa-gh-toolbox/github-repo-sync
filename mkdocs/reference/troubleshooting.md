@@ -4,58 +4,60 @@ title: Troubleshooting
 
 # Troubleshooting
 
-This guide provides solutions to the most common issues encountered when using **Lupaxa GitHub Repository Sync**.
+This guide provides solutions to the most common issues encountered when installing, configuring and running **Lupaxa GitHub Repository Sync**.
 
-Most problems fall into one of four categories:
+Many problems can be resolved by carefully reviewing the error message reported by the application and verifying the configuration, Git environment and authentication.
 
-- Configuration issues.
-- Git repository issues.
-- Authentication problems.
-- Environment or operating system issues.
+## General Troubleshooting Process
 
-This document explains how to identify these problems, understand their causes, and resolve them safely.
+When an issue occurs, work through the following steps:
 
----
+1. Read the complete error message.
+2. Verify the configuration file.
+3. Confirm Git is installed and working correctly.
+4. Verify authentication with GitHub.
+5. Confirm network connectivity.
+6. Retry the operation.
+7. Enable verbose output if additional information is required.
 
-# Before You Begin
-
-Before investigating a specific issue, verify the following:
-
-- You are using a supported version of Python.
-- Git is installed and available.
-- The application is installed correctly.
-- Your configuration validates successfully.
-- You can clone the affected repository manually using Git.
-
-If all of the above are true, the issue is likely to be isolated to the repository or environment rather than the application itself.
+Following this sequence resolves the majority of common issues.
 
 ---
 
-# Configuration Problems
-
-## Configuration File Cannot Be Found
+## Configuration Could Not Be Loaded
 
 ### Symptoms
 
-- The application reports that the configuration file does not exist.
-- Synchronisation does not begin.
+Examples include:
+
+- The application exits immediately.
+- A configuration file cannot be found.
+- JSON5 parsing errors are reported.
 
 ### Possible Causes
 
-- Incorrect file path.
-- Typographical error.
-- Incorrect working directory.
-- Missing configuration file.
+- The configuration file does not exist.
+- The file path is incorrect.
+- Invalid JSON5 syntax.
+- The current user cannot read the file.
 
 ### Resolution
 
-Verify the path supplied to the application.
+Verify that the configuration file exists.
 
-```bash
-github-repo-sync --config config.json5
+For the default configuration:
+
+```text
+~/.github-repo-sync.json5
 ```
 
-Ensure the file exists and that the current user has permission to read it.
+If using an alternative configuration file, confirm the path is correct:
+
+```bash
+grs --config /path/to/config.json5 validate
+```
+
+Correct any reported validation errors before continuing.
 
 ---
 
@@ -63,50 +65,45 @@ Ensure the file exists and that the current user has permission to read it.
 
 ### Symptoms
 
-Validation reports one or more errors.
+Validation reports one or more errors before synchronisation begins.
 
 ### Possible Causes
 
 - Missing required properties.
 - Duplicate organisations.
 - Duplicate repositories.
-- Invalid property types.
-- Unsupported configuration values.
-- Invalid JSON5 syntax.
+- Invalid property values.
+- Incorrect configuration structure.
 
 ### Resolution
 
-Run the validator directly.
+Run configuration validation independently.
 
 ```bash
-github-repo-sync validate
+grs validate
 ```
 
-Correct the reported issues before attempting synchronisation.
+Correct all reported validation errors before running synchronisation.
 
 ---
 
-# Git Authentication Problems
-
-## Repository Cannot Be Cloned
+## Git Is Not Installed
 
 ### Symptoms
 
-Clone operations fail.
-
-### Possible Causes
-
-- Incorrect repository name.
-- Repository does not exist.
-- Private repository.
-- Missing authentication.
-- Insufficient permissions.
+The application reports that Git cannot be found.
 
 ### Resolution
 
-Attempt to clone the repository manually using Git.
+Verify that Git is installed.
 
-If the manual clone fails, resolve the authentication issue before running the application again.
+```bash
+git --version
+```
+
+If Git is not installed, install it using your operating system's preferred package manager.
+
+After installation, ensure that the `git` executable is available on your system `PATH`.
 
 ---
 
@@ -114,224 +111,213 @@ If the manual clone fails, resolve the authentication issue before running the a
 
 ### Symptoms
 
-Git reports permission or authentication errors.
+Repository access is denied.
+
+Examples include:
+
+- Authentication failed.
+- Permission denied.
+- Repository not accessible.
 
 ### Possible Causes
 
-- Expired credentials.
-- Invalid Personal Access Token.
-- Missing SSH key.
+- Invalid credentials.
+- Expired Personal Access Token.
 - Incorrect SSH configuration.
+- Insufficient repository permissions.
 
 ### Resolution
 
-Verify that Git authentication works independently of the application.
+Verify that Git authentication is working independently of the application.
 
 For example:
 
 ```bash
-git clone git@github.com:organisation/repository.git
+git ls-remote git@github.com:organisation/repository.git
 ```
 
 or
 
 ```bash
-git clone https://github.com/organisation/repository.git
+git ls-remote https://github.com/organisation/repository.git
 ```
 
+Correct any authentication issues before retrying synchronisation.
+
 ---
 
-# Repository Problems
-
-## Repository Is Skipped
+## Repository Cannot Be Cloned
 
 ### Symptoms
 
-The synchronisation summary reports that a repository was skipped.
+A repository cannot be cloned during synchronisation.
 
 ### Possible Causes
 
-- Local modifications.
-- Untracked files.
-- Detached `HEAD`.
-- Diverged branches.
-- Missing upstream branch.
-- Incorrect remote configuration.
+- Repository does not exist.
+- Repository URL is incorrect.
+- Authentication failure.
+- Network problem.
 
 ### Resolution
 
-Review the repository manually.
+Verify:
 
-The application intentionally skips repositories that require user intervention.
+- Repository name.
+- Organisation name.
+- Repository URL.
+- Repository permissions.
+- Internet connectivity.
 
 ---
 
-## Repository Is Not a Valid Git Repository
+## Repository Update Failed
 
 ### Symptoms
 
-The application reports an invalid repository.
+An existing repository cannot be updated.
 
 ### Possible Causes
 
-- The directory is not a Git repository.
-- The `.git` directory is missing.
-- Repository metadata has become corrupted.
+- Repository is not in an expected state.
+- Local Git issues.
+- Remote repository unavailable.
+- Authentication problems.
 
 ### Resolution
 
-Determine whether the directory should be:
+Inspect the repository manually.
 
-- Deleted and cloned again.
-- Converted into a valid Git repository.
-- Removed from the configuration.
+Useful commands include:
+
+```bash
+git status
+```
+
+```bash
+git remote -v
+```
+
+```bash
+git branch
+```
+
+Resolve any reported Git issues before running synchronisation again.
 
 ---
 
-## Repository Has Diverged
+## Network Problems
 
 ### Symptoms
 
-The local branch has diverged from the remote branch.
-
-### Resolution
-
-Review the repository manually using Git.
-
-Typical approaches include:
-
-- Merging changes.
-- Rebasing.
-- Resetting the repository.
-
-The application deliberately avoids performing these operations automatically.
-
----
-
-# Network Problems
-
-## Fetch Failed
+The application reports network or remote access errors.
 
 ### Possible Causes
 
 - Internet connection unavailable.
-- GitHub unavailable.
+- DNS issues.
 - Firewall restrictions.
 - Proxy configuration.
-- Temporary network interruption.
+- Temporary GitHub outage.
 
 ### Resolution
 
-Verify network connectivity.
+Confirm Internet connectivity.
 
-Retry the synchronisation after connectivity has been restored.
-
----
-
-# Performance Issues
-
-## Synchronisation Appears Slow
-
-Several factors influence synchronisation performance.
-
-Examples include:
-
-- Number of repositories.
-- Repository size.
-- Internet connection speed.
-- GitHub response time.
-- Storage performance.
-
-Large repositories naturally require more time to clone and update.
-
----
-
-## Large Numbers of Repositories
-
-Synchronising several hundred repositories may take noticeable time.
-
-Recommendations include:
-
-- Synchronise regularly.
-- Use fast local storage.
-- Ensure a reliable network connection.
-- Avoid unnecessary repository duplication.
-
-Future releases may introduce optional parallel processing.
-
----
-
-# Installation Problems
-
-## Command Not Found
-
-### Symptoms
-
-```text
-command not found: github-repo-sync
-```
-
-### Resolution
-
-Verify that the package has been installed correctly.
+For example:
 
 ```bash
-pip show lupaxa-github-repo-sync
-```
-
-Also ensure that your Python scripts directory is included in your system `PATH`.
-
----
-
-## Incorrect Python Version
-
-Verify which version of Python is being used.
-
-```bash
-python --version
+ping github.com
 ```
 
 or
 
 ```bash
-python3 --version
+curl https://github.com
 ```
 
-The application requires Python 3.11 or later.
+Retry the operation once connectivity has been restored.
 
 ---
 
-# Still Having Problems?
+## Slow Synchronisation
 
-If you cannot resolve the issue:
+### Symptoms
 
-1. Validate the configuration.
-2. Run the application with verbose output.
-3. Review the reported error messages.
-4. Attempt the equivalent Git commands manually.
-5. Gather the relevant console output before reporting the issue.
+Synchronisation appears slower than expected.
 
-Providing detailed information makes diagnosing problems significantly easier.
+### Possible Causes
+
+- Large repository collections.
+- Slow network connection.
+- Large repositories.
+- GitHub rate limiting.
+- Local storage performance.
+
+### Resolution
+
+This behaviour is generally expected when synchronising many repositories.
+
+If performance changes significantly compared with previous runs, investigate:
+
+- Network performance.
+- Disk performance.
+- Authentication delays.
+- GitHub service status.
 
 ---
 
-# Reporting Issues
+## Unexpected Application Error
 
-When reporting an issue, include as much relevant information as possible, including:
+### Symptoms
 
-- Operating system.
-- Python version.
-- Git version.
+The application terminates unexpectedly or reports an internal error.
+
+### Resolution
+
+Collect the following information before reporting the issue:
+
 - Application version.
-- Configuration (where appropriate).
+- Python version.
+- Operating system.
+- Command executed.
 - Console output.
-- Error messages.
-- Steps required to reproduce the issue.
+- Configuration details (where appropriate).
+- Steps required to reproduce the problem.
 
-Please avoid including sensitive information such as authentication tokens, passwords, or private repository URLs.
+This information greatly assists with diagnosis.
 
 ---
 
-# Next Steps
+## Enabling Verbose Output
 
-If your question is not answered here, continue to the **Frequently Asked Questions** section, which explains many of the design decisions and behaviours of **Lupaxa GitHub Repository Sync**.
+If additional diagnostic information is required, enable verbose mode.
+
+```bash
+grs --verbose sync
+```
+
+Verbose output provides additional information about configuration loading, repository processing and synchronisation progress.
+
+---
+
+## Still Need Help?
+
+If the issue cannot be resolved:
+
+- Confirm you are using the latest version of the application.
+- Validate the configuration.
+- Verify Git authentication independently.
+- Review the error message carefully.
+- Gather diagnostic information before reporting the issue.
+
+Providing clear reproduction steps and relevant diagnostic information will significantly reduce the time required to identify and resolve the problem.
+
+## Related Documentation
+
+See also:
+
+- **Configuration Guide**
+- **Command Reference**
+- **Exit Codes**
+- **Safety Model**

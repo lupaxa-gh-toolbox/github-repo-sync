@@ -4,143 +4,102 @@ title: Getting Started
 
 # Getting Started
 
-Welcome to the **Getting Started** section.
+Welcome to the **Getting Started** guide for **Lupaxa GitHub Repository Sync**.
 
-This section introduces the fundamentals of installing, configuring, and using **Lupaxa GitHub Repository Sync** for the first time.
+This section introduces the application and walks you through everything required to install it, configure it and perform your first repository synchronisation.
 
-Whether you are synchronising a handful of repositories or managing hundreds across multiple GitHub organisations, these guides will help you get up and running quickly and establish a solid foundation for the more advanced topics covered later in the documentation.
+Whether you are managing a single GitHub organisation or hundreds of repositories across multiple organisations, this guide provides the knowledge required to
+get up and running quickly and safely.
 
----
+## What You Will Learn
 
-## What You'll Learn
+The Getting Started guide covers:
 
-After completing this section you will know how to:
+- Installing Lupaxa GitHub Repository Sync.
+- Verifying your installation.
+- Understanding the application requirements.
+- Creating your first configuration file.
+- Performing your first synchronisation.
+- Learning where to find more detailed documentation.
+
+By the end of this section you will have a working installation and understand the basic workflow used by the application.
+
+## Prerequisites
+
+Before installing the application, ensure that your environment includes:
+
+- Python 3.11 or later.
+- Git installed and available on your system `PATH`.
+- Access to GitHub.
+- Appropriate authentication for any private repositories you intend to synchronise.
+
+You should also decide where your local repository collection will be stored.
+
+## Installation
+
+Lupaxa GitHub Repository Sync is distributed as a standard Python package and installs a command-line application named `grs`.
+
+The installation guide explains how to:
 
 - Install the application.
-- Verify your installation.
-- Create your first configuration file.
-- Validate your configuration.
-- Synchronise repositories safely.
-- Understand the default repository layout.
-- Perform your first successful synchronisation.
+- Verify that the installation completed successfully.
+- Confirm the installed version.
+- Upgrade to newer releases.
+- Remove the application if required.
 
----
+Continue to **Installation** for the complete installation process.
 
-## Before You Begin
+## Configuration
 
-Before installing the application, ensure your system meets the minimum requirements.
+The application is configured using a JSON5 configuration file.
 
-### Operating Systems
+Unless another location is specified on the command line, the default configuration file is:
 
-The application supports:
-
-- macOS
-- Linux
-- Windows
-
----
-
-### Python
-
-Python **3.11** or later is required.
-
-You can verify your Python version by running:
-
-```bash
-python --version
+```text
+~/.github-repo-sync.json5
 ```
 
-or
+The configuration file defines:
 
-```bash
-python3 --version
-```
+- The local directory used to store repositories.
+- The GitHub organisations to synchronise.
+- The repositories that should be managed.
+- Synchronisation behaviour and application options.
 
----
+JSON5 has been chosen because it supports comments, trailing commas and other features that make configuration files easier to read and maintain than standard JSON.
 
-### Git
+## Typical Workflow
 
-Git **2.x** or later must be installed and available on your system `PATH`.
+A typical synchronisation workflow consists of the following steps:
 
-Verify your installation:
+1. Install the application.
+2. Create the configuration file.
+3. Define the organisations and repositories to synchronise.
+4. Validate the configuration.
+5. Review the planned operations.
+6. Run the synchronisation.
+7. Review the final summary.
 
-```bash
-git --version
-```
-
----
-
-### GitHub Access
-
-The application can clone both public and private repositories.
-
-For private repositories, ensure that your preferred authentication method has already been configured.
-
-For example:
-
-- GitHub SSH keys
-- GitHub Personal Access Tokens
-- Git Credential Manager
-- Existing Git credentials
-
-The application uses your existing Git configuration and does not implement its own authentication mechanism.
-
----
+Before any repository operations are performed, the application validates the configuration and checks that repositories are in a safe state to be updated.
 
 ## Documentation Structure
 
-The Getting Started section consists of two guides.
+Once you have completed this section, the remainder of the documentation is organised into the following areas:
 
-### Installation
+- **Configuration** explains every available configuration option.
+- **Usage** describes the available commands and synchronisation behaviour.
+- **Concepts** explains the application's internal design and safety model.
+- **Reference** contains troubleshooting guidance, exit codes and frequently asked questions.
+- **Development** provides information for contributors and maintainers.
 
-Learn how to:
+## Safety First
 
-- Install the application.
-- Install optional development dependencies.
-- Verify the installation.
-- Upgrade to newer releases.
-- Remove the application.
+Protecting existing repositories and local changes is one of the primary design goals of Lupaxa GitHub Repository Sync.
 
----
+Before updating an existing repository, the application inspects its current state to ensure that synchronisation can be performed safely.
 
-### Quick Start
-
-Build your first working configuration.
-
-This guide walks through:
-
-1. Creating a configuration file.
-2. Validating the configuration.
-3. Reviewing the planned repositories.
-4. Running the first synchronisation.
-5. Understanding the output.
-
-By the end of the guide you will have a working synchronisation environment ready for everyday use.
-
----
-
-## Recommended Reading Order
-
-If you are new to the application, the recommended order is:
-
-1. Installation
-2. Quick Start
-3. Configuration Guide
-4. Command Reference
-5. Repository Safety Model
-
-Following this order introduces new concepts gradually while building a complete understanding of how the application works.
-
----
-
-## Need More Detail?
-
-The Getting Started guides intentionally focus on the most common workflows.
-
-For comprehensive documentation covering every configuration option, command-line argument, and repository state, continue with the later sections of the documentation.
-
----
+More information is available in the **Safety Model** documentation.
 
 ## Next Steps
 
-Continue to the **Installation** guide to install the application and verify that your environment is ready for synchronising repositories.
+Continue to **Installation** to install Lupaxa GitHub Repository Sync and prepare your system for your first synchronisation.

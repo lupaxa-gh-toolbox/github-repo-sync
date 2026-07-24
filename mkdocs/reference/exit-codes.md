@@ -4,121 +4,22 @@ title: Exit Codes
 
 # Exit Codes
 
-Every execution of **Lupaxa GitHub Repository Sync** returns an operating system exit code.
+Every command executed by **Lupaxa GitHub Repository Sync** returns an exit code when it finishes.
 
-Exit codes provide a reliable way for scripts, scheduled tasks, CI/CD pipelines, and other automation tools to determine whether an operation completed successfully or whether user intervention may be required.
+Exit codes provide a reliable way for shell scripts, automation platforms and Continuous Integration (CI) systems to determine whether an operation completed successfully.
 
-A successful synchronisation does not simply mean that every repository was updated. It means the application completed its work without encountering an unrecoverable error. Individual repositories may still have been skipped because they were not in a safe state.
-
----
+Unlike console output, exit codes are intended for machine-readable processing and should always be used when automating the application.
 
 ## Why Exit Codes Matter
 
-Exit codes are particularly useful when the application is executed automatically.
+Automation should never rely on parsing console output.
 
-Typical examples include:
+Instead, scripts should check the exit code returned by the application.
 
-- Cron jobs.
-- Windows Task Scheduler.
-- CI/CD pipelines.
-- Build servers.
-- Self-hosted GitHub Actions runners.
-- Monitoring systems.
-
-These systems typically determine success or failure solely from the application's exit status.
-
----
-
-## Exit Code Reference
-
-| Exit Code | Name | Description |
-| ----------|------|-------------|
-| `0` | Success | The requested operation completed successfully. |
-| `1` | General Error | An unexpected application error occurred. |
-| `2` | Configuration Error | The configuration file could not be loaded or validated. |
-| `3` | Repository Error* | One or more repository operations failed. |
-| `4` | Git Error* | A Git operation failed before processing could continue. |
-| `5` | Internal Error* | An unexpected internal application error occurred. |
-
-> **Note**
->
-> Exit codes marked with an asterisk (*) are reserved for future releases. At present, most operational failures are reported using a general error code while detailed reporting continues to evolve.
-
----
-
-## Exit Code `0`
-
-A value of `0` indicates that the requested command completed successfully.
-
-Examples include:
-
-- Configuration validated successfully.
-- Repository list displayed successfully.
-- Synchronisation completed successfully.
-
-A successful synchronisation may still report:
-
-- Repositories already up to date.
-- Repositories skipped because they were not safe to update.
-- Informational warnings.
-
-These situations are not considered application failures.
-
----
-
-## Exit Code `1`
-
-A value of `1` indicates that the application encountered an unexpected error.
-
-Possible causes include:
-
-- Unexpected exception.
-- Filesystem failure.
-- Invalid runtime environment.
-- Unexpected dependency failure.
-
-Further information is normally displayed in the console output.
-
----
-
-## Exit Code `2`
-
-Returned when the configuration cannot be processed.
-
-Examples include:
-
-- Configuration file missing.
-- Invalid JSON5 syntax.
-- Missing required properties.
-- Duplicate repositories.
-- Invalid configuration hierarchy.
-
-No synchronisation is attempted when configuration validation fails.
-
----
-
-## Reserved Exit Codes
-
-Additional exit codes are reserved to provide more detailed reporting in future versions.
-
-Possible future categories include:
-
-- Individual repository failures.
-- Authentication failures.
-- Git command failures.
-- Partial synchronisation results.
-- Network connectivity issues.
-
-Introducing additional exit codes will improve integration with monitoring systems and automation platforms while maintaining backwards compatibility wherever possible.
-
----
-
-## Using Exit Codes in Shell Scripts
-
-### Bash
+For example:
 
 ```bash
-github-repo-sync
+grs sync
 
 if [ $? -eq 0 ]; then
     echo "Synchronisation completed successfully."
@@ -127,61 +28,148 @@ else
 fi
 ```
 
----
+Most automation systems provide native support for evaluating command exit codes.
 
-### PowerShell
+## Standard Exit Codes
 
-```powershell
-github-repo-sync
+The following exit codes are reserved by the application.
 
-if ($LASTEXITCODE -eq 0) {
-    Write-Host "Synchronisation completed successfully."
-}
-else {
-    Write-Host "Synchronisation failed."
-}
-```
+| Exit Code | Meaning                             |
+| :-------: | :---------------------------------- |
+| `0`       | Operation completed successfully.   |
+| `1`       | General application error.          |
+| `2`       | Invalid command-line arguments.     |
+| `3`       | Configuration validation failed.    |
+| `4`       | Configuration could not be loaded.  |
+| `5`       | Synchronisation failed.             |
+| `6`       | Git operation failed.               |
+| `7`       | Authentication failed.              |
+| `8`       | Network or remote repository error. |
+| `9`       | Unexpected internal error.          |
 
----
+> **Note**
+>
+> The exact exit codes may change as the application evolves. Refer to the release notes for any changes introduced in future versions.
 
-## Using Exit Codes in CI/CD
+## Successful Execution
 
-Exit codes can be used to determine whether subsequent pipeline stages should continue.
-
-Typical workflow:
+A successful command returns:
 
 ```text
-Validate Configuration
-        │
-        ▼
-Synchronise Repositories
-        │
-        ▼
-Exit Code == 0 ?
-      │       │
-     Yes      No
-      │       │
-      ▼       ▼
- Continue   Stop Pipeline
+Exit Code: 0
 ```
 
-This allows build systems to terminate early if repository synchronisation fails.
+This indicates that:
 
----
+- The requested command completed successfully.
+- No unrecoverable errors occurred.
+- The application terminated normally.
+
+Warnings do not necessarily result in a non-zero exit code.
+
+## Configuration Errors
+
+Configuration-related problems return a non-zero exit code.
+
+Typical causes include:
+
+- Invalid JSON5 syntax.
+- Missing required properties.
+- Invalid configuration values.
+- Duplicate entries.
+- Unsupported configuration versions.
+
+Correct the configuration before attempting another synchronisation.
+
+## Synchronisation Errors
+
+A synchronisation error indicates that the requested operation could not be completed successfully.
+
+Examples include:
+
+- Repository access failures.
+- Clone failures.
+- Git update failures.
+- Repository processing errors.
+
+Depending on the error, some repositories may still have been processed successfully.
+
+## Authentication Errors
+
+Authentication failures occur when GitHub credentials cannot be used to access one or more repositories.
+
+Common causes include:
+
+- Expired credentials.
+- Invalid Personal Access Tokens.
+- Incorrect SSH configuration.
+- Insufficient repository permissions.
+
+Verify authentication before retrying the operation.
+
+## Network Errors
+
+Network-related exit codes indicate that communication with GitHub or another remote service could not be completed.
+
+Possible causes include:
+
+- Internet connectivity problems.
+- DNS resolution failures.
+- Firewall restrictions.
+- Temporary service interruptions.
+- Remote server errors.
+
+In many cases, retrying the operation after the issue has been resolved is sufficient.
+
+## Internal Errors
+
+Internal errors indicate that the application encountered an unexpected condition.
+
+These errors are uncommon and may indicate:
+
+- A software defect.
+- Corrupted application state.
+- An unexpected external dependency failure.
+
+If an internal error can be reproduced consistently, consider reporting it with:
+
+- Application version.
+- Python version.
+- Operating system.
+- Configuration (where appropriate).
+- Console output.
+- Steps required to reproduce the problem.
+
+## Using Exit Codes in Automation
+
+Exit codes make it straightforward to integrate Lupaxa GitHub Repository Sync into automation.
+
+Typical examples include:
+
+- Scheduled synchronisation jobs.
+- Continuous Integration pipelines.
+- Deployment workflows.
+- Build servers.
+- Maintenance scripts.
+
+Automation should always evaluate the exit code before assuming that synchronisation completed successfully.
 
 ## Best Practices
 
-When using exit codes in automation:
+When writing automation:
 
-- Always check the application's exit status.
-- Log both the exit code and console output.
-- Treat non-zero exit codes as requiring investigation.
-- Review skipped repositories separately from application failures.
+- Always check the exit code.
+- Treat non-zero exit codes as failures unless explicitly documented otherwise.
+- Record console output for troubleshooting.
+- Retry transient failures where appropriate.
+- Alert administrators when repeated failures occur.
 
-Exit codes indicate the success or failure of the application itself, while the synchronisation summary provides additional detail about the repositories that were processed.
+Following these recommendations helps ensure reliable and predictable automated execution.
 
----
+## Related Documentation
 
-## Next Steps
+For more information, see:
 
-Continue to **Troubleshooting** for guidance on diagnosing common configuration, Git, and synchronisation issues.
+- **Automation**
+- **Troubleshooting**
+- **Command Reference**

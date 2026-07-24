@@ -4,145 +4,106 @@ title: Usage
 
 # Usage
 
-The **Usage** section explains how to use **Lupaxa GitHub Repository Sync** once it has been installed and configured.
+This section explains how to use **Lupaxa GitHub Repository Sync** to validate configuration files, inspect planned operations and synchronise GitHub repositories.
 
-While the **Getting Started** and **Configuration** sections focus on installation and creating a valid configuration file, this section covers the day-to-day operation of the application, including the available command-line interface, the synchronisation process, and automation.
+Whether you are running the application interactively or as part of an automated workflow, the commands follow a consistent and predictable process designed to
+protect your repositories whilst providing clear progress information.
 
-Whether you are synchronising repositories manually from your workstation or running unattended synchronisation on a build server, the principles remain the same.
+## Command Overview
 
----
+The application is operated using the `grs` command-line application.
 
-## What You'll Learn
+Typical usage consists of:
 
-This section explains how to:
+1. Loading a configuration file.
+2. Validating the configuration.
+3. Inspecting repositories.
+4. Determining the required actions.
+5. Performing safe synchronisation.
+6. Displaying a summary of the results.
 
-- Use the command-line interface.
-- Validate configuration files.
-- List configured repositories.
-- Synchronise repositories safely.
-- Understand application output.
-- Automate synchronisation tasks.
-- Troubleshoot common operational issues.
+Every command returns an appropriate exit code, making the application suitable for scripting and automation.
 
----
+## Command Categories
 
-## The Command-Line Interface
-
-The application is designed to be operated entirely from the command line.
-
-Two executable names are provided:
-
-```bash
-github-repo-sync
-```
-
-and the shorter alias:
-
-```bash
-grs
-```
-
-Both commands expose exactly the same functionality.
-
----
-
-## Typical Workflow
-
-For most users, repository synchronisation follows a simple workflow.
-
-```text
-Create Configuration
-          │
-          ▼
-Validate Configuration
-          │
-          ▼
-Review Repository List
-          │
-          ▼
-Synchronise Repositories
-          │
-          ▼
-Review Summary
-```
-
-Each stage is intentionally independent, allowing configurations to be validated before any Git operations are performed.
-
----
-
-## Safety Before Speed
-
-A key design goal of the application is safe operation.
-
-During synchronisation, every existing repository is inspected before it is modified.
-
-Repositories that cannot be updated safely are skipped and reported to the user rather than being modified automatically.
-
-This behaviour helps protect local development work and avoids unexpected changes to repositories that require manual attention.
-
----
-
-## Documentation in This Section
-
-The Usage section is divided into three guides.
+The usage documentation is organised into the following sections.
 
 ### Commands
 
-A complete reference for every command-line option supported by the application.
+A complete reference for every supported command-line option and command.
 
-This includes:
+This section explains how to:
 
-- Global options.
-- Configuration selection.
-- Validation.
-- Repository listing.
-- Synchronisation.
-- Exit codes.
-
----
+- Display help.
+- Display the application version.
+- Specify configuration files.
+- Validate configuration.
+- Execute synchronisation.
+- Interpret exit codes.
 
 ### Synchronisation
 
-A detailed explanation of what happens during a synchronisation run.
+Describes exactly how repositories are processed.
 
 Topics include:
 
 - Repository discovery.
-- Clone operations.
-- Repository inspection.
-- Fast-forward updates.
-- Skipped repositories.
+- Cloning missing repositories.
+- Updating existing repositories.
+- Repository state inspection.
+- Safe synchronisation behaviour.
 - Summary reporting.
-
----
 
 ### Automation
 
-Guidance for running repository synchronisation automatically.
+Explains how to integrate Lupaxa GitHub Repository Sync into automated environments.
 
-Topics include:
+Examples include:
 
 - Cron jobs.
-- Scheduled Tasks.
-- CI/CD environments.
-- Build servers.
-- Shared development systems.
-- Best practices for unattended operation.
+- Scheduled tasks.
+- Continuous Integration (CI) pipelines.
+- Unattended execution.
+- Logging.
+- Exit code handling.
 
----
+## Typical Workflow
 
-## Recommended Reading Order
+Most users follow the same workflow each time they use the application.
 
-For users new to the application, the recommended reading order is:
+1. Update the configuration file.
+2. Validate the configuration.
+3. Review any validation errors.
+4. Run synchronisation.
+5. Review the summary output.
 
-1. Commands
-2. Synchronisation
-3. Automation
+The application performs validation before making any changes to local repositories, helping to detect problems as early as possible.
 
-This introduces the user interface before explaining the underlying synchronisation process and finally covering unattended execution.
+## Safety
 
----
+Lupaxa GitHub Repository Sync is designed to perform safe synchronisation.
+
+Before updating a repository, the application verifies that it is in a suitable state for synchronisation. Repositories that require manual intervention are skipped rather than modified automatically.
+
+This behaviour helps protect local work and avoids destructive Git operations.
+
+## Logging and Output
+
+During execution the application provides progress information describing the work being performed.
+
+Depending on the command being executed, output may include:
+
+- Configuration loading.
+- Validation results.
+- Repository discovery.
+- Clone operations.
+- Repository updates.
+- Warnings.
+- Errors.
+- Final summary information.
+
+The amount of output may vary depending on the command-line options used.
 
 ## Next Steps
 
-Continue to the **Commands** guide to learn about the command-line interface and the operations supported by **Lupaxa GitHub Repository Sync**.
+Begin with the **Commands** section to learn how to use the command-line interface, then continue to **Synchronisation** to understand how repositories are processed.

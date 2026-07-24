@@ -4,269 +4,146 @@ title: Installation
 
 # Installation
 
-This guide explains how to install **Lupaxa GitHub Repository Sync**, verify your installation, and ensure your system is ready to synchronise GitHub repositories.
-
----
+This guide explains how to install **Lupaxa GitHub Repository Sync**, verify your installation and ensure your environment is correctly configured before
+performing your first synchronisation.
 
 ## System Requirements
 
-Before installing the application, ensure your system meets the following minimum requirements.
+Before installing the application, ensure that your system meets the following requirements.
 
-| Requirement | Version |
-| ------------ | ------- |
-| Python | 3.11 or later |
-| Git | 2.x or later |
-| Operating System | macOS, Linux or Windows |
+### Python
 
----
+Lupaxa GitHub Repository Sync requires:
 
-## Verify Python
+- Python 3.11 or later.
 
-Check that Python is installed.
-
-```bash
-python --version
-```
-
-or
+Verify your installed version:
 
 ```bash
 python3 --version
 ```
 
-The output should report Python 3.11 or later.
+### Git
 
----
+Git must be installed and available on your system `PATH`.
 
-## Verify Git
-
-Ensure Git is available.
+Verify your installation:
 
 ```bash
 git --version
 ```
 
-Example output:
+If Git is not installed, refer to the official Git documentation for installation instructions appropriate for your operating system.
 
-```text
-git version 2.51.0
-```
+### GitHub Access
 
----
+You should ensure that you can access any repositories you intend to synchronise.
 
-## Install from PyPI
+For private repositories, configure Git authentication before using the application. Supported authentication methods include:
 
-Install the latest released version using `pip`.
+- SSH keys.
+- Personal Access Tokens (PATs).
+- Git Credential Manager.
+- Operating system credential stores.
 
-```bash
-pip install lupaxa-github-repo-sync
-```
+The application uses your existing Git configuration and does not implement its own authentication mechanism.
 
-Alternatively:
+## Installing from PyPI
 
-```bash
-python -m pip install lupaxa-github-repo-sync
-```
-
----
-
-## Upgrade an Existing Installation
-
-To upgrade to the latest release:
+Install the latest stable release using `pip`:
 
 ```bash
-pip install --upgrade lupaxa-github-repo-sync
+python3 -m pip install lupaxa-github-repo-sync
 ```
 
-or
+Using `python3 -m pip` ensures that the package is installed for the intended Python interpreter.
+
+## Upgrading
+
+To upgrade an existing installation:
 
 ```bash
-python -m pip install --upgrade lupaxa-github-repo-sync
+python3 -m pip install --upgrade lupaxa-github-repo-sync
 ```
 
----
+## Verifying the Installation
 
-## Verify the Installation
-
-After installation, verify that the command-line interface is available.
-
-```bash
-github-repo-sync --version
-```
-
-Example:
-
-```text
-github-repo-sync 1.0.0
-```
-
-A shorter command is also provided.
+Confirm that the application has been installed successfully:
 
 ```bash
 grs --version
 ```
 
-Both commands provide identical functionality.
+The command should display the installed version of **Lupaxa GitHub Repository Sync**.
 
----
-
-## Confirm the Installation Path
-
-If multiple Python versions are installed, you may wish to verify which executable is being used.
-
-### macOS / Linux
+You can also display the available command-line options:
 
 ```bash
-which github-repo-sync
+grs --help
 ```
 
-or
+## Default Configuration Location
+
+Unless another configuration file is specified on the command line, the application automatically loads:
+
+```text
+~/.github-repo-sync.json5
+```
+
+This file contains the organisations, repositories and synchronisation options used by the application.
+
+Detailed information about the configuration format is provided in the **Configuration** section of this documentation.
+
+## Installing in a Virtual Environment
+
+Although not required, installing the application inside a Python virtual environment is recommended when working on development systems.
+
+Create a virtual environment:
 
 ```bash
-which grs
-```
-
-### Windows
-
-```powershell
-where github-repo-sync
-```
-
----
-
-## Installing Inside a Virtual Environment
-
-Using a virtual environment is recommended when developing or contributing to the project.
-
-Create a virtual environment.
-
-```bash
-python -m venv .venv
+python3 -m venv .venv
 ```
 
 Activate it.
 
-### macOS / Linux
+On Linux or macOS:
 
 ```bash
 source .venv/bin/activate
 ```
 
-### Windows
+On Windows (PowerShell):
 
 ```powershell
-.venv\Scripts\activate
+.venv\Scripts\Activate.ps1
 ```
 
-Install the package.
+Install the application:
 
 ```bash
-pip install lupaxa-github-repo-sync
+python3 -m pip install lupaxa-github-repo-sync
 ```
 
----
+## Uninstalling
 
-## Installing from Source
-
-Clone the repository.
+To remove the application:
 
 ```bash
-git clone https://github.com/the-lupaxa-project/lupaxa-github-repo-sync.git
+python3 -m pip uninstall lupaxa-github-repo-sync
 ```
 
-Change into the project directory.
+## Troubleshooting Installation
 
-```bash
-cd lupaxa-github-repo-sync
-```
+If installation fails:
 
-Install the package in editable mode.
+- Verify that Python 3.11 or later is installed.
+- Verify that Git is installed and available on the system `PATH`.
+- Ensure that `pip` is up to date.
+- Confirm that the `grs` command is available after installation.
+- Verify that your GitHub authentication is working if you intend to synchronise private repositories.
 
-```bash
-pip install -e .
-```
-
-This is the recommended approach when developing or testing new features.
-
----
-
-## Installing Development Dependencies
-
-Development dependencies can be installed using the optional extras defined by the project.
-
-```bash
-pip install -e ".[dev]"
-```
-
-These include tools used during development, such as formatters, linters, type checkers, and test frameworks.
-
----
-
-## Authentication
-
-The application uses your existing Git configuration for authentication.
-
-No additional login process is required.
-
-Public repositories can normally be cloned without authentication.
-
-Private repositories require an authentication method that Git already recognises, such as:
-
-- SSH keys
-- GitHub Personal Access Tokens
-- Git Credential Manager
-- Existing Git credential helpers
-
-If Git can clone a repository manually, the application will normally be able to clone it as well.
-
----
-
-## Confirm Everything Works
-
-Run the application.
-
-```bash
-github-repo-sync --help
-```
-
-You should see the full command-line help.
-
-If the help page appears successfully, the installation is complete.
-
----
-
-## Troubleshooting
-
-### Command Not Found
-
-If the command cannot be found:
-
-- Verify that the installation completed successfully.
-- Ensure your Python scripts directory is included in your `PATH`.
-- Restart your terminal after installation.
-
----
-
-### Incorrect Python Version
-
-If an older Python interpreter is being used, install the package explicitly with the required version.
-
-For example:
-
-```bash
-python3.13 -m pip install lupaxa-github-repo-sync
-```
-
----
-
-### Git Not Installed
-
-If Git is unavailable, install Git before continuing.
-
-The application cannot function without Git.
-
----
+Further troubleshooting guidance is available in the **Reference** section of this documentation.
 
 ## Next Steps
 
-Continue to the **Quick Start** guide to create your first configuration and perform your first repository synchronisation.
+Once the application has been installed successfully, continue to **Quick Start** to create your first configuration file and perform your first synchronisation.

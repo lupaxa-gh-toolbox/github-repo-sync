@@ -220,18 +220,6 @@ The documentation includes:
 - Frequently Asked Questions
 - Development Guide
 
-## Repository Structure
-
-```text
-.
-├── docs/
-├── lupaxa_github_repo_sync/
-├── tests/
-├── pyproject.toml
-├── mkdocs.yml
-└── README.md
-```
-
 <a href="https://github.com/the-lupaxa-project">
     <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/components/footer-for-child-orgs.svg" alt="The Lupaxa Project Footer" width="100%" />
 </a>

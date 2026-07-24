@@ -4,318 +4,138 @@ title: Repository States
 
 # Repository States
 
-During synchronisation, every configured repository is evaluated and assigned a **repository state**.
+Before any synchronisation takes place, **Lupaxa GitHub Repository Sync** inspects each configured repository to determine its current state.
 
-The repository state describes the current condition of the local repository and determines the action that the application will take.
+The state of a repository determines what action, if any, the application will perform. This process ensures that repositories are only modified when it is safe to do so.
 
-Understanding these states makes it much easier to interpret synchronisation results and understand why a repository was cloned, updated, skipped, or reported as requiring manual attention.
+Every repository is evaluated independently, allowing the application to make the most appropriate decision for each repository without affecting the processing of others.
 
----
+## Why Repository States Matter
 
-# Repository Lifecycle
+Not every repository requires the same action.
 
-Every repository progresses through a simple decision process.
+For example, a repository may:
+
+- Not exist locally.
+- Already be up to date.
+- Require an update.
+- Contain local changes.
+- Be inaccessible.
+- Require manual intervention.
+
+Rather than applying the same operation to every repository, Lupaxa GitHub Repository Sync determines the current state before deciding what to do.
+
+## Repository Processing Workflow
+
+Every repository follows the same high-level workflow.
 
 ```text
-Configured Repository
-         │
-         ▼
-Does the Repository Exist?
-         │
-   ┌─────┴─────┐
-   │           │
-  No          Yes
-   │           │
-   ▼           ▼
-Clone      Inspect Repository
-                 │
-                 ▼
-         Determine State
-                 │
-                 ▼
-        Select Appropriate Action
+Repository
+     │
+     ▼
+Inspect Repository
+     │
+     ▼
+Determine Current State
+     │
+     ▼
+Select Appropriate Action
+     │
+     ▼
+Clone • Update • Skip • Report Error
 ```
 
-The detected state always determines the action. No repository is modified without first identifying its current state.
+Each repository is processed independently.
 
----
+## Repository Does Not Exist
 
-# Missing Repository
+If the configured repository does not exist locally, the application prepares the destination directory and clones the repository.
 
-A repository that does not exist locally is considered **Missing**.
+This is the simplest state and normally requires no user intervention.
 
-## Characteristics
+Typical action:
 
-- Directory does not exist.
-- No local clone is present.
-- Repository has never been synchronised.
+- Clone the repository.
 
-## Action
+## Repository Exists
 
-The repository is cloned from GitHub.
+If the repository already exists locally, the application performs additional inspection before deciding whether synchronisation can continue.
 
----
+Typical checks include:
 
-# Invalid Repository
+- Is the directory a valid Git repository?
+- Is the expected remote configured?
+- Is the repository accessible?
+- Is the repository in a state suitable for synchronisation?
 
-An existing directory that is not recognised as a valid Git repository.
+The results of these checks determine the next action.
 
-## Characteristics
+## Repository Can Be Updated
 
-- Missing `.git` directory.
-- Corrupted Git metadata.
-- Incorrect directory contents.
+If the repository passes all safety checks, the application performs the required synchronisation.
 
-## Action
+Typical action:
 
-The repository is skipped.
+- Fetch remote changes.
+- Perform a safe update.
+- Record the result.
 
-Manual investigation is required before synchronisation can continue.
+## Repository Requires Manual Intervention
 
----
+Some repository states cannot be resolved automatically.
 
-# Clean Repository
+Examples may include:
 
-A repository with no local modifications and a correctly configured remote.
+- Unexpected repository configuration.
+- Repository corruption.
+- Authentication failures.
+- Network failures.
+- Repository-specific Git errors.
 
-## Characteristics
+In these situations, the application skips the repository and reports the reason.
 
-- Valid Git repository.
-- Clean working tree.
-- Attached to a branch.
-- Correct remote.
-- Upstream configured.
+## Repository Is Skipped
 
-## Action
+Skipping a repository does not necessarily indicate an error.
 
-The repository is eligible for synchronisation.
+Instead, it means the application determined that automatic synchronisation could not be completed safely.
 
----
+Skipping one repository does not prevent the remaining repositories from being processed.
 
-# Up-to-Date Repository
+## Repository Processing Is Independent
 
-A clean repository that already matches the latest state of its upstream branch.
+Each repository is processed independently from every other repository.
 
-## Characteristics
+This provides several advantages:
 
-- Working tree clean.
-- No incoming commits.
-- No outgoing commits.
+- A failure affecting one repository does not necessarily stop the synchronisation.
+- Progress continues wherever possible.
+- The final summary accurately reflects the state of every repository.
 
-## Action
+This behaviour is particularly important when synchronising large collections of repositories.
 
-No update is required.
+## Summary Reporting
 
-The repository is reported as already up to date.
+After every repository has been processed, the application displays a summary describing the outcome.
 
----
+Depending on the synchronisation, the summary may include:
 
-# Fast-Forward Repository
+- Repositories cloned.
+- Repositories updated.
+- Repositories skipped.
+- Errors encountered.
+- Overall success or failure.
 
-A repository that is behind its upstream branch but can be updated safely using a fast-forward operation.
+This provides a clear overview of the synchronisation without requiring the user to inspect every individual repository.
 
-## Characteristics
+## Relationship to the Safety Model
 
-- Working tree clean.
-- No local commits.
-- Remote contains newer commits.
+Repository states form part of the application's overall safety model.
 
-## Action
+The current state of a repository is used to determine whether synchronisation can proceed safely or whether manual intervention is required.
 
-Perform a fast-forward update.
+Further information is available in the **Safety Model** documentation.
 
-No merge or rebase is required.
+## Next Steps
 
----
-
-# Dirty Repository
-
-A repository containing local modifications.
-
-## Characteristics
-
-- Modified files.
-- Staged changes.
-- Unstaged changes.
-
-## Action
-
-The repository is skipped.
-
-Updating the repository could interfere with local development work.
-
----
-
-# Repository with Untracked Files
-
-The repository contains files that are not tracked by Git.
-
-## Characteristics
-
-- Untracked files present.
-- Working tree not considered clean.
-
-## Action
-
-The repository is skipped.
-
-Untracked files may indicate work in progress or locally generated content that requires review.
-
----
-
-# Detached HEAD
-
-The repository is not currently checked out on a branch.
-
-## Characteristics
-
-- Detached `HEAD`.
-- No active branch.
-
-## Action
-
-The repository is skipped.
-
-Automatic updates are intentionally avoided while the repository is in this state.
-
----
-
-# Diverged Repository
-
-The local and remote branches have both advanced independently.
-
-## Characteristics
-
-- Local commits exist.
-- Remote commits exist.
-- Fast-forward update impossible.
-
-## Action
-
-The repository is skipped.
-
-The divergence must be resolved manually before synchronisation can continue.
-
----
-
-# Missing Upstream Branch
-
-The current branch has no configured upstream.
-
-## Characteristics
-
-- Branch exists.
-- No upstream tracking branch.
-
-## Action
-
-The repository is skipped.
-
-An upstream branch must be configured before automatic synchronisation is possible.
-
----
-
-# Remote Configuration Error
-
-The configured Git remote does not match the repository defined in the configuration.
-
-Examples include:
-
-- Incorrect remote URL.
-- Repository renamed.
-- Remote removed.
-- Repository pointing to an unrelated project.
-
-## Action
-
-The repository is skipped.
-
-Updating an unexpected repository could result in serious mistakes, so manual intervention is required.
-
----
-
-# Fetch Failure
-
-The application could not retrieve the latest information from the remote repository.
-
-Possible causes include:
-
-- Network failure.
-- Authentication problems.
-- Repository permissions.
-- Remote server unavailable.
-
-## Action
-
-The repository is skipped.
-
-Other repositories continue to be processed.
-
----
-
-# Clone Failure
-
-The repository could not be cloned successfully.
-
-Possible causes include:
-
-- Repository does not exist.
-- Authentication failure.
-- Network interruption.
-- Insufficient permissions.
-- Invalid clone URL.
-
-## Action
-
-The failure is recorded in the final summary.
-
-Remaining repositories continue to be processed.
-
----
-
-# State Transitions
-
-The application attempts to move repositories through a predictable lifecycle.
-
-```text
-Missing
-    │
-    ▼
-Cloned
-    │
-    ▼
-Clean
-    │
-    ▼
-Up-to-Date
-    │
-    ▼
-Fast-Forward Available
-    │
-    ▼
-Updated
-```
-
-Some repositories may temporarily move into states such as **Dirty** or **Detached HEAD**, in which case they remain unchanged until manually corrected.
-
----
-
-# Why States Matter
-
-Repository states provide several benefits.
-
-They allow the application to:
-
-- Make consistent synchronisation decisions.
-- Avoid destructive operations.
-- Explain why repositories were skipped.
-- Produce meaningful reports.
-- Continue processing other repositories when problems occur.
-
-This state-based approach is one of the key design principles behind **Lupaxa GitHub Repository Sync**.
-
----
-
-# Next Steps
-
-Continue to **Architecture** for an overview of the internal structure of the application and how the various components work together during synchronisation.
+Continue to **Architecture** for an overview of the application's internal structure and the components responsible for configuration, validation and synchronisation.

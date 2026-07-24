@@ -4,120 +4,115 @@ title: Development
 
 # Development
 
-The **Development** section is intended for contributors, maintainers, and anyone interested in understanding or extending **Lupaxa GitHub Repository Sync**.
+The **Development** section is intended for contributors and maintainers of **Lupaxa GitHub Repository Sync**.
 
-Whether you want to fix a bug, implement a new feature, improve the documentation, or simply understand how the project is structured, these guides explain the development workflow and the standards used throughout the project.
+It provides information about the project's structure, development workflow, coding standards and release process.
 
----
+Unlike the previous sections, which focus on using the application, the Development section explains how the project is built, tested and maintained.
 
-## Development Philosophy
+Whether you are fixing a bug, implementing a new feature or preparing a release, these guides describe the conventions used throughout the project.
 
-Lupaxa GitHub Repository Sync is developed with a strong emphasis on:
+## Topics Covered
 
-- Readability.
-- Maintainability.
-- Predictability.
-- Type safety.
-- Comprehensive documentation.
-- Conservative design.
+The Development documentation is organised into the following guides.
 
-Every change should improve the project without increasing unnecessary complexity.
+### Development Environment
 
----
+Explains how to prepare a local development environment.
 
-## Code Quality
+Topics include:
 
-The project follows modern Python development practices.
+- Required software.
+- Creating a virtual environment.
+- Installing development dependencies.
+- Running the project locally.
+- Recommended tools.
 
-These include:
+### Project Structure
 
-- Strong type hints.
-- Clear module boundaries.
-- Consistent formatting.
-- Automated linting.
-- Automated testing.
-- Comprehensive documentation.
+Provides an overview of the repository layout and explains the purpose of each major directory.
 
-The goal is to keep the codebase approachable for both new contributors and long-term maintainers.
+Topics include:
 
----
-
-## Project Structure
-
-The project has been organised so that each module has a single responsibility.
-
-Typical areas include:
-
-- Command-line interface.
-- Configuration loading.
-- Validation.
-- Synchronisation.
-- Git operations.
-- User interface components.
-- Utility functions.
-
-This separation simplifies maintenance and makes future enhancements easier to implement.
-
----
-
-## Documentation
-
-Documentation is considered a first-class part of the project.
-
-Changes that introduce new functionality should include updates to the relevant documentation where appropriate.
-
-Documentation is published using **MkDocs** with the **Material for MkDocs** theme.
-
----
-
-## Testing
-
-Every significant change should be tested before submission.
-
-Testing helps ensure that new functionality behaves as expected and that existing behaviour has not been unintentionally affected.
-
-Both automated and manual testing play an important role in maintaining the quality of the project.
-
----
-
-## Development Guides
-
-The Development section currently contains the following documents.
-
-### Contributing
-
-Explains:
-
-- Development workflow.
-- Coding standards.
-- Pull request expectations.
-- Issue reporting.
-- Feature requests.
-
----
+- Source code.
+- Tests.
+- Documentation.
+- Configuration.
+- Build artefacts.
 
 ### Testing
 
-Explains:
+Describes the project's testing strategy and explains how to execute the test suite.
 
-- Test structure.
-- Running the test suite.
-- Code quality tools.
-- Recommended validation before submitting changes.
+Topics include:
 
----
+- Unit tests.
+- Integration tests.
+- Test organisation.
+- Running individual tests.
+- Test coverage.
 
-## Recommended Reading Order
+### Contributing
 
-For new contributors, the recommended order is:
+Explains how changes should be developed and submitted.
 
-1. Contributing
-2. Testing
+Topics include:
 
-These documents provide everything needed to begin contributing to the project.
+- Coding standards.
+- Pull requests.
+- Commit messages.
+- Code review.
+- Documentation updates.
 
----
+### Release Process
+
+Documents the process used to prepare and publish new releases.
+
+Topics include:
+
+- Version management.
+- Release validation.
+- Packaging.
+- Publishing.
+- Release notes.
+
+## Development Principles
+
+Development of Lupaxa GitHub Repository Sync follows a number of core principles.
+
+- Keep the codebase modular.
+- Prefer readability over unnecessary complexity.
+- Maintain backwards compatibility where practical.
+- Write tests for new functionality.
+- Update documentation alongside code changes.
+- Keep user-facing behaviour predictable.
+
+These principles help ensure the project remains maintainable as it grows.
+
+## Who Should Read This Section?
+
+This section is intended for:
+
+- Contributors.
+- Maintainers.
+- Package maintainers.
+- Automation engineers.
+- Anyone interested in understanding how the application is developed.
+
+End users generally do not need to read this section unless they plan to contribute to the project.
+
+## Recommended Reading
+
+New contributors are encouraged to read the documentation in the following order:
+
+1. Development Environment.
+2. Project Structure.
+3. Testing.
+4. Contributing.
+5. Release Process.
+
+Reading these guides first will provide a good understanding of the project's development workflow and standards.
 
 ## Next Steps
 
-Continue to **Contributing** to learn about the project's development workflow, coding standards, and contribution guidelines.
+Continue to **Development Environment** to prepare a local environment for contributing to Lupaxa GitHub Repository Sync.

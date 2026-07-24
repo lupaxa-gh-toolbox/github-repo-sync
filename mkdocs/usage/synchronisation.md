@@ -6,19 +6,13 @@ title: Synchronisation
 
 Synchronisation is the core function of **Lupaxa GitHub Repository Sync**.
 
-Its purpose is simple:
+During a synchronisation run, the application compares your local repository collection with the configuration file and safely performs the operations required to bring the two into alignment.
 
-> Ensure that the repositories defined in your configuration exist locally and are safely synchronised with their corresponding GitHub repositories.
+Every repository is processed independently, allowing problems affecting one repository to be reported without necessarily preventing the remaining repositories from being processed.
 
-Unlike many synchronisation tools, this application does **not** blindly execute `git pull` against every repository it finds. Instead, every repository is evaluated before any Git operation is performed.
+## Synchronisation Workflow
 
-This conservative approach helps protect local development work while ensuring repositories remain up to date whenever it is safe to do so.
-
----
-
-# The Synchronisation Process
-
-A synchronisation run follows a predictable sequence of operations.
+Each synchronisation follows the same sequence of operations.
 
 ```text
 Load Configuration
@@ -27,256 +21,138 @@ Load Configuration
 Validate Configuration
         │
         ▼
-Create Organisation Directories
+Discover Repositories
         │
         ▼
-Process Each Repository
+Inspect Local Repository
         │
-        ├── Repository Missing
-        │       │
-        │       ▼
-        │     Clone Repository
+        ▼
+Determine Required Action
         │
-        └── Repository Exists
-                │
-                ▼
-        Inspect Repository
-                │
-                ▼
-        Safe to Update?
-           │         │
-          Yes        No
-           │         │
-           ▼         ▼
-   Fast-forward     Skip
-      Update
-                │
-                ▼
-        Produce Summary
+        ▼
+Clone / Update / Skip
+        │
+        ▼
+Record Result
+        │
+        ▼
+Display Summary
 ```
 
-Every repository progresses independently through this workflow.
+Each stage must complete successfully before the next begins.
 
-An issue affecting one repository does not prevent the remaining repositories from being processed.
+## Configuration Validation
 
----
-
-# Loading the Configuration
-
-The application begins by loading the configured JSON5 file.
-
-During this stage it:
-
-- Parses the configuration.
-- Applies default values.
-- Resolves inherited settings.
-- Builds the in-memory configuration model.
-
-If the configuration cannot be loaded, synchronisation stops immediately.
-
----
-
-# Configuration Validation
-
-Before any filesystem or Git operations begin, the configuration is validated.
+Before any repository operations are performed, the application validates the configuration file.
 
 Validation includes checks such as:
 
 - Required properties.
+- Invalid property types.
 - Duplicate organisations.
 - Duplicate repositories.
-- Invalid property types.
+- Invalid configuration structure.
 - Unsupported values.
 
-If validation fails, no repositories are modified.
+If validation fails, synchronisation is aborted before any repositories are modified.
 
----
+## Repository Discovery
 
-# Creating Organisation Directories
+Once the configuration has been validated, the application begins processing the configured organisations and repositories.
 
-Each configured organisation receives its own directory beneath the configured clone path.
+For each configured repository it determines whether:
 
-For example:
+- The repository already exists locally.
+- The repository must be cloned.
+- The repository can be updated.
+- Manual intervention is required.
 
-```text
-~/Development/
-├── the-lupaxa-project/
-├── lupaxa-security-toolbox/
-└── lupaxa-devops-toolbox/
-```
+Each repository is processed independently.
 
-Directories are created automatically if they do not already exist.
+## Cloning Repositories
 
-Existing directories are reused.
+If a configured repository does not already exist locally, the application clones it into the configured repository directory.
 
----
+Repositories are organised according to the configuration, typically beneath a common repository root.
 
-# Repository Discovery
+## Updating Existing Repositories
 
-Each configured repository is then processed individually.
+When a repository already exists locally, the application inspects its current Git state before attempting an update.
 
-For every repository, the application determines whether:
+Depending on that state, the repository may be:
 
-- the repository already exists locally
-- the directory exists but is not a Git repository
-- the repository must be cloned
+- Updated.
+- Left unchanged.
+- Skipped.
 
-The required action is then selected automatically.
+The application does not assume that every repository is safe to update automatically.
 
----
+## Safe Synchronisation
 
-# Cloning Missing Repositories
+One of the primary design goals of Lupaxa GitHub Repository Sync is protecting existing repositories.
 
-Repositories that do not exist locally are cloned automatically.
+Before updating a repository, the application performs a series of safety checks to determine whether synchronisation can proceed safely.
 
-Clone URLs are generated using the configured clone protocol.
+Repositories requiring manual intervention are skipped rather than modified automatically.
 
-For HTTPS:
+This helps prevent accidental loss of local work.
 
-```text
-https://github.com/the-lupaxa-project/workflows.git
-```
+Further information is available in the **Safety Model** documentation.
 
-For SSH:
+## Processing Large Repository Collections
 
-```text
-git@github.com:the-lupaxa-project/workflows.git
-```
+The application is designed to scale from small personal collections through to much larger multi-organisation environments.
 
-Successful clones are included in the final summary.
+Repositories are processed individually, allowing progress to be reported throughout the synchronisation process.
 
----
+This approach also makes it easier to identify repositories that require attention without interrupting the processing of unrelated repositories.
 
-# Inspecting Existing Repositories
+## Progress Reporting
 
-Repositories that already exist are inspected before any update is attempted.
+During synchronisation the application reports its progress.
 
-Typical inspections include:
+Depending on the repository state, messages may indicate:
 
-- Valid Git repository.
-- Expected remote URL.
-- Working tree status.
-- Detached HEAD detection.
-- Upstream branch configuration.
-- Branch divergence.
-- Fetch success.
+- Configuration loading.
+- Validation.
+- Repository discovery.
+- Clone operations.
+- Repository inspection.
+- Repository updates.
+- Skipped repositories.
+- Warnings.
+- Errors.
 
-Only repositories that pass every safety check are eligible for synchronisation.
+When processing has completed, a summary of the overall synchronisation is displayed.
 
----
+## Error Handling
 
-# Updating Repositories
+Errors are handled as close as possible to their source.
 
-When a repository is considered safe, the application performs a fast-forward update.
+Where practical, errors affecting a single repository do not terminate the entire synchronisation process.
 
-No rebasing, merging, or history rewriting is performed.
+Examples include:
 
-The application only applies updates that Git can perform safely without requiring user intervention.
+- Repository access failures.
+- Authentication failures.
+- Network errors.
+- Git operation failures.
+- Configuration problems.
 
----
+A summary is displayed at the end of the run to help identify any repositories requiring manual attention.
 
-# Skipped Repositories
+## Best Practices
 
-Some repositories cannot be updated automatically.
+For reliable synchronisation:
 
-Common reasons include:
+- Validate the configuration before synchronising.
+- Commit or stash local changes before updating repositories.
+- Resolve repository-specific issues before re-running synchronisation.
+- Keep Git authentication up to date.
+- Review warnings and errors after each run.
 
-- Local modifications.
-- Untracked files.
-- Detached HEAD.
-- Diverged branches.
-- Incorrect remote configuration.
-- Missing upstream branch.
-- Failed fetch.
-- Invalid Git repository.
+Following these recommendations helps ensure consistent and predictable synchronisation results.
 
-Skipped repositories are left unchanged and reported at the end of the run.
+## Next Steps
 
-This behaviour is intentional and helps prevent accidental data loss.
-
----
-
-# Error Handling
-
-Errors are isolated to individual repositories wherever possible.
-
-For example:
-
-- A failed clone does not stop other repositories from being processed.
-- A fetch failure only affects the current repository.
-- A skipped repository does not interrupt synchronisation.
-
-This allows large synchronisation jobs to complete even when individual repositories require manual attention.
-
----
-
-# Synchronisation Summary
-
-At the end of every run, a summary is displayed.
-
-Typical information includes:
-
-- Organisations processed.
-- Repositories processed.
-- Repositories cloned.
-- Repositories updated.
-- Repositories skipped.
-- Errors encountered.
-- Total execution time.
-
-This provides a concise overview of the synchronisation results.
-
----
-
-# Safe by Design
-
-One of the primary design goals of the application is protecting local repositories.
-
-During synchronisation the application will never automatically:
-
-- discard local changes
-- delete repositories
-- clean untracked files
-- reset branches
-- perform forced checkouts
-- resolve merge conflicts
-- rewrite Git history
-- delete branches
-
-Any repository requiring these operations is skipped for manual review.
-
----
-
-# Performance
-
-Synchronisation is designed to scale from a handful of repositories to several hundred.
-
-Typical performance depends on:
-
-- Number of repositories.
-- Network speed.
-- Repository size.
-- Git hosting performance.
-- Local storage performance.
-
-Because only configured repositories are processed, synchronisation remains predictable even for large repository collections.
-
----
-
-# Best Practices
-
-For reliable synchronisation, it is recommended to:
-
-- Validate configurations before synchronising.
-- Commit or stash local work before running updates.
-- Review skipped repositories after each run.
-- Keep Git authentication configured correctly.
-- Synchronise regularly rather than infrequently.
-
-Regular synchronisation generally results in smaller updates and fewer conflicts.
-
----
-
-# Next Steps
-
-If you intend to run synchronisation automatically, continue to the **Automation** guide to learn how to schedule unattended synchronisation on development workstations, build servers, and continuous integration environments.
+If you intend to run Lupaxa GitHub Repository Sync unattended or as part of a scheduled workflow, continue to **Automation**.

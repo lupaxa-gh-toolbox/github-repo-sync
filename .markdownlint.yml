@@ -15,6 +15,11 @@ MD013:
 
 MD024: false
 
+# Treat the Markdown H1 as the document title rather than the
+# title property in MkDocs YAML front matter.
+MD025:
+  front_matter_title: ""
+
 # Disable trailing-punctuation-in-headings (allows ":" etc.)
 MD026:
   punctuation: ""

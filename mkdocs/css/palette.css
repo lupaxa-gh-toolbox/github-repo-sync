@@ -1,0 +1,58 @@
+/* ====================================================================== */
+/*  Lupaxa Colour Palette Overrides for MkDocs Material                   */
+/* ====================================================================== */
+/*
+ * Brand colours:
+ *   Primary (header/footer/nav): #203959
+ *   Accent (links/buttons/highlights): #6d95d3
+ *
+ * This stylesheet forces Material for MkDocs to use Lupaxa brand colours
+ * consistently, overriding the default "blue grey" palette.
+ *
+ * Works for:
+ *   - Light mode (default)
+ *   - Dark mode (slate)
+ *   - Header
+ *   - Navigation tabs
+ *   - Footer (all nested elements)
+ *   - Custom footer content (.lupaxa-footer)
+ */
+
+/* ---------------------------------------------------------------------- */
+/*  Light mode (default scheme)                                           */
+/* ---------------------------------------------------------------------- */
+:root {
+  /* Primary brand colour */
+  --md-primary-fg-color: #203959;
+  --md-primary-fg-color--light: #6d95d3;
+  --md-primary-fg-color--dark: #0b1222;
+
+  /* Accent colour */
+  --md-accent-fg-color: #6d95d3;
+}
+
+/* ---------------------------------------------------------------------- */
+/*  Dark mode (slate scheme)                                              */
+/* ---------------------------------------------------------------------- */
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: #203959;
+  --md-primary-fg-color--light: #6d95d3;
+  --md-primary-fg-color--dark: #050812;
+
+  --md-accent-fg-color: #6d95d3;
+}
+
+/* ====================================================================== */
+/*  FORCE HEADER + NAV BAR TO EXACT BRAND COLOUR                          */
+/* ====================================================================== */
+
+.md-header,
+.md-header-nav,
+.md-tabs {
+  background-color: #203959 !important;
+  color: #ffffff !important;
+}
+
+/* ====================================================================== */
+/*  END OF FILE                                                            */
+/* ====================================================================== */

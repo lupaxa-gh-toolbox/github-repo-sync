@@ -6,231 +6,209 @@ title: Contributing
 
 Thank you for your interest in contributing to **Lupaxa GitHub Repository Sync**.
 
-Contributions of all sizes are welcome, whether they involve fixing bugs, improving documentation, enhancing usability, or implementing new features.
+Whether you are fixing a bug, improving the documentation, adding a new feature or suggesting an enhancement, your contribution is appreciated.
 
-This document outlines the development workflow and coding standards used throughout the project.
+This guide describes the standards and workflow used throughout the project to ensure that contributions remain consistent, maintainable and easy to review.
 
----
+## Before You Start
 
-# Before You Start
-
-Before making changes, it is recommended that you:
+Before beginning any work, ensure that you have:
 
 - Read the project documentation.
-- Search existing issues and discussions.
-- Confirm that the work is not already in progress.
-- Open an issue to discuss significant changes before beginning implementation.
+- Set up a local development environment.
+- Run the existing test suite successfully.
+- Familiarised yourself with the project structure.
 
-Early discussion helps ensure that proposed changes align with the long-term direction of the project.
+Understanding the existing architecture before making changes will usually result in smaller, cleaner contributions.
 
----
+## Types of Contributions
 
-# Development Environment
+Contributions may include:
 
-Clone the repository.
+- Bug fixes.
+- New features.
+- Performance improvements.
+- Documentation improvements.
+- Test improvements.
+- Refactoring.
+- Build and tooling improvements.
 
-```bash
-git clone https://github.com/the-lupaxa-project/lupaxa-github-repo-sync.git
+Every contribution should improve the project without introducing unnecessary complexity.
+
+## Development Workflow
+
+The recommended development workflow is:
+
+1. Fork the repository (if applicable).
+2. Clone the repository locally.
+3. Create a new feature branch.
+4. Implement the required changes.
+5. Add or update automated tests.
+6. Update the documentation where required.
+7. Run the complete test suite.
+8. Submit a pull request.
+
+Keeping changes focused on a single objective makes reviews significantly easier.
+
+## Branch Naming
+
+Branches should use clear, descriptive names.
+
+Examples include:
+
+```text
+feature/add-json5-validation
+bugfix/fix-repository-discovery
+docs/update-installation-guide
+refactor/simplify-config-loader
 ```
 
-Change into the project directory.
+Avoid generic branch names such as:
 
-```bash
-cd lupaxa-github-repo-sync
+```text
+new
+changes
+test
+update
 ```
 
-Create a virtual environment.
+## Coding Standards
 
-```bash
-python -m venv .venv
-```
+All code should:
 
-Activate the virtual environment.
-
-### macOS / Linux
-
-```bash
-source .venv/bin/activate
-```
-
-### Windows
-
-```powershell
-.venv\Scripts\activate
-```
-
-Install the project in editable mode together with the development dependencies.
-
-```bash
-pip install -e ".[dev]"
-```
-
----
-
-# Development Workflow
-
-The typical workflow is:
-
-1. Create a feature branch.
-2. Implement the required changes.
-3. Update the documentation if necessary.
-4. Run the project's quality checks.
-5. Run the test suite.
-6. Commit your changes.
-7. Submit a pull request.
-
-Keeping changes focused and self-contained makes them easier to review.
-
----
-
-# Coding Standards
-
-The project aims to follow modern Python best practices.
-
-General guidelines include:
-
+- Be readable.
+- Be well structured.
+- Follow the project's formatting standards.
 - Use descriptive names.
-- Prefer clarity over cleverness.
-- Keep functions focused on a single responsibility.
+- Include appropriate type annotations where applicable.
 - Avoid unnecessary complexity.
-- Add type hints where appropriate.
-- Write docstrings for public interfaces.
 
-Consistency across the codebase is more important than individual style preferences.
+Code should be written for long-term maintainability rather than minimal line count.
 
----
+## Documentation
 
-# Code Formatting
+Documentation is considered part of the source code.
 
-Source code should be formatted using the project's chosen formatting tools before submission.
+Whenever user-facing behaviour changes:
 
-Typical checks include:
+- Update the relevant documentation.
+- Add examples where appropriate.
+- Remove obsolete information.
+- Keep terminology consistent.
 
-```bash
-ruff check .
-```
+Changes should never leave the documentation out of sync with the application.
 
-```bash
-ruff format .
-```
+## Testing
 
-Any reported issues should be resolved before creating a pull request.
+Every functional change should include appropriate automated tests.
 
----
+Before submitting a contribution:
 
-# Testing
+- Run the complete test suite.
+- Ensure all tests pass.
+- Add regression tests for bug fixes.
+- Update existing tests where behaviour has changed.
 
-Contributors are expected to run the test suite before submitting changes.
+Changes that reduce test quality should be avoided.
 
-For example:
+## Commit Messages
 
-```bash
-pytest
-```
+Commit messages should clearly describe the purpose of the change.
 
-Where practical, new functionality should be accompanied by appropriate tests.
-
----
-
-# Documentation
-
-Documentation should be updated whenever changes affect:
-
-- User-visible behaviour.
-- Configuration.
-- Command-line options.
-- Synchronisation behaviour.
-- Installation.
-- Development workflows.
-
-Keeping documentation up to date is considered an important part of maintaining the project.
-
----
-
-# Commit Messages
-
-Commit messages should be concise and clearly describe the purpose of the change.
-
-For example:
+Examples:
 
 ```text
-Improve repository validation
+Add repository validation for duplicate entries
+
+Improve configuration error reporting
+
+Update installation documentation
+
+Fix repository discovery when organisation is empty
 ```
 
-```text
-Add support for SSH clone protocol
-```
-
-Avoid vague commit messages such as:
-
-```text
-Update
-```
-
-or
+Avoid commit messages such as:
 
 ```text
 Fix stuff
+
+Changes
+
+Update
+
+Misc
 ```
 
-Meaningful commit messages make the project's history easier to understand.
+Clear commit messages make the project history significantly easier to understand.
 
----
+## Pull Requests
 
-# Pull Requests
+When submitting a pull request:
 
-Before opening a pull request, ensure that:
+- Keep the scope focused.
+- Describe the purpose of the change.
+- Explain any significant design decisions.
+- Reference related issues where appropriate.
+- Ensure all automated checks pass.
 
-- The code builds successfully.
-- Tests pass.
-- Documentation has been updated where necessary.
-- Formatting and linting have been completed.
-- Unrelated changes have not been included.
+Smaller pull requests are generally easier to review than large, unrelated collections of changes.
 
-Smaller, focused pull requests are generally easier to review than large collections of unrelated changes.
+## Code Review
 
----
+Code review helps maintain the overall quality of the project.
 
-# Reporting Bugs
+Reviewers may consider:
 
-Bug reports should include as much relevant information as possible, including:
+- Correctness.
+- Readability.
+- Maintainability.
+- Performance.
+- Documentation.
+- Test coverage.
+- Consistency with the existing architecture.
 
-- Operating system.
-- Python version.
-- Git version.
+Feedback should be constructive, respectful and focused on improving the project.
+
+## Backwards Compatibility
+
+Where practical, changes should preserve compatibility with existing configurations and workflows.
+
+If a breaking change is unavoidable:
+
+- Clearly document it.
+- Update the migration guidance.
+- Include it in the release notes.
+
+Minimising unnecessary breaking changes helps provide a stable experience for users.
+
+## Reporting Issues
+
+When reporting an issue, include as much relevant information as possible.
+
+Useful information includes:
+
 - Application version.
-- Steps to reproduce the issue.
-- Expected behaviour.
-- Actual behaviour.
-- Relevant console output.
+- Python version.
+- Operating system.
+- Command executed.
+- Configuration details (where appropriate).
+- Console output.
+- Steps required to reproduce the issue.
 
-Providing reproducible examples greatly improves the likelihood of a quick resolution.
+Providing complete information significantly reduces the time required to investigate and resolve problems.
 
----
+## Summary
 
-# Suggesting New Features
+Successful contributions are typically:
 
-Feature requests are welcome.
+- Well scoped.
+- Well tested.
+- Well documented.
+- Easy to review.
+- Consistent with the existing architecture.
 
-When proposing a new feature, consider including:
+Following the guidance in this document helps ensure that contributions can be reviewed and integrated efficiently.
 
-- The problem being solved.
-- Why the existing behaviour is insufficient.
-- A suggested approach.
-- Any alternatives that were considered.
+## Next Steps
 
-Clear proposals encourage productive discussion and help shape future development.
-
----
-
-# Code of Conduct
-
-All contributors are expected to follow the project's Code of Conduct and interact respectfully with other members of the community.
-
----
-
-# Thank You
-
-Every contribution, whether large or small, helps improve **Lupaxa GitHub Repository Sync**.
-
-Thank you for taking the time to contribute to the project.
+Continue to **Release Process** to learn how new versions of Lupaxa GitHub Repository Sync are prepared, validated and published.

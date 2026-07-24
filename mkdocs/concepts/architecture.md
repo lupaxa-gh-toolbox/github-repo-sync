@@ -4,266 +4,178 @@ title: Architecture
 
 # Architecture
 
-Understanding the internal architecture of **Lupaxa GitHub Repository Sync** is helpful for contributors, maintainers, and anyone interested in how the application works internally.
+Lupaxa GitHub Repository Sync has been designed around a modular architecture that separates configuration, validation, repository processing and user interaction into distinct components.
 
-The project has been designed around a number of simple principles:
+This separation makes the application easier to understand, maintain and extend whilst ensuring that each component has a clearly defined responsibility.
+
+## Design Goals
+
+The architecture is based on several core principles:
 
 - Separation of responsibilities.
 - Strong typing throughout the codebase.
-- Modular components.
 - Predictable execution.
+- Non-destructive operation.
 - Clear error reporting.
-- Extensibility for future features.
+- Extensibility.
+- Testability.
 
-Each component has a well-defined responsibility and communicates with the rest of the application through clear interfaces.
+These principles help keep the codebase maintainable as new features are introduced.
 
----
+## High-Level Architecture
 
-# High-Level Architecture
-
-The application is organised into a series of independent modules.
-
-```text
-                    Command Line
-                          │
-                          ▼
-                    Argument Parser
-                          │
-                          ▼
-                 Command Dispatcher
-                          │
-                          ▼
-                Configuration Loader
-                          │
-                          ▼
-              Configuration Validator
-                          │
-                          ▼
-                 Synchronisation Engine
-                          │
-          ┌───────────────┼───────────────┐
-          │               │               │
-          ▼               ▼               ▼
-     Git Operations   Progress UI   Console Output
-          │
-          ▼
-     Summary & Exit Code
-```
-
-Each stage has a single responsibility and can be developed, tested, and maintained independently.
-
----
-
-# Project Structure
-
-The application follows a modular package layout.
+At a high level, the application follows the workflow below.
 
 ```text
-lupaxa_github_repo_sync/
-├── __init__.py
-├── __main__.py
-├── cli.py
-├── commands.py
-├── constants.py
-├── display.py
-├── exceptions.py
-├── git_operations.py
-├── loader.py
-├── models.py
-├── progress.py
-├── styles.py
-├── synchronisation.py
-├── tables.py
-├── utils.py
-├── validation.py
-└── validators.py
+                 Command Line Interface
+                          │
+                          ▼
+                  Argument Processing
+                          │
+                          ▼
+               Configuration Loading
+                          │
+                          ▼
+              Configuration Validation
+                          │
+                          ▼
+             Repository Synchronisation
+                          │
+        ┌─────────────────┼─────────────────┐
+        │                 │                 │
+        ▼                 ▼                 ▼
+   Git Operations   Progress Reporting   Console Output
+        │
+        ▼
+      Summary
 ```
 
-Each module focuses on a specific area of responsibility.
+Each stage performs a single responsibility before passing control to the next.
 
----
+## Command-Line Interface
 
-# Command-Line Interface
+The command-line interface provides the entry point to the application.
 
-The command-line interface is responsible for:
+Its responsibilities include:
 
-- Parsing command-line arguments.
+- Processing command-line arguments.
 - Selecting the requested command.
-- Handling global options.
-- Returning appropriate exit codes.
+- Loading the requested configuration.
+- Reporting success or failure.
+- Returning the appropriate exit code.
 
-It contains very little business logic, delegating almost all work to the command layer.
+The command-line interface intentionally contains very little business logic.
 
----
+## Configuration
 
-# Command Layer
+Configuration is loaded before any repository processing begins.
 
-The command layer acts as the bridge between the user interface and the application logic.
+The configuration layer is responsible for:
 
-Typical responsibilities include:
-
-- Loading configuration files.
-- Calling validation routines.
-- Starting synchronisation.
-- Displaying results.
-- Handling application-level exceptions.
-
-This keeps the command-line interface lightweight and easy to extend.
-
----
-
-# Configuration System
-
-The configuration system consists of three main components.
-
-## Loader
-
-Responsible for:
-
-- Reading JSON5 files.
+- Reading the JSON5 configuration file.
 - Parsing configuration data.
 - Constructing internal models.
+- Reporting configuration errors.
 
----
+Once loaded, the configuration is passed to the validation layer.
 
-## Validators
+## Validation
 
-Responsible for validating:
+Validation ensures that the configuration is complete and internally consistent.
+
+Typical validation includes:
 
 - Required properties.
 - Property types.
-- Duplicate entries.
+- Duplicate organisations.
+- Duplicate repositories.
 - Invalid values.
 - Configuration hierarchy.
 
-Validation occurs before any synchronisation work begins.
+If validation fails, synchronisation does not begin.
 
----
+## Synchronisation Engine
 
-## Models
+The synchronisation engine coordinates the processing of repositories.
 
-Configuration data is represented using strongly typed models.
+Its responsibilities include:
 
-These models provide:
+1. Processing each configured organisation.
+2. Processing each configured repository.
+3. Determining the required action.
+4. Calling the appropriate Git operations.
+5. Recording the outcome.
+6. Producing the final summary.
 
-- Validation support.
-- Type safety.
-- Predictable behaviour.
-- Easier testing.
+The synchronisation engine does not perform Git operations directly.
 
----
+## Git Operations
 
-# Synchronisation Engine
-
-The synchronisation engine coordinates the overall synchronisation process.
-
-Typical workflow:
-
-1. Receive validated configuration.
-2. Create required directories.
-3. Process each organisation.
-4. Process each repository.
-5. Clone missing repositories.
-6. Inspect existing repositories.
-7. Perform safe updates.
-8. Generate summary information.
-
-The engine itself does not perform Git operations directly.
-
----
-
-# Git Operations
-
-All Git-specific functionality is isolated within a dedicated module.
+All interactions with Git are isolated within dedicated components.
 
 Typical operations include:
 
 - Repository discovery.
-- Clone.
-- Fetch.
-- Status inspection.
+- Repository cloning.
+- Fetching remote changes.
+- Repository inspection.
 - Branch inspection.
-- Fast-forward update.
-- Remote validation.
+- Safe repository updates.
 
-Separating Git operations from synchronisation logic simplifies testing and future enhancements.
+Keeping Git operations separate from synchronisation logic simplifies testing and future maintenance.
 
----
+## User Interface
 
-# User Interface Components
+Presentation is separated from application logic.
 
-Several modules exist solely to improve the user experience.
-
-These include:
+User interface components are responsible for:
 
 - Console formatting.
-- Progress indicators.
+- Progress reporting.
 - Tables.
-- Colours and styles.
-- Status messages.
+- Colours and styling.
+- Summary generation.
 
-Keeping presentation separate from business logic allows the application to support alternative output formats in the future.
+This separation makes it easier to support alternative output formats in the future.
 
----
-
-# Error Handling
+## Error Handling
 
 Errors are handled as close as possible to their source.
 
-The application uses dedicated exception types to distinguish between:
+Where practical:
 
-- Configuration errors.
-- Validation errors.
-- Git errors.
-- Filesystem errors.
-- Unexpected internal failures.
+- Validation errors stop processing before synchronisation begins.
+- Repository-specific failures do not prevent unrelated repositories from being processed.
+- Errors are reported clearly and consistently.
+- The application always attempts to produce a useful summary.
 
-Where possible, errors affecting a single repository do not terminate the entire synchronisation process.
+## Extensibility
 
----
+The modular design allows new functionality to be introduced with minimal impact on existing components.
 
-# Extensibility
+Future enhancements may include:
 
-The modular architecture has been designed to support future enhancements without requiring significant restructuring.
+- Additional configuration options.
+- Alternative Git hosting providers.
+- Additional reporting formats.
+- Extended automation capabilities.
+- New validation rules.
 
-Potential future capabilities include:
+Because responsibilities are clearly separated, new functionality can usually be added by extending existing components rather than modifying unrelated parts of the application.
 
-- Parallel repository processing.
-- Repository filtering.
-- Multiple configuration files.
-- Plugin support.
-- Structured logging.
-- Machine-readable output.
-- Additional Git hosting providers.
+## Summary
 
-By keeping responsibilities clearly separated, new functionality can generally be added by extending existing modules rather than rewriting them.
-
----
-
-# Testing
-
-The architecture supports testing at multiple levels.
-
-Individual modules can be tested independently, while higher-level integration tests can validate complete synchronisation workflows.
-
-This layered approach improves maintainability and helps ensure that changes to one part of the application do not unintentionally affect others.
-
----
-
-# Summary
-
-The architecture of **Lupaxa GitHub Repository Sync** has been designed to be:
+The architecture of Lupaxa GitHub Repository Sync has been designed to be:
 
 - Modular.
 - Predictable.
-- Testable.
 - Maintainable.
 - Extensible.
+- Testable.
 
-By separating configuration, validation, synchronisation, Git operations, and user interface concerns, the project remains easy to understand while providing a solid foundation for future development.
+By separating configuration, validation, synchronisation, Git operations and presentation into dedicated components, the application remains straightforward to
+understand whilst providing a solid foundation for future development.
 
----
+## Next Steps
 
-# Next Steps
-
-Continue to the **Reference** section for detailed technical information, including exit codes, troubleshooting guidance, and answers to frequently asked questions.
+Continue to the **Reference** section for detailed technical information, including exit codes, troubleshooting guidance and answers to frequently asked questions.
