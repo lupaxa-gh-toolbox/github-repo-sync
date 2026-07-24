@@ -28,7 +28,6 @@ jobs:
     secrets: inherit
     with:
       python-version: "3.13"
-      use-dev-extras: true
 
   generate-workflow-summary:
     name: Generate Workflow Summary
