@@ -1,0 +1,177 @@
+site_name: Lupaxa GitHub Repository Sync
+site_description: >-
+  Safely clone and synchronise large collections of GitHub repositories
+  from a single declarative configuration.
+site_author: The Lupaxa Project
+site_url: https://the-lupaxa-internal-toolbox.github.io/lupaxa-github-repo-sync/
+
+repo_name: the-lupaxa-internal-toolbox/lupaxa-github-repo-sync
+repo_url: https://github.com/the-lupaxa-internal-toolbox/lupaxa-github-repo-sync
+edit_uri: edit/master/mkdocs/
+
+copyright: >-
+  Copyright &copy; The Lupaxa Project
+
+docs_dir: mkdocs
+site_dir: site
+
+strict: true
+
+theme:
+  name: material
+
+  language: en
+
+  logo: assets/images/logo.png
+  favicon: assets/images/favicon.png
+
+  icon:
+    repo: fontawesome/brands/github
+
+  features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    - content.tabs.link
+    - navigation.footer
+    - navigation.indexes
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.path
+    - navigation.sections
+    - navigation.tabs
+    - navigation.top
+    - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
+
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue
+      accent: light blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+nav:
+  - Home: index.md
+
+  - Getting Started:
+      - getting-started/index.md
+      - Installation: getting-started/installation.md
+      - Quick Start: getting-started/quick-start.md
+
+  - Configuration:
+      - configuration/index.md
+      - Configuration Guide: configuration/configuration-guide.md
+      - Configuration Reference: configuration/configuration-reference.md
+      - Examples: configuration/examples.md
+
+  - Usage:
+      - usage/index.md
+      - Commands: usage/commands.md
+      - Synchronisation: usage/synchronisation.md
+      - Automation: usage/automation.md
+
+  - Concepts:
+      - concepts/index.md
+      - Safety Model: concepts/safety-model.md
+      - Repository States: concepts/repository-states.md
+      - Architecture: concepts/architecture.md
+
+  - Reference:
+      - reference/index.md
+      - Exit Codes: reference/exit-codes.md
+      - Troubleshooting: reference/troubleshooting.md
+      - Frequently Asked Questions: reference/faq.md
+
+  - Development:
+      - development/index.md
+      - Contributing: development/contributing.md
+      - Testing: development/testing.md
+
+plugins:
+  - search:
+      lang: en
+
+markdown_extensions:
+  - abbr
+
+  - admonition
+
+  - attr_list
+
+  - def_list
+
+  - footnotes
+
+  - md_in_html
+
+  - tables
+
+  - toc:
+      permalink: true
+      permalink_title: Link to this section
+      toc_depth: 3
+
+  - pymdownx.betterem:
+      smart_enable: all
+
+  - pymdownx.caret
+
+  - pymdownx.details
+
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+
+  - pymdownx.inlinehilite
+
+  - pymdownx.keys
+
+  - pymdownx.mark
+
+  - pymdownx.smartsymbols
+
+  - pymdownx.snippets:
+      check_paths: true
+
+  - pymdownx.superfences
+
+  - pymdownx.tabbed:
+      alternate_style: true
+
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+  - pymdownx.tilde
+
+extra:
+  generator: false
+
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/the-lupaxa-internal-toolbox
+      name: The Lupaxa Internal Toolbox on GitHub
+
+  version:
+    provider: mike
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+watch:
+  - README.md

@@ -1,0 +1,38 @@
+{
+  config: {
+    clone_path: "~/Desktop/GitMaster2",
+    clone_protocol: "ssh",
+  },
+
+  organisations: [
+    {
+      name: "the-lupaxa-project",
+      alias: "TheLupaxaProject",
+
+      repositories: [
+        {
+          name: "workflows",
+        },
+        {
+          name: "brand-assets",
+        },
+      ],
+    },
+
+    {
+      name: "lupaxa-actions-toolbox",
+      alias: "ActionsToolbox",
+
+      repositories: [
+        {
+          name: ".github",
+          alias: "github",
+        },
+        {
+          name: ".github-private",
+          alias: "github-private",
+        },
+      ],
+    },
+  ],
+}
