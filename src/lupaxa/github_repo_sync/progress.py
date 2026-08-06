@@ -59,22 +59,16 @@ def create_progress(
             finished_text="✓",
         ),
         TextColumn(
-            "[{task.fields[action_style]}]"
-            "{task.fields[action]:<8}"
-            "[/]",
+            "[{task.fields[action_style]}]{task.fields[action]:<8}[/]",
             justify="left",
         ),
         MofNCompleteColumn(),
         TextColumn(
-            "[{task.fields[repository_style]}]"
-            "{task.fields[repository]}"
-            "[/]",
+            "[{task.fields[repository_style]}]{task.fields[repository]}[/]",
             table_column=None,
         ),
         TextColumn(
-            "[{task.fields[detail_style]}]"
-            "{task.fields[detail]}"
-            "[/]",
+            "[{task.fields[detail_style]}]{task.fields[detail]}[/]",
         ),
         TimeElapsedColumn(),
         console=display.console,
@@ -109,22 +103,14 @@ def create_spinner(
             finished_text="✓",
         ),
         TextColumn(
-            "[{task.fields[action_style]}]"
-            "{task.fields[action]:<8}"
-            "[/]",
+            "[{task.fields[action_style]}]{task.fields[action]:<8}[/]",
             justify="left",
         ),
         TextColumn(
-            "[{task.fields[repository_style]}]"
-            "{task.fields[repository]}"
-            "[/]",
-            overflow="ellipsis",
+            "[{task.fields[repository_style]}]{task.fields[repository]}[/]",
         ),
         TextColumn(
-            "[{task.fields[detail_style]}]"
-            "{task.fields[detail]}"
-            "[/]",
-            overflow="ellipsis",
+            "[{task.fields[detail_style]}]{task.fields[detail]}[/]",
         ),
         TimeElapsedColumn(),
         console=display.console,

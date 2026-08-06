@@ -120,10 +120,7 @@ def reject_unknown_keys(
     if not unknown_keys:
         return
 
-    formatted_keys = ", ".join(
-        repr(key)
-        for key in sorted(unknown_keys)
-    )
+    formatted_keys = ", ".join(repr(key) for key in sorted(unknown_keys))
 
     key_word = "key" if len(unknown_keys) == 1 else "keys"
 
@@ -149,19 +146,13 @@ def validate_local_directory_name(
     """
 
     if value in {".", ".."}:
-        raise ConfigurationError(
-            f"{location} must not be '.' or '..'."
-        )
+        raise ConfigurationError(f"{location} must not be '.' or '..'.")
 
     if "/" in value or "\\" in value:
-        raise ConfigurationError(
-            f"{location} must be a directory name, not a path."
-        )
+        raise ConfigurationError(f"{location} must be a directory name, not a path.")
 
     if "\x00" in value:
-        raise ConfigurationError(
-            f"{location} must not contain a null character."
-        )
+        raise ConfigurationError(f"{location} must not contain a null character.")
 
 
 def validate_github_name(
@@ -190,9 +181,7 @@ def validate_github_name(
     )
 
     if name in {".", ".."}:
-        raise ConfigurationError(
-            f"{location} must not be '.' or '..'."
-        )
+        raise ConfigurationError(f"{location} must not be '.' or '..'.")
 
     if "/" in name or "\\" in name:
         raise ConfigurationError(
@@ -200,9 +189,7 @@ def validate_github_name(
         )
 
     if "\x00" in name:
-        raise ConfigurationError(
-            f"{location} must not contain a null character."
-        )
+        raise ConfigurationError(f"{location} must not contain a null character.")
 
     return name
 
@@ -267,12 +254,8 @@ def validate_clone_protocol(
     ).lower()
 
     if protocol not in SUPPORTED_CLONE_PROTOCOLS:
-        supported_protocols = ", ".join(
-            sorted(SUPPORTED_CLONE_PROTOCOLS)
-        )
+        supported_protocols = ", ".join(sorted(SUPPORTED_CLONE_PROTOCOLS))
 
-        raise ConfigurationError(
-            f"{location} must be one of: {supported_protocols}."
-        )
+        raise ConfigurationError(f"{location} must be one of: {supported_protocols}.")
 
     return cast(CloneProtocol, protocol)

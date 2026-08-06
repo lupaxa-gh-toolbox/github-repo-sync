@@ -135,9 +135,7 @@ def format_repository_path(
     """
 
     return Text(
-        abbreviate_home_path(
-            Path(path)
-        ),
+        abbreviate_home_path(Path(path)),
         style=STYLE_PATH,
         overflow="fold",
     )
@@ -189,28 +187,20 @@ def create_configuration_table(
 
     for organisation in organisations:
         organisation_name = organisation["name"]
-        organisation_destination = organisation[
-            "destination_name"
-        ]
+        organisation_destination = organisation["destination_name"]
 
         for repository in organisation["repositories"]:
-            repository_destination = repository[
-                "destination_name"
-            ]
+            repository_destination = repository["destination_name"]
 
             destination_path = (
-                clone_path
-                / organisation_destination
-                / repository_destination
+                clone_path / organisation_destination / repository_destination
             )
 
             table.add_row(
                 organisation_name,
                 repository["name"],
                 repository["clone_protocol"].upper(),
-                format_repository_path(
-                    destination_path
-                ),
+                format_repository_path(destination_path),
             )
 
     return table
@@ -298,32 +288,19 @@ def create_repository_results_table(
         )
 
     for result in results:
-        repository_name = (
-            f"{result['organisation']}/"
-            f"{result['repository']}"
-        )
+        repository_name = f"{result['organisation']}/{result['repository']}"
 
         row: list[Text | str] = [
             repository_name,
-            format_repository_action(
-                result["action"]
-            ),
-            format_repository_result_status(
-                result["result"]
-            ),
+            format_repository_action(result["action"]),
+            format_repository_result_status(result["result"]),
         ]
 
         if include_paths:
-            row.append(
-                format_repository_path(
-                    result["path"]
-                )
-            )
+            row.append(format_repository_path(result["path"]))
 
         if include_messages:
-            row.append(
-                result["message"]
-            )
+            row.append(result["message"])
 
         table.add_row(*row)
 
@@ -369,9 +346,7 @@ def print_repository_results_table(
         "Message",
         style=STYLE_MUTED,
     )
-    table.add_row(
-        "No repository results were recorded."
-    )
+    table.add_row("No repository results were recorded.")
 
     display.console.print(table)
 
@@ -423,20 +398,10 @@ def create_failure_table(
             continue
 
         table.add_row(
-            (
-                f"{result['organisation']}/"
-                f"{result['repository']}"
-            ),
-            format_repository_result_status(
-                result["result"]
-            ),
-            format_repository_path(
-                result["path"]
-            ),
-            (
-                result["message"]
-                or "Repository synchronisation failed."
-            ),
+            (f"{result['organisation']}/{result['repository']}"),
+            format_repository_result_status(result["result"]),
+            format_repository_path(result["path"]),
+            (result["message"] or "Repository synchronisation failed."),
         )
 
     return table
@@ -454,20 +419,12 @@ def print_failure_table(
 
     """
 
-    failed_results = [
-        result
-        for result in results
-        if result["result"] == "failed"
-    ]
+    failed_results = [result for result in results if result["result"] == "failed"]
 
     if not failed_results:
         return
 
-    display.console.print(
-        create_failure_table(
-            failed_results
-        )
-    )
+    display.console.print(create_failure_table(failed_results))
 
 
 def count_repository_actions(
@@ -532,24 +489,18 @@ def create_summary_table(
     """
 
     cloned = sum(
-        result["action"] == "cloned"
-        and result["result"] == "success"
+        result["action"] == "cloned" and result["result"] == "success"
         for result in results
     )
     updated = sum(
-        result["action"] == "updated"
-        and result["result"] == "success"
+        result["action"] == "updated" and result["result"] == "success"
         for result in results
     )
     skipped = sum(
-        result["action"] == "skipped"
-        and result["result"] != "failed"
+        result["action"] == "skipped" and result["result"] != "failed"
         for result in results
     )
-    failed = sum(
-        result["result"] == "failed"
-        for result in results
-    )
+    failed = sum(result["result"] == "failed" for result in results)
 
     summary_rows = (
         (
@@ -629,11 +580,7 @@ def print_summary_table(
 
     """
 
-    display.console.print(
-        create_summary_table(
-            results
-        )
-    )
+    display.console.print(create_summary_table(results))
 
 
 def create_failure_summary_table(
@@ -683,26 +630,16 @@ def create_failure_summary_table(
 
     for status, count in sorted(
         counts.items(),
-        key=lambda item: (
-            REPOSITORY_RESULT_LABELS[
-                item[0]
-            ].casefold()
-        ),
+        key=lambda item: REPOSITORY_RESULT_LABELS[item[0]].casefold(),
     ):
         table.add_row(
             Text(
-                REPOSITORY_RESULT_LABELS[
-                    status
-                ],
-                style=REPOSITORY_RESULT_STYLES[
-                    status
-                ],
+                REPOSITORY_RESULT_LABELS[status],
+                style=REPOSITORY_RESULT_STYLES[status],
             ),
             Text(
                 str(count),
-                style=REPOSITORY_RESULT_STYLES[
-                    status
-                ],
+                style=REPOSITORY_RESULT_STYLES[status],
             ),
         )
 
@@ -733,14 +670,7 @@ def print_failure_summary_table(
 
     """
 
-    if not any(
-        result["result"] == "failed"
-        for result in results
-    ):
+    if not any(result["result"] == "failed" for result in results):
         return
 
-    display.console.print(
-        create_failure_summary_table(
-            results
-        )
-    )
+    display.console.print(create_failure_summary_table(results))

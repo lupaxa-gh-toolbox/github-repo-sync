@@ -58,10 +58,7 @@ def build_clone_url(
             f"{organisation_name}/{repository_name}.git"
         )
 
-    return (
-        f"{GITHUB_HTTPS_BASE_URL}/"
-        f"{organisation_name}/{repository_name}.git"
-    )
+    return f"{GITHUB_HTTPS_BASE_URL}/{organisation_name}/{repository_name}.git"
 
 
 def ensure_git_available() -> None:
@@ -118,8 +115,7 @@ def ensure_directory(
         exists = directory.exists()
     except OSError as exc:
         raise RepositorySyncError(
-            f"Could not inspect {description.lower()} "
-            f"'{directory}': {exc}",
+            f"Could not inspect {description.lower()} '{directory}': {exc}",
             result="inaccessible",
         ) from exc
 
@@ -128,8 +124,7 @@ def ensure_directory(
             is_directory = directory.is_dir()
         except OSError as exc:
             raise RepositorySyncError(
-                f"Could not inspect {description.lower()} "
-                f"'{directory}': {exc}",
+                f"Could not inspect {description.lower()} '{directory}': {exc}",
                 result="inaccessible",
             ) from exc
 
@@ -153,8 +148,7 @@ def ensure_directory(
             ) from exc
         except OSError as exc:
             raise RepositorySyncError(
-                f"Could not create {description.lower()} "
-                f"'{directory}': {exc}",
+                f"Could not create {description.lower()} '{directory}': {exc}",
                 result="inaccessible",
             ) from exc
 
@@ -195,9 +189,6 @@ def format_git_error(error: GitCommandError) -> str:
         error.stderr,
         error.stdout,
     ):
-        if candidate is None:
-            continue
-
         message = str(candidate).strip()
 
         if message:
@@ -308,10 +299,8 @@ def remote_matches_repository(
     actual_organisation, actual_repository = identity
 
     return (
-        actual_organisation.casefold()
-        == expected_organisation.casefold()
-        and actual_repository.casefold()
-        == expected_repository.casefold()
+        actual_organisation.casefold() == expected_organisation.casefold()
+        and actual_repository.casefold() == expected_repository.casefold()
     )
 
 
@@ -343,9 +332,7 @@ def inspect_repository(
         if not repository_path.is_dir():
             return {
                 "status": "invalid",
-                "message": (
-                    "Repository destination exists but is not a directory."
-                ),
+                "message": ("Repository destination exists but is not a directory."),
             }
     except PermissionError as exc:
         return {
@@ -366,9 +353,7 @@ def inspect_repository(
     except InvalidGitRepositoryError:
         return {
             "status": "invalid",
-            "message": (
-                "Destination exists but is not a valid Git repository."
-            ),
+            "message": ("Destination exists but is not a valid Git repository."),
         }
     except NoSuchPathError:
         return {
@@ -406,10 +391,7 @@ def inspect_repository(
     except ValueError:
         return {
             "status": "no-origin",
-            "message": (
-                f"Repository does not have a "
-                f"'{DEFAULT_REMOTE_NAME}' remote."
-            ),
+            "message": (f"Repository does not have a '{DEFAULT_REMOTE_NAME}' remote."),
         }
 
     try:
@@ -417,17 +399,14 @@ def inspect_repository(
     except (GitCommandError, OSError) as exc:
         return {
             "status": "inaccessible",
-            "message": (
-                f"Could not read {DEFAULT_REMOTE_NAME} remote URLs: {exc}"
-            ),
+            "message": (f"Could not read {DEFAULT_REMOTE_NAME} remote URLs: {exc}"),
         }
 
     if not origin_urls:
         return {
             "status": "no-origin",
             "message": (
-                f"Repository {DEFAULT_REMOTE_NAME} remote does not "
-                "contain a URL."
+                f"Repository {DEFAULT_REMOTE_NAME} remote does not contain a URL."
             ),
         }
 
@@ -508,10 +487,7 @@ def inspect_repository(
 
     return {
         "status": "update",
-        "message": (
-            f"Repository is ready to update from "
-            f"'{tracking_branch.name}'."
-        ),
+        "message": (f"Repository is ready to update from '{tracking_branch.name}'."),
     }
 
 
@@ -600,8 +576,7 @@ def update_repository(
         ) from exc
     except GitCommandError as exc:
         raise RepositorySyncError(
-            f"Git update failed for '{repository_path}': "
-            f"{format_git_error(exc)}",
+            f"Git update failed for '{repository_path}': {format_git_error(exc)}",
             result="failed",
         ) from exc
     except OSError as exc:
@@ -683,8 +658,7 @@ def clone_repository(
 
         if cleanup_error is not None:
             message += (
-                " The incomplete destination could not be removed: "
-                f"{cleanup_error}"
+                f" The incomplete destination could not be removed: {cleanup_error}"
             )
 
         raise RepositorySyncError(
@@ -697,12 +671,10 @@ def clone_repository(
 
         if cleanup_error is not None:
             message += (
-                " The incomplete destination could not be removed: "
-                f"{cleanup_error}"
+                f" The incomplete destination could not be removed: {cleanup_error}"
             )
 
         raise RepositorySyncError(
-            f"Could not clone '{clone_url}' into "
-            f"'{repository_path}': {message}",
+            f"Could not clone '{clone_url}' into '{repository_path}': {message}",
             result="failed",
         ) from exc

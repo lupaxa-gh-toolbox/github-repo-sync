@@ -68,10 +68,7 @@ def validate_repository(
 
     """
 
-    location = (
-        f"organisations[{organisation_index}]"
-        f".repositories[{repository_index}]"
-    )
+    location = f"organisations[{organisation_index}].repositories[{repository_index}]"
 
     repository_object = require_object(
         repository,
@@ -89,9 +86,7 @@ def validate_repository(
     )
 
     if "name" not in repository_object:
-        raise ConfigurationError(
-            f"{location}.name is required."
-        )
+        raise ConfigurationError(f"{location}.name is required.")
 
     name = validate_github_name(
         repository_object["name"],
@@ -158,14 +153,10 @@ def validate_organisation(
     )
 
     if "name" not in organisation_object:
-        raise ConfigurationError(
-            f"{location}.name is required."
-        )
+        raise ConfigurationError(f"{location}.name is required.")
 
     if "repositories" not in organisation_object:
-        raise ConfigurationError(
-            f"{location}.repositories is required."
-        )
+        raise ConfigurationError(f"{location}.repositories is required.")
 
     name = validate_github_name(
         organisation_object["name"],
@@ -200,14 +191,10 @@ def validate_organisation(
         )
 
         repository_name_key = repository["name"].casefold()
-        repository_destination_key = repository[
-            "destination_name"
-        ].casefold()
+        repository_destination_key = repository["destination_name"].casefold()
 
         if repository_name_key in repository_names:
-            previous_index = repository_names[
-                repository_name_key
-            ]
+            previous_index = repository_names[repository_name_key]
 
             raise ConfigurationError(
                 f"{location}.repositories[{repository_index}].name "
@@ -216,9 +203,7 @@ def validate_organisation(
             )
 
         if repository_destination_key in repository_destinations:
-            previous_index = repository_destinations[
-                repository_destination_key
-            ]
+            previous_index = repository_destinations[repository_destination_key]
 
             raise ConfigurationError(
                 f"{location}.repositories[{repository_index}] resolves to "
@@ -226,13 +211,9 @@ def validate_organisation(
                 f"{repository['destination_name']!r}."
             )
 
-        repository_names[
-            repository_name_key
-        ] = repository_index
+        repository_names[repository_name_key] = repository_index
 
-        repository_destinations[
-            repository_destination_key
-        ] = repository_index
+        repository_destinations[repository_destination_key] = repository_index
 
         repositories.append(repository)
 
@@ -274,14 +255,10 @@ def validate_configuration(
     )
 
     if "config" not in configuration:
-        raise ConfigurationError(
-            "configuration.config is required."
-        )
+        raise ConfigurationError("configuration.config is required.")
 
     if "organisations" not in configuration:
-        raise ConfigurationError(
-            "configuration.organisations is required."
-        )
+        raise ConfigurationError("configuration.organisations is required.")
 
     global_config = require_object(
         configuration["config"],
@@ -298,23 +275,17 @@ def validate_configuration(
     )
 
     if "clone_path" not in global_config:
-        raise ConfigurationError(
-            "config.clone_path is required."
-        )
+        raise ConfigurationError("config.clone_path is required.")
 
     if "clone_protocol" not in global_config:
-        raise ConfigurationError(
-            "config.clone_protocol is required."
-        )
+        raise ConfigurationError("config.clone_protocol is required.")
 
     raw_clone_path = require_non_empty_string(
         global_config["clone_path"],
         "config.clone_path",
     )
 
-    clone_path = resolve_configured_path(
-        Path(raw_clone_path)
-    )
+    clone_path = resolve_configured_path(Path(raw_clone_path))
 
     clone_protocol = validate_clone_protocol(
         global_config["clone_protocol"],
@@ -335,9 +306,7 @@ def validate_configuration(
     organisation_destinations: dict[str, int] = {}
     organisations: list[OrganisationConfiguration] = []
 
-    for organisation_index, raw_organisation in enumerate(
-        raw_organisations
-    ):
+    for organisation_index, raw_organisation in enumerate(raw_organisations):
         organisation = validate_organisation(
             organisation=raw_organisation,
             organisation_index=organisation_index,
@@ -345,14 +314,10 @@ def validate_configuration(
         )
 
         organisation_name_key = organisation["name"].casefold()
-        organisation_destination_key = organisation[
-            "destination_name"
-        ].casefold()
+        organisation_destination_key = organisation["destination_name"].casefold()
 
         if organisation_name_key in organisation_names:
-            previous_index = organisation_names[
-                organisation_name_key
-            ]
+            previous_index = organisation_names[organisation_name_key]
 
             raise ConfigurationError(
                 f"organisations[{organisation_index}].name duplicates "
@@ -361,9 +326,7 @@ def validate_configuration(
             )
 
         if organisation_destination_key in organisation_destinations:
-            previous_index = organisation_destinations[
-                organisation_destination_key
-            ]
+            previous_index = organisation_destinations[organisation_destination_key]
 
             raise ConfigurationError(
                 f"organisations[{organisation_index}] resolves to the same "
@@ -371,24 +334,16 @@ def validate_configuration(
                 f"{organisation['destination_name']!r}."
             )
 
-        organisation_names[
-            organisation_name_key
-        ] = organisation_index
+        organisation_names[organisation_name_key] = organisation_index
 
-        organisation_destinations[
-            organisation_destination_key
-        ] = organisation_index
+        organisation_destinations[organisation_destination_key] = organisation_index
 
         organisations.append(organisation)
 
-    organisations.sort(
-        key=lambda item: item["name"].casefold()
-    )
+    organisations.sort(key=lambda item: item["name"].casefold())
 
     for organisation in organisations:
-        organisation["repositories"].sort(
-            key=lambda item: item["name"].casefold()
-        )
+        organisation["repositories"].sort(key=lambda item: item["name"].casefold())
 
     return {
         "config": {

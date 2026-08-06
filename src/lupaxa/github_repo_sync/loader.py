@@ -48,9 +48,7 @@ def load_configuration(config_path: Path) -> dict[str, Any]:
         ) from exc
 
     if not config_path_status:
-        raise ConfigurationError(
-            f"Could not inspect configuration path: {config_path}"
-        )
+        raise ConfigurationError(f"Could not inspect configuration path: {config_path}")
 
     if not config_path.is_file():
         raise ConfigurationError(
@@ -78,8 +76,6 @@ def load_configuration(config_path: Path) -> dict[str, Any]:
         ) from exc
 
     if not isinstance(configuration, dict):
-        raise ConfigurationError(
-            "The top-level configuration value must be an object."
-        )
+        raise ConfigurationError("The top-level configuration value must be an object.")
 
     return configuration

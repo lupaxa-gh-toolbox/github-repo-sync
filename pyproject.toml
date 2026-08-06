@@ -65,7 +65,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-development = [
+dev = [
   "build>=1.2.2,<2.0.0",
   "mypy>=1.17.0,<2.0.0",
   "pre-commit>=4.2.0,<5.0.0",

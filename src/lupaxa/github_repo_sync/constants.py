@@ -15,13 +15,9 @@ PROGRAM_NAME: Final[str] = "github-repo-sync"
 PROGRAM_ALIAS: Final[str] = "grs"
 PROJECT_NAME: Final[str] = "lupaxa-github-repo-sync"
 PROGRAM_VERSION: Final[str] = "v0.1.0"
-PROGRAM_VERSION_STRING: Final[str] = (
-    f"{PROGRAM_NAME} {PROGRAM_VERSION}"
-)
+PROGRAM_VERSION_STRING: Final[str] = f"{PROGRAM_NAME} {PROGRAM_VERSION}"
 
-DEFAULT_CONFIG_FILENAME: Final[Path] = (
-    Path.home() / ".github-repo-sync.json5"
-)
+DEFAULT_CONFIG_FILENAME: Final[Path] = Path.home() / ".github-repo-sync.json5"
 
 DEFAULT_CONSOLE_WIDTH: Final[int] = 180
 MIN_CONSOLE_WIDTH: Final[int] = 80

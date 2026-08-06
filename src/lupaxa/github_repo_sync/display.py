@@ -91,11 +91,7 @@ def create_console(
 
     """
 
-    effective_width = (
-        DEFAULT_CONSOLE_WIDTH
-        if width is None
-        else width
-    )
+    effective_width = DEFAULT_CONSOLE_WIDTH if width is None else width
 
     effective_width = max(
         MIN_CONSOLE_WIDTH,
@@ -112,6 +108,9 @@ def create_console(
         force_terminal=force_terminal,
         soft_wrap=False,
     )
+
+
+console = create_console()
 
 
 def configure_console(
@@ -649,10 +648,7 @@ def print_organisation_header(
         style=STYLE_HEADING,
     )
 
-    if (
-        destination_name is not None
-        and destination_name != organisation_name
-    ):
+    if destination_name is not None and destination_name != organisation_name:
         heading.append(" ")
         heading.append(
             f"({destination_name})",
@@ -767,24 +763,15 @@ def print_completion_status(
     console.print()
 
     if failed:
-        repository_word = (
-            "repository"
-            if failed == 1
-            else "repositories"
-        )
+        repository_word = "repository" if failed == 1 else "repositories"
 
         print_error(
-            "Synchronisation completed with "
-            f"{failed} failed {repository_word}."
+            f"Synchronisation completed with {failed} failed {repository_word}."
         )
         return
 
     if skipped:
-        repository_word = (
-            "repository"
-            if skipped == 1
-            else "repositories"
-        )
+        repository_word = "repository" if skipped == 1 else "repositories"
 
         print_warning(
             "Synchronisation completed successfully, with "
@@ -792,9 +779,7 @@ def print_completion_status(
         )
         return
 
-    print_success(
-        "All configured repositories were synchronised successfully."
-    )
+    print_success("All configured repositories were synchronised successfully.")
 
 
 def print_completion_summary(
@@ -853,9 +838,7 @@ def print_unhandled_error(
     error_message = str(error).strip()
 
     if error_message:
-        print_error(
-            f"{error_name}: {escape(error_message)}"
-        )
+        print_error(f"{error_name}: {escape(error_message)}")
         return
 
     print_error(error_name)

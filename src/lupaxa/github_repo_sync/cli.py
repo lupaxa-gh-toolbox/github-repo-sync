@@ -127,9 +127,7 @@ def _add_configuration_arguments(
 
     """
 
-    group = parser.add_argument_group(
-        "configuration"
-    )
+    group = parser.add_argument_group("configuration")
 
     group.add_argument(
         "-c",
@@ -157,9 +155,7 @@ def _add_presentation_arguments(
 
     """
 
-    group = parser.add_argument_group(
-        "presentation"
-    )
+    group = parser.add_argument_group("presentation")
 
     group.add_argument(
         "--no-header",
@@ -208,9 +204,7 @@ def _add_sync_output_arguments(
 
     """
 
-    group = parser.add_argument_group(
-        "synchronisation output"
-    )
+    group = parser.add_argument_group("synchronisation output")
 
     group.add_argument(
         "--no-configuration",
@@ -227,18 +221,13 @@ def _add_sync_output_arguments(
     group.add_argument(
         "--no-repository-output",
         action="store_true",
-        help=(
-            "Do not print an individual result for each synchronised "
-            "repository."
-        ),
+        help=("Do not print an individual result for each synchronised repository."),
     )
 
     group.add_argument(
         "--results-table",
         action="store_true",
-        help=(
-            "Print a detailed table containing every repository result."
-        ),
+        help=("Print a detailed table containing every repository result."),
     )
 
     group.add_argument(
@@ -276,14 +265,10 @@ def _positive_integer(
     try:
         parsed_value = int(value)
     except ValueError as exc:
-        raise argparse.ArgumentTypeError(
-            f"{value!r} is not an integer."
-        ) from exc
+        raise argparse.ArgumentTypeError(f"{value!r} is not an integer.") from exc
 
     if parsed_value <= 0:
-        raise argparse.ArgumentTypeError(
-            "value must be greater than zero."
-        )
+        raise argparse.ArgumentTypeError("value must be greater than zero.")
 
     return parsed_value
 
@@ -353,29 +338,19 @@ def main(
 
     parser = create_parser()
 
-    effective_arguments = list(
-        sys.argv[1:]
-        if argv is None
-        else argv
-    )
+    effective_arguments = list(sys.argv[1:] if argv is None else argv)
 
     try:
-        arguments = parser.parse_args(
-            effective_arguments
-        )
+        arguments = parser.parse_args(effective_arguments)
 
         configure_console(
             width=arguments.console_width,
             no_colour=arguments.no_colour,
         )
 
-        return int(
-            _run_selected_mode(arguments)
-        )
+        return int(_run_selected_mode(arguments))
     except KeyboardInterrupt:
-        print_error(
-            "Operation interrupted by the user."
-        )
+        print_error("Operation interrupted by the user.")
         return EXIT_FAILURE
     except BrokenPipeError:
         return EXIT_FAILURE
@@ -385,6 +360,4 @@ def main(
 
 
 if __name__ == "__main__":
-    raise SystemExit(
-        main()
-    )
+    raise SystemExit(main())

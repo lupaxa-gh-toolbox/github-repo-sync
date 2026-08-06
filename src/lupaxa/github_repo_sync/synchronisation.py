@@ -70,9 +70,7 @@ def build_repository_path(
     """
 
     return (
-        clone_path
-        / organisation["destination_name"]
-        / repository["destination_name"]
+        clone_path / organisation["destination_name"] / repository["destination_name"]
     )
 
 
@@ -270,10 +268,7 @@ def synchronise_organisation(
 
     """
 
-    organisation_path = (
-        clone_path
-        / organisation["destination_name"]
-    )
+    organisation_path = clone_path / organisation["destination_name"]
 
     try:
         ensure_directory(
@@ -281,7 +276,7 @@ def synchronise_organisation(
             "Organisation directory",
         )
     except RepositorySyncError as exc:
-        results: list[RepositoryResult] = []
+        skipped_results: list[RepositoryResult] = []
 
         for repository in organisation["repositories"]:
             repository_path = build_repository_path(
@@ -301,12 +296,12 @@ def synchronise_organisation(
                 message=str(exc),
             )
 
-            results.append(result)
+            skipped_results.append(result)
 
             if result_callback is not None:
                 result_callback(result)
 
-        return results
+        return skipped_results
 
     results: list[RepositoryResult] = []
 
@@ -356,9 +351,7 @@ def synchronise_repositories(
 
     ensure_git_available()
 
-    clone_path = Path(
-        configuration["config"]["clone_path"]
-    )
+    clone_path = Path(configuration["config"]["clone_path"])
 
     ensure_directory(
         clone_path,
@@ -375,10 +368,7 @@ def synchronise_repositories(
         disable=not show_progress,
     ) as (progress, progress_task):
         for organisation in configuration["organisations"]:
-            organisation_path = (
-                clone_path
-                / organisation["destination_name"]
-            )
+            organisation_path = clone_path / organisation["destination_name"]
 
             try:
                 ensure_directory(
@@ -502,34 +492,23 @@ def _build_progress_completion_message(
     """
 
     cloned = sum(
-        result["action"] == "cloned"
-        and result["result"] == "success"
+        result["action"] == "cloned" and result["result"] == "success"
         for result in results
     )
 
     updated = sum(
-        result["action"] == "updated"
-        and result["result"] == "success"
+        result["action"] == "updated" and result["result"] == "success"
         for result in results
     )
 
     skipped = sum(
-        result["action"] == "skipped"
-        and result["result"] != "failed"
+        result["action"] == "skipped" and result["result"] != "failed"
         for result in results
     )
 
-    failed = sum(
-        result["result"] == "failed"
-        for result in results
-    )
+    failed = sum(result["result"] == "failed" for result in results)
 
-    return (
-        f"{cloned} cloned, "
-        f"{updated} updated, "
-        f"{skipped} skipped, "
-        f"{failed} failed."
-    )
+    return f"{cloned} cloned, {updated} updated, {skipped} skipped, {failed} failed."
 
 
 def synchronisation_succeeded(
@@ -549,10 +528,7 @@ def synchronisation_succeeded(
 
     """
 
-    return not any(
-        result["result"] == "failed"
-        for result in results
-    )
+    return not any(result["result"] == "failed" for result in results)
 
 
 def count_results(
@@ -573,22 +549,16 @@ def count_results(
     return {
         "total": len(results),
         "cloned": sum(
-            result["action"] == "cloned"
-            and result["result"] == "success"
+            result["action"] == "cloned" and result["result"] == "success"
             for result in results
         ),
         "updated": sum(
-            result["action"] == "updated"
-            and result["result"] == "success"
+            result["action"] == "updated" and result["result"] == "success"
             for result in results
         ),
         "skipped": sum(
-            result["action"] == "skipped"
-            and result["result"] != "failed"
+            result["action"] == "skipped" and result["result"] != "failed"
             for result in results
         ),
-        "failed": sum(
-            result["result"] == "failed"
-            for result in results
-        ),
+        "failed": sum(result["result"] == "failed" for result in results),
     }

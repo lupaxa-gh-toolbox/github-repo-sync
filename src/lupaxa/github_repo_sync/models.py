@@ -54,9 +54,7 @@ RepositoryInspectionStatus: TypeAlias = Literal[
 # Repository synchronisation types
 #
 
-RepositorySuccessStatus: TypeAlias = Literal[
-    "success",
-]
+RepositorySuccessStatus: TypeAlias = Literal["success",]
 
 RepositoryFailureStatus: TypeAlias = Literal[
     "invalid",
@@ -108,6 +106,7 @@ RepositoryAction: TypeAlias = Literal[
 #
 # Configuration models
 #
+
 
 class RepositoryConfiguration(TypedDict):
     """
@@ -188,6 +187,7 @@ class ValidatedConfiguration(TypedDict):
 #
 # Synchronisation models
 #
+
 
 class RepositoryInspection(TypedDict):
     """

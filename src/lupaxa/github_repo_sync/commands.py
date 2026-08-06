@@ -74,17 +74,11 @@ def load_and_validate_configuration(
 
     """
 
-    resolved_config_path = resolve_path(
-        config_path
-    )
+    resolved_config_path = resolve_path(config_path)
 
-    raw_configuration = load_configuration(
-        resolved_config_path
-    )
+    raw_configuration = load_configuration(resolved_config_path)
 
-    return validate_configuration(
-        raw_configuration
-    )
+    return validate_configuration(raw_configuration)
 
 
 def run_sync(
@@ -127,26 +121,18 @@ def run_sync(
 
     """
 
-    resolved_config_path = resolve_path(
-        config_path
-    )
+    resolved_config_path = resolve_path(config_path)
 
     if show_header:
         print_program_header()
 
     try:
-        configuration = load_and_validate_configuration(
-            resolved_config_path
-        )
+        configuration = load_and_validate_configuration(resolved_config_path)
     except ConfigurationError as exc:
-        print_error(
-            str(exc)
-        )
+        print_error(str(exc))
         return EXIT_CONFIGURATION_ERROR
 
-    clone_path = Path(
-        configuration["config"]["clone_path"]
-    )
+    clone_path = Path(configuration["config"]["clone_path"])
 
     if show_configuration:
         _print_configuration_summary(
@@ -156,20 +142,14 @@ def run_sync(
         )
 
     if show_configuration_table:
-        print_section(
-            "Synchronisation Plan"
-        )
+        print_section("Synchronisation Plan")
 
         print_configuration_table(
             organisations=configuration["organisations"],
             clone_path=clone_path,
         )
 
-    result_callback = (
-        _print_repository_result
-        if show_repository_output
-        else None
-    )
+    result_callback = _print_repository_result if show_repository_output else None
 
     try:
         results = synchronise_repositories(
@@ -178,14 +158,10 @@ def run_sync(
             result_callback=result_callback,
         )
     except RepositorySyncError as exc:
-        print_error(
-            str(exc)
-        )
+        print_error(str(exc))
         return EXIT_FAILURE
     except KeyboardInterrupt:
-        print_error(
-            "Synchronisation interrupted by the user."
-        )
+        print_error("Synchronisation interrupted by the user.")
         return EXIT_FAILURE
 
     _print_sync_output(
@@ -195,9 +171,7 @@ def run_sync(
         show_summary_table=show_summary_table,
     )
 
-    if synchronisation_succeeded(
-        results
-    ):
+    if synchronisation_succeeded(results):
         return EXIT_SUCCESS
 
     return EXIT_FAILURE
@@ -225,44 +199,26 @@ def run_validate(
 
     """
 
-    resolved_config_path = resolve_path(
-        config_path
-    )
+    resolved_config_path = resolve_path(config_path)
 
     if show_header:
         print_program_header()
 
     try:
-        configuration = load_and_validate_configuration(
-            resolved_config_path
-        )
+        configuration = load_and_validate_configuration(resolved_config_path)
     except ConfigurationError as exc:
-        print_error(
-            str(exc)
-        )
+        print_error(str(exc))
         return EXIT_CONFIGURATION_ERROR
 
-    print_section(
-        "Validation"
-    )
+    print_section("Validation")
 
-    print_info(
-        f"Configuration file: {config_path}"
-    )
+    print_info(f"Configuration file: {config_path}")
 
-    print_success(
-        "Configuration is valid."
-    )
+    print_success("Configuration is valid.")
 
-    print_info(
-        "Organisations: "
-        f"{len(configuration['organisations'])}"
-    )
+    print_info(f"Organisations: {len(configuration['organisations'])}")
 
-    print_info(
-        "Repositories: "
-        f"{count_repositories(configuration)}"
-    )
+    print_info(f"Repositories: {count_repositories(configuration)}")
 
     return EXIT_SUCCESS
 
@@ -290,26 +246,18 @@ def run_plan(
 
     """
 
-    resolved_config_path = resolve_path(
-        config_path
-    )
+    resolved_config_path = resolve_path(config_path)
 
     if show_header:
         print_program_header()
 
     try:
-        configuration = load_and_validate_configuration(
-            resolved_config_path
-        )
+        configuration = load_and_validate_configuration(resolved_config_path)
     except ConfigurationError as exc:
-        print_error(
-            str(exc)
-        )
+        print_error(str(exc))
         return EXIT_CONFIGURATION_ERROR
 
-    clone_path = Path(
-        configuration["config"]["clone_path"]
-    )
+    clone_path = Path(configuration["config"]["clone_path"])
 
     _print_configuration_summary(
         configuration=configuration,
@@ -317,9 +265,7 @@ def run_plan(
         clone_path=clone_path,
     )
 
-    print_section(
-        "Synchronisation Plan"
-    )
+    print_section("Synchronisation Plan")
 
     print_configuration_table(
         organisations=configuration["organisations"],
@@ -351,15 +297,9 @@ def _print_configuration_summary(
     print_configuration_summary(
         config_path=config_path,
         clone_path=clone_path,
-        clone_protocol=configuration["config"][
-            "clone_protocol"
-        ],
-        organisation_count=len(
-            configuration["organisations"]
-        ),
-        repository_count=count_repositories(
-            configuration
-        ),
+        clone_protocol=configuration["config"]["clone_protocol"],
+        organisation_count=len(configuration["organisations"]),
+        repository_count=count_repositories(configuration),
     )
 
 
@@ -375,9 +315,7 @@ def _print_repository_result(
 
     """
 
-    repository_path = Path(
-        result["path"]
-    )
+    repository_path = Path(result["path"])
 
     result_status = result["result"]
 
@@ -422,43 +360,24 @@ def _print_sync_output(
 
     """
 
-    counts = count_results(
-        results
-    )
+    counts = count_results(results)
 
     if show_results_table:
-        print_section(
-            "Results"
-        )
+        print_section("Results")
 
-        print_repository_results_table(
-            results
-        )
+        print_repository_results_table(results)
 
-    if (
-        show_failure_table
-        and counts["failed"]
-    ):
-        print_section(
-            "Failures"
-        )
+    if show_failure_table and counts["failed"]:
+        print_section("Failures")
 
-        print_failure_table(
-            results
-        )
+        print_failure_table(results)
 
-        print_failure_summary_table(
-            results
-        )
+        print_failure_summary_table(results)
 
-    print_section(
-        "Summary"
-    )
+    print_section("Summary")
 
     if show_summary_table:
-        print_summary_table(
-            results
-        )
+        print_summary_table(results)
 
     print_completion_summary(
         total=counts["total"],
@@ -507,6 +426,4 @@ def print_command_start(
 
     """
 
-    print_info(
-        f"Running command: {command_name}"
-    )
+    print_info(f"Running command: {command_name}")
