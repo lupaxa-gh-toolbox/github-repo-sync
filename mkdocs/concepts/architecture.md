@@ -1,7 +1,3 @@
----
-title: Architecture
----
-
 # Architecture
 
 Lupaxa GitHub Repository Sync has been designed around a modular architecture that separates configuration, validation, repository processing and user interaction into distinct components.

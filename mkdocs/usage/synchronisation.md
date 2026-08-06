@@ -1,7 +1,3 @@
----
-title: Synchronisation
----
-
 # Synchronisation
 
 Synchronisation is the core function of **Lupaxa GitHub Repository Sync**.

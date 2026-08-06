@@ -207,3 +207,6 @@ git-*.sh
 
 # Private Superpowers specs/plans (symlink into Lupaxa cursor-docs vault)
 cursor-docs
+.makefiles/
+.superpowers/
+.cursor/

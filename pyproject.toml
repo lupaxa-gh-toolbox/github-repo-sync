@@ -12,7 +12,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 license-files = [
-  "LICENSE",
+  "LICENCE",
 ]
 
 authors = [
@@ -74,8 +74,8 @@ development = [
   "ruff>=0.12.0,<1.0.0",
   "twine>=6.1.0,<7.0.0",
   "types-setuptools>=80.0.0,<81.0.0",
-  "mkdocs>=1.6.0",
-  "mkdocs-material>=9.5.0",
+  "mkdocs==1.6.1",
+  "mkdocs-material==9.7.7",
 ]
 test = [
   "pytest>=8.0",

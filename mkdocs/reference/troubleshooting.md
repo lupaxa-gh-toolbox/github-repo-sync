@@ -1,7 +1,3 @@
----
-title: Troubleshooting
----
-
 # Troubleshooting
 
 This guide provides solutions to the most common issues encountered when installing, configuring and running **Lupaxa GitHub Repository Sync**.

@@ -1,7 +1,3 @@
----
-title: Configuration Guide
----
-
 # Configuration Guide
 
 Lupaxa GitHub Repository Sync is configured using a single JSON5 configuration file.

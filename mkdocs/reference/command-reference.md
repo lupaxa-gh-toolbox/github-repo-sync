@@ -1,7 +1,3 @@
----
-title: Command Reference
----
-
 # Command Reference
 
 This document provides a complete reference for the commands supported by **Lupaxa GitHub Repository Sync**.

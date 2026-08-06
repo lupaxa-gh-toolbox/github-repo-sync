@@ -2,10 +2,12 @@ name: First-Time Contributor Greetings
 
 on:
   pull_request:
+    types: [opened]
     branches-ignore:
       - 'dependabot/**'
 
   issues:
+    types: [opened]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

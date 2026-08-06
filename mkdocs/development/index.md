@@ -1,7 +1,3 @@
----
-title: Development
----
-
 # Development
 
 The **Development** section is intended for contributors and maintainers of **Lupaxa GitHub Repository Sync**.

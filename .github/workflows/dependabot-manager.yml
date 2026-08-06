@@ -13,15 +13,15 @@ permissions:
   pull-requests: write
 
 jobs:
-  dependabot-manager:
-    name: Dependabot Manager
+  dependabot:
+    name: Dependabot
     uses: the-lupaxa-project/workflows/.github/workflows/reusable-dependabot-manager.yml@master
     secrets: inherit
 
   generate-workflow-summary:
     name: Generate Workflow Summary
     needs:
-      - dependabot-manager
+      - dependabot
     if: always()
     uses: the-lupaxa-project/workflows/.github/workflows/reusable-workflow-summary.yml@master
 

@@ -1,7 +1,3 @@
----
-title: Exit Codes
----
-
 # Exit Codes
 
 Every command executed by **Lupaxa GitHub Repository Sync** returns an exit code when it finishes.

@@ -1,7 +1,3 @@
----
-title: Safety Model
----
-
 # Safety Model
 
 One of the primary design goals of **Lupaxa GitHub Repository Sync** is to protect your repositories from unintended or destructive changes.

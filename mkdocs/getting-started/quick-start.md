@@ -1,7 +1,3 @@
----
-title: Quick Start
----
-
 # Quick Start
 
 This guide walks you through creating a minimal configuration and performing your first repository synchronisation.

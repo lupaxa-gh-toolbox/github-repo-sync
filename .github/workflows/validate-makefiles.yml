@@ -1,17 +1,29 @@
-name: Documentation Linter
+name: Validate Makefiles
 
 on:
   push:
     paths:
-      - "**/*.md"
-      - "**/*.yml"
-      - "**/*.yaml"
+      - ".github/workflows/validate-makefiles.yml"
+      - "Makefile"
+      - "makefile"
+      - "GNUmakefile"
+      - "**/*.mk"
+      - "**/*.make"
+      - "Makefile.*"
+      - "checkmake.ini"
 
   pull_request:
+    branches:
+      - "master"
     paths:
-      - "**/*.md"
-      - "**/*.yml"
-      - "**/*.yaml"
+      - ".github/workflows/validate-makefiles.yml"
+      - "Makefile"
+      - "makefile"
+      - "GNUmakefile"
+      - "**/*.mk"
+      - "**/*.make"
+      - "Makefile.*"
+      - "checkmake.ini"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -22,27 +34,17 @@ permissions:
   contents: read
 
 jobs:
-  link-checker:
-    name: Link Checker
-    uses: the-lupaxa-project/workflows/.github/workflows/reusable-link-checker.yml@master
-    secrets: inherit
-
-  markdown-linter:
-    name: Markdown Linter
-    uses: the-lupaxa-project/workflows/.github/workflows/reusable-markdown-linter.yml@master
-    secrets: inherit
-
-  yaml-linter:
-    name: YAML Linter
-    uses: the-lupaxa-project/workflows/.github/workflows/reusable-yaml-linter.yml@master
-    secrets: inherit
+  validate-makefiles:
+    name: Validate Makefiles
+    uses: the-lupaxa-project/workflows/.github/workflows/reusable-makefile-linter.yml@master
+    with:
+      check_conventions: true
+      exclude_files: "^site/|^mkdocs/|^\\.makefiles/"
 
   generate-workflow-summary:
     name: Generate Workflow Summary
     needs:
-      - link-checker
-      - markdown-linter
-      - yaml-linter
+      - validate-makefiles
     if: always()
     uses: the-lupaxa-project/workflows/.github/workflows/reusable-workflow-summary.yml@master
 

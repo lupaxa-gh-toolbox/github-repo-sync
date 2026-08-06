@@ -1,5 +1,9 @@
 name: Generate Test Release
 
+# Makefile mapping: make bump-*-rc → version X.Y.Z-rcN → tag vX.Y.Z-rcN
+# Creates a GitHub prerelease (not a draft).
+# -devN tags do not trigger this workflow (local / in-repo WIP only).
+
 on:
   push:
     tags:
@@ -17,6 +21,9 @@ jobs:
   generate-release-notes:
     name: Generate Release Notes
     uses: the-lupaxa-project/workflows/.github/workflows/reusable-github-release-generator.yml@master
+    with:
+      draft: false
+      prerelease: true
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 

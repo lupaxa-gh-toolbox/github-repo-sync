@@ -1,7 +1,3 @@
----
-title: Commands
----
-
 # Commands
 
 Lupaxa GitHub Repository Sync is operated using the `grs` command-line application.

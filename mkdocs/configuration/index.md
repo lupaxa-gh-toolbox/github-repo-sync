@@ -1,7 +1,3 @@
----
-title: Configuration
----
-
 # Configuration
 
 The behaviour of **Lupaxa GitHub Repository Sync** is controlled by a JSON5 configuration file.

@@ -1,7 +1,3 @@
----
-title: Examples
----
-
 # Configuration Examples
 
 This section contains example configuration files demonstrating common ways to use **Lupaxa GitHub Repository Sync**.

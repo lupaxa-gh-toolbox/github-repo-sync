@@ -1,7 +1,3 @@
----
-title: Frequently Asked Questions
----
-
 # Frequently Asked Questions
 
 This guide answers some of the questions most commonly asked by users of **Lupaxa GitHub Repository Sync**.

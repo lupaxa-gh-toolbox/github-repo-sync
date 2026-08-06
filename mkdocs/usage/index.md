@@ -1,7 +1,3 @@
----
-title: Usage
----
-
 # Usage
 
 This section explains how to use **Lupaxa GitHub Repository Sync** to validate configuration files, inspect planned operations and synchronise GitHub repositories.

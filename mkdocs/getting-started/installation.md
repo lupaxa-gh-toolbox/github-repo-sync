@@ -1,7 +1,3 @@
----
-title: Installation
----
-
 # Installation
 
 This guide explains how to install **Lupaxa GitHub Repository Sync**, verify your installation and ensure your environment is correctly configured before

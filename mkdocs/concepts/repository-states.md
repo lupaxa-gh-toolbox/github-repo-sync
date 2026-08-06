@@ -1,7 +1,3 @@
----
-title: Repository States
----
-
 # Repository States
 
 Before any synchronisation takes place, **Lupaxa GitHub Repository Sync** inspects each configured repository to determine its current state.

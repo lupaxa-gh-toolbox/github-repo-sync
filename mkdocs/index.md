@@ -1,7 +1,3 @@
----
-title: Home
----
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/organisations/the-lupaxa-blueprints/readme-logo.png" alt="Logo" />
 </p>

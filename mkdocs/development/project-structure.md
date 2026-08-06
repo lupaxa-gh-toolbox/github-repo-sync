@@ -1,7 +1,3 @@
----
-title: Project Structure
----
-
 # Project Structure
 
 This guide provides an overview of the repository layout used by **Lupaxa GitHub Repository Sync**.

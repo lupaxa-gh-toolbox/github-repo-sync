@@ -1,7 +1,3 @@
----
-title: Configuration Reference
----
-
 # Configuration Reference
 
 This section provides a complete reference for every configuration property supported by **Lupaxa GitHub Repository Sync**.

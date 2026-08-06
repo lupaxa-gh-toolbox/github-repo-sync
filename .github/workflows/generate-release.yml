@@ -1,11 +1,18 @@
 name: Generate Release
 
+# Makefile mapping (bump-my-version tag v{version}):
+#   stable X.Y.Z  → this workflow (published release)
+#   X.Y.Z-rcN     → generate-test-release.yml (prerelease)
+#   X.Y.Z-devN    → no release workflow
+#   X.Y.Z-draftN  → generate-draft-release.yml (GitHub draft; not from Make)
+
 on:
   push:
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+'
-      - '!v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+'
       - '!v[0-9]+.[0-9]+.[0-9]+-dev[0-9]+'
+      - '!v[0-9]+.[0-9]+.[0-9]+-draft[0-9]+'
+      - '!v[0-9]+.[0-9]+.[0-9]+-rc[0-9]+'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -19,6 +26,9 @@ jobs:
   generate-release-notes:
     name: Generate Release Notes
     uses: the-lupaxa-project/workflows/.github/workflows/reusable-github-release-generator.yml@master
+    with:
+      draft: false
+      prerelease: false
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
 

@@ -1,65 +1,42 @@
-# Base ruleset, then override the noisy bits for GitHub Actions & templates
+# yamllint — MkDocs portal / GitHub Actions (Lupaxa defaults)
 extends: default
 
 ignore: |
-  node_modules/
-  dist/
-  build/
-  vendor/
-  **/.venv/
-  **/__pycache__/
+  site/
+  cursor-docs/
 
 rules:
-  # Turn off line-length complaints (too noisy in CI)
-  line-length: disable
-
-  # GitHub Actions & templates do not require '---'
+  # Project YAML omits the optional document-start marker.
   document-start: disable
 
-  # Indentation must be correct — YAML breaks if indentation is wrong
-  indentation:
-    spaces: 2
-    indent-sequences: consistent
-    check-multi-line-strings: false
-    level: error   # safe to enforce — prevents broken YAML
+  # Data files and workflow `uses:` lines include long URLs and prose.
+  line-length:
+    max: 160
+    allow-non-breakable-words: true
+    allow-non-breakable-inline-mappings: true
 
-  # Colon spacing issues break readability but not functionality
-  # → escalate to error so formatting stays consistent
-  colons:
-    max-spaces-before: 0
-    max-spaces-after: 1
-    level: error
+  # GitHub Actions uses the key name `on:` (truthy token).
+  truthy:
+    allowed-values: ["true", "false", "yes", "no"]
+    check-keys: false
 
-  # Enforce 2 spaces before inline comments
-  # (‘key: value  # comment’)
   comments:
-    min-spaces-from-content: 2
-    level: error   # you explicitly want this enforced
+    min-spaces-from-content: 1
 
-  # Braces/brackets spacing impacts readability only
-  # → keep as warnings to avoid pointless failures
   braces:
+    min-spaces-inside: 0
     max-spaces-inside: 1
-    level: warning
+
   brackets:
-    max-spaces-inside: 1
-    level: warning
+    min-spaces-inside: 0
+    max-spaces-inside: 0
 
-  # Trailing spaces are always bad
-  trailing-spaces:
-    level: error   # safe to enforce
+  commas:
+    max-spaces-before: 0
+    min-spaces-after: 1
+    max-spaces-after: 1
 
-  # Missing newline at EOF — stylistic only
-  new-line-at-end-of-file:
-    level: error
-
-  # Empty lines — stylistic
-  empty-lines:
-    max: 2
-    max-start: 0
-    max-end: 1
-
-  # Common false-positives in Actions & templates
-  truthy: disable
-  octal-values: disable
-
+  indentation:
+    spaces: consistent
+    indent-sequences: true
+    check-multi-line-strings: false

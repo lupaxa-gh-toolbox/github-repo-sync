@@ -1,7 +1,3 @@
----
-title: Concepts
----
-
 # Concepts
 
 This section explains the concepts and design principles that underpin **Lupaxa GitHub Repository Sync**.

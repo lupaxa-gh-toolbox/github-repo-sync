@@ -1,7 +1,3 @@
----
-title: Testing
----
-
 # Testing
 
 Testing is an essential part of the development process for **Lupaxa GitHub Repository Sync**.

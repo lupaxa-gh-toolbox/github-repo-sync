@@ -1,7 +1,3 @@
----
-title: Automation
----
-
 # Automation
 
 Lupaxa GitHub Repository Sync has been designed to operate reliably in both interactive and unattended environments.

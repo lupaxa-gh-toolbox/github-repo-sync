@@ -1,7 +1,3 @@
----
-title: Reference
----
-
 # Reference
 
 The **Reference** section provides detailed technical information for **Lupaxa GitHub Repository Sync**.

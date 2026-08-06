@@ -1,7 +1,3 @@
----
-title: Development Environment
----
-
 # Development Environment
 
 This guide explains how to prepare a local development environment for **Lupaxa GitHub Repository Sync**.

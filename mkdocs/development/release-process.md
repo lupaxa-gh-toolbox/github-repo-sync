@@ -1,7 +1,3 @@
----
-title: Release Process
----
-
 # Release Process
 
 This guide describes the process used to prepare, validate and publish new releases of **Lupaxa GitHub Repository Sync**.

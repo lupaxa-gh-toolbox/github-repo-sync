@@ -1,4 +1,17 @@
-name: Publish Mkdocs
+name: Publish MkDocs
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - ".github/workflows/publish-mkdocs.yml"
+      - "mkdocs/**"
+      - "mkdocs.yml"
+      - "overrides/**"
+      - "requirements.txt"
+
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -8,26 +21,17 @@ permissions:
   actions: read
   contents: read
   deployments: write
-  pages: write
   id-token: write
-
-on:
-  push:
-    branches:
-      - master
-    paths:
-      - "docs/**"
-      - "mkdocs.yml"
-      - ".github/workflows/publish-mkdocs.yml"
-  workflow_dispatch:
+  pages: write
 
 jobs:
   publish-mkdocs:
-    name: Publish Mkdocs
+    name: Publish MkDocs
     uses: the-lupaxa-project/workflows/.github/workflows/reusable-mkdocs-site-publisher.yml@master
     secrets: inherit
     with:
       python-version: "3.13"
+      cleanup: true
 
   generate-workflow-summary:
     name: Generate Workflow Summary
