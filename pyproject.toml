@@ -83,10 +83,10 @@ test = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/the-lupaxa-internal-toolbox/lupaxa-github-repo-sync"
-Documentation = "https://github.com/the-lupaxa-internal-toolbox/lupaxa-github-repo-sync/tree/master/docs"
-Repository = "https://github.com/the-lupaxa-internal-toolbox/lupaxa-github-repo-sync"
-Issues = "https://github.com/the-lupaxa-internal-toolbox/lupaxa-github-repo-sync/issues"
+Homepage = "https://github.com/lupaxa-gh-toolbox/github-repo-sync"
+Documentation = "https://github-repo-sync.thelupaxaproject.org/"
+Repository = "https://github.com/lupaxa-gh-toolbox/github-repo-sync"
+Issues = "https://github.com/lupaxa-gh-toolbox/github-repo-sync/issues"
 
 [project.scripts]
 github-repo-sync = "lupaxa.github_repo_sync.cli:main"

@@ -71,13 +71,13 @@ python -m venv --help
 Clone the repository using Git.
 
 ```bash
-git clone https://github.com/the-lupaxa-project/lupaxa-github-repo-sync.git
+git clone https://github.com/lupaxa-gh-toolbox/github-repo-sync.git
 ```
 
 Change into the project directory.
 
 ```bash
-cd lupaxa-github-repo-sync
+cd github-repo-sync
 ```
 
 ## Create a Virtual Environment

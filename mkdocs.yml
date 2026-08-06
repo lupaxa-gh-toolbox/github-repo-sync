@@ -27,10 +27,10 @@ site_url: https://github-repo-sync.thelupaxaproject.org/
 # the View and Edit page links.
 
 # Short repository name displayed in the site header.
-repo_name: the-lupaxa-internal-toolbox/lupaxa-github-repo-sync
+repo_name: lupaxa-gh-toolbox/github-repo-sync
 
 # Full URL of the source repository.
-repo_url: https://github.com/the-lupaxa-internal-toolbox/lupaxa-github-repo-sync
+repo_url: https://github.com/lupaxa-gh-toolbox/github-repo-sync
 
 # Path appended to repo_url when constructing page-edit links.
 #
