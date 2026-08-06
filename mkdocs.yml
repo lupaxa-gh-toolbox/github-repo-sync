@@ -27,7 +27,7 @@ extra:
     - Where exploration meets precision.
     - Where the untamed meets the engineered.
   # Counter.dev analytics (omit counter_dev_id to disable).
-  # counter_dev_id: <uuid>
+  counter_dev_id: ef410665-76d4-43fe-9e91-53f26ed1004b
   counter_dev_utcoffset: 0
   social_image: assets/images/social-card.png
   social_image_width: 1200
