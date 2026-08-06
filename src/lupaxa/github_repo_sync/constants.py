@@ -11,6 +11,31 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Final
 
+__all__ = [
+    "CLONE_PROTOCOL_HTTPS",
+    "CLONE_PROTOCOL_SSH",
+    "DEFAULT_CONFIG_FILENAME",
+    "DEFAULT_CONSOLE_WIDTH",
+    "DEFAULT_REMOTE_NAME",
+    "EXIT_CANCELLED",
+    "EXIT_CONFIGURATION_ERROR",
+    "EXIT_FAILURE",
+    "EXIT_REPOSITORY_ERROR",
+    "EXIT_SUCCESS",
+    "EXIT_SYNC_INCOMPLETE",
+    "GITHUB_HOSTNAME",
+    "GITHUB_HTTPS_BASE_URL",
+    "GITHUB_SSH_USER",
+    "MAX_CONSOLE_WIDTH",
+    "MIN_CONSOLE_WIDTH",
+    "PROGRAM_ALIAS",
+    "PROGRAM_NAME",
+    "PROGRAM_VERSION",
+    "PROGRAM_VERSION_STRING",
+    "PROJECT_NAME",
+    "SUPPORTED_CLONE_PROTOCOLS",
+]
+
 PROGRAM_NAME: Final[str] = "github-repo-sync"
 PROGRAM_ALIAS: Final[str] = "grs"
 PROJECT_NAME: Final[str] = "lupaxa-github-repo-sync"

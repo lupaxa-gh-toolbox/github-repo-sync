@@ -417,12 +417,6 @@ def synchronise_repositories(
                 continue
 
             for repository in organisation["repositories"]:
-                repository_path = build_repository_path(
-                    clone_path=clone_path,
-                    organisation=organisation,
-                    repository=repository,
-                )
-
                 set_overall_repository(
                     progress,
                     progress_task,
