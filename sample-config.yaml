@@ -1,0 +1,24 @@
+# Example configuration demonstrating organisation path aliases.
+# With clone_path "~/Desktop/GitMaster":
+#   the-lupaxa-project  -> GitMaster/Lupaxa/TheLupaxaProject/...
+#   lupaxa-gh-toolbox   -> GitMaster/Lupaxa/GitHubToolbox/...
+
+config:
+  clone_path: ~/Desktop/GitMaster
+  clone_protocol: ssh
+
+organisations:
+  - name: the-lupaxa-project
+    alias: Lupaxa/TheLupaxaProject
+    repositories:
+      - name: .github
+        alias: github
+      - name: workflows
+      - name: brand-assets
+
+  - name: lupaxa-gh-toolbox
+    alias: Lupaxa/GitHubToolbox
+    repositories:
+      - name: .github
+        alias: github
+      - name: github-repo-sync

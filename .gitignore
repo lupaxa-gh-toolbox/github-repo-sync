@@ -1,0 +1,149 @@
+# OS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Cursor
+.cursor/
+.superpowers/
+cursor-docs
+.makefiles/
+
+# Build
+build/
+dist/
+wheelhouse/
+*.egg-info/
+*.egg
+*.whl
+pip-wheel-metadata/
+.eggs/
+
+# Certificates
+*.pem
+*.der
+*.csr
+*.key
+*.crt
+*.pfx
+*.cer
+*.jwk
+*.keystore
+certs*/
+keys*/
+output*/
+generated*/
+
+# Docker
+docker/
+docker-compose.override.yml
+
+# Docs
+docs/_build/
+docs/build/
+docs/.cache/
+docs/.benchmarks/
+
+# Editors
+.vscode/
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+*.autosave
+
+# Git
+git-*.sh
+*.diff
+*.patch
+
+# Logs
+*.log
+*.audit
+*.trace
+*.out
+*.err
+*.dump
+*.stackdump
+*.core
+core.*
+
+# MkDocs
+site/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+venv/
+.env/
+.venv/
+env/
+ENV/
+.conda/
+.python-version
+.hatch/
+.poetry/
+pipenv-files/
+pdm.lock
+pdm.toml
+rye.lock
+.ruff_cache/
+.mypy_cache/
+.pytest_cache/
+.cache/
+pytestdebug.log
+pip-log.txt
+.audit-env/
+
+# Secrets
+*.env
+*.env.*
+.envrc
+*.secret
+*.secrets
+*.credentials
+*.tokens
+vault.json
+*.gpg
+*.asc
+*.pgp
+
+# Temporary
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.old
+*.local
+*.override
+*.user
+*.machine
+config.local.*
+settings.local.*
+
+# Tests
+tests/tmp*/
+tests/output*/
+tests/**/assets*/
+coverage.xml
+htmlcov/
+.coverage*
+.nox/
+.tox/
