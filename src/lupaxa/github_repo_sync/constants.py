@@ -46,7 +46,7 @@ __all__ = [
 PROGRAM_NAME: Final[str] = "github-repo-sync"
 PROGRAM_ALIAS: Final[str] = "grs"
 PROJECT_NAME: Final[str] = "lupaxa-github-repo-sync"
-PROGRAM_VERSION: Final[str] = "0.1.2"
+PROGRAM_VERSION: Final[str] = "0.1.3"
 PROGRAM_VERSION_STRING: Final[str] = f"{PROGRAM_NAME} v{PROGRAM_VERSION}"
 
 DEFAULT_CONFIG_BASENAME: Final[str] = ".github-repo-sync"
