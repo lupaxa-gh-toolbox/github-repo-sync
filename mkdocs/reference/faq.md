@@ -39,26 +39,26 @@ Future versions may introduce support for additional Git hosting platforms.
 
 ### Where is the configuration file stored?
 
-By default, the application uses:
+By default, the application searches the home directory in this order:
 
 ```text
 ~/.github-repo-sync.yaml
+~/.github-repo-sync.yml
+~/.github-repo-sync.json
+~/.github-repo-sync.json5
 ```
 
-An alternative configuration file can be specified using the `--config` option.
+An alternative YAML, JSON, or JSON5 file can be specified using the `--config`
+option.
 
 ---
 
-### Why does the application use JSON5 instead of JSON?
+### Which configuration formats are supported?
 
-JSON5 provides a more user-friendly configuration format by supporting features such as:
+YAML, JSON, or JSON5. YAML is the default and recommended format.
 
-- Comments.
-- Trailing commas.
-- Unquoted object keys.
-- Improved readability.
-
-These features make larger configuration files significantly easier to maintain.
+YAML and JSON5 allow comments. JSON5 also allows trailing commas and unquoted
+object keys. Strict JSON does not allow comments.
 
 ---
 
@@ -71,7 +71,7 @@ You can create multiple configuration files and specify which one to use when ru
 For example:
 
 ```bash
-grs --config work.json5 sync
+grs --config work.yaml
 ```
 
 ---
@@ -178,13 +178,14 @@ Automation should evaluate exit codes rather than parsing console output.
 
 ### Can the application synchronise hundreds of repositories?
 
-Yes.
-
-The application has been designed to process repositories individually, making it suitable for synchronising large repository collections.
+Yes. Repositories are processed concurrently (default: one worker per CPU). Use
+`--workers` to raise or lower the thread count. Per-repository output is
+alphabetical by GitHub name after load, not file order.
 
 The overall execution time depends primarily on:
 
 - Repository count.
+- Worker count.
 - Repository size.
 - Network performance.
 - GitHub responsiveness.
@@ -200,8 +201,9 @@ Longer execution times are usually caused by external factors, such as:
 - Slow network connections.
 - Authentication delays.
 - GitHub service performance.
+- A low `--workers` value, or GitHub SSH throttling at a high one.
 
-This behaviour is generally expected.
+This behaviour is generally expected. If SSH errors increase, reduce `--workers`.
 
 ---
 

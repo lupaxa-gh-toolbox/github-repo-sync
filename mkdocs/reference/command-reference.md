@@ -23,7 +23,7 @@ The following options are available regardless of the command being executed.
 
 | Option            | Description                                                          |
 | :---------------- | :------------------------------------------------------------------- |
-| `--config <file>` | Specify an alternative configuration file.                           |
+| `--config <file>` | Specify an alternative YAML, JSON, or JSON5 configuration file.      |
 | `--no-colour`     | Disable coloured console output.                                     |
 | `--version`       | Display the application version.                                     |
 | `--help`          | Display command-line help.                                           |
@@ -66,7 +66,7 @@ grs
 Synchronise using an alternative configuration file.
 
 ```bash
-grs --config ~/work/github.json5
+grs --config ~/work/github.yaml
 ```
 
 Disable coloured output.
@@ -86,8 +86,14 @@ grs --recover-rewritten-history
 | Option                        | Description                                                                                          |
 | :---------------------------- | :--------------------------------------------------------------------------------------------------- |
 | `--recover-rewritten-history` | Reset a clean local branch onto rewritten remote history. Without this flag those repos are skipped. |
+| `--workers N`                 | Process this many repositories at once (default: CPU count). Output is alphabetical after load.      |
 
-This option is only valid during synchronisation. A dirty working tree is still skipped.
+`--recover-rewritten-history` is only valid during synchronisation. A dirty
+working tree is still skipped. `--workers` also applies to `--status`.
+
+```bash
+grs --workers 8
+```
 
 ## Validate
 
@@ -110,7 +116,7 @@ grs --validate
 Validate an alternative configuration.
 
 ```bash
-grs --config custom.json5 --validate
+grs --config custom.yaml --validate
 ```
 
 This command is recommended before making significant configuration changes.
@@ -136,7 +142,7 @@ grs --plan
 Preview an alternative configuration.
 
 ```bash
-grs --config custom.json5 --plan
+grs --config custom.yaml --plan
 ```
 
 ## Status
@@ -162,6 +168,7 @@ grs --status [STATUS OPTIONS]
 | :---------------- | :----------------------------------------------------------------------- |
 | `--ignore-clean`  | Omit fully clean repositories from per-repository output and results.    |
 | `--offline`       | Skip fetching remotes; compare against existing remote-tracking refs.    |
+| `--workers N`     | Check this many repositories at once (default: CPU count).               |
 
 ### Typical Usage
 
@@ -181,6 +188,12 @@ Check status without network access.
 
 ```bash
 grs --status --offline
+```
+
+Check repositories concurrently.
+
+```bash
+grs --status --workers 8
 ```
 
 ### Exit Codes

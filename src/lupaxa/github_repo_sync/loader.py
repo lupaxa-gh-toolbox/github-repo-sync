@@ -1,7 +1,7 @@
 """
 Configuration loading for Lupaxa GitHub Repository Sync.
 
-This module locates and loads a JSON5, JSON, or YAML configuration file.
+This module locates and loads a YAML, JSON, or JSON5 configuration file.
 Structural validation is performed separately by the validation module.
 """
 
@@ -57,10 +57,10 @@ def resolve_default_configuration_path(
 
 def load_configuration(config_path: Path) -> dict[str, Any]:
     """
-    Load a JSON5, JSON, or YAML configuration file.
+    Load a YAML, JSON, or JSON5 configuration file.
 
-    The parser is selected from the filename suffix. ``.json5`` uses JSON5,
-    ``.json`` uses strict JSON, and ``.yaml`` / ``.yml`` use YAML. Unknown
+    The parser is selected from the filename suffix. ``.yaml`` / ``.yml`` use
+    YAML, ``.json`` uses strict JSON, and ``.json5`` uses JSON5. Unknown
     suffixes are parsed as JSON5.
 
     Args:

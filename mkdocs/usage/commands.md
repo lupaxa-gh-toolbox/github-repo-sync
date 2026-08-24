@@ -48,13 +48,17 @@ The version displayed is taken directly from the installed package metadata.
 
 ## Using an Alternative Configuration File
 
-By default, the application loads:
+By default, the application searches the home directory in this order:
 
 ```text
 ~/.github-repo-sync.yaml
+~/.github-repo-sync.yml
+~/.github-repo-sync.json
+~/.github-repo-sync.json5
 ```
 
-If you need to use a different configuration file, specify it using the appropriate command-line option.
+If you need to use a different YAML, JSON, or JSON5 file, specify it using
+`--config`.
 
 This is useful when maintaining multiple synchronisation environments.
 
@@ -112,6 +116,12 @@ Combine both options when you want a compact report of only repositories that ne
 grs --status --ignore-clean --offline
 ```
 
+Status checks use the same worker pool as synchronisation (default: CPU count):
+
+```bash
+grs --status --workers 8
+```
+
 Exit codes for status checks:
 
 - `0` — every configured repository is clean and synchronised.
@@ -146,6 +156,14 @@ grs --recover-rewritten-history
 ```
 
 This flag is only valid during synchronisation. Dirty working trees are still skipped.
+
+Synchronisation and `--status` process repositories concurrently. The default
+worker count is the number of CPUs. Per-repository output stays in configuration
+order:
+
+```bash
+grs --workers 8
+```
 
 ## Exit Codes
 

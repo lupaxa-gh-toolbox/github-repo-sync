@@ -2,12 +2,18 @@
 
 This section provides a complete reference for every configuration property supported by **GitHub Repository Sync**.
 
-The configuration file is written using the JSON5 format and is validated before any synchronisation operations begin.
+The configuration file is written in YAML, JSON, or JSON5 and is validated
+before any synchronisation operations begin. YAML is the default and
+recommended format.
 
-Unless another configuration file is specified on the command line, the application automatically loads:
+Unless another configuration file is specified on the command line, the
+application searches the home directory in this order:
 
 ```text
 ~/.github-repo-sync.yaml
+~/.github-repo-sync.yml
+~/.github-repo-sync.json
+~/.github-repo-sync.json5
 ```
 
 > **Important**
@@ -109,11 +115,9 @@ When omitted, the local repository directory is the GitHub repository `name`.
 
 When set, the alias must be a single directory name (not a path). This is typically used when the GitHub name is unsuitable as a folder name:
 
-```json5
-{
-  name: ".github",
-  alias: "github",
-}
+```yaml
+name: .github
+alias: github
 ```
 
 Duplicate repository entries, or repositories that resolve to the same local directory within an organisation, are reported during validation.
@@ -142,32 +146,22 @@ If any validation errors are detected, synchronisation is aborted.
 
 ## Comments
 
-Because JSON5 is used, comments are permitted throughout the configuration file.
+YAML and JSON5 permit comments throughout the configuration file.
 
 For example:
 
-```json5
-{
-  config: {
-    // Local repository root.
-    clone_path: "~/Desktop/GitMaster",
-    clone_protocol: "ssh",
-  },
+```yaml
+config:
+  # Local repository root.
+  clone_path: ~/Desktop/GitMaster
+  clone_protocol: ssh
 
-  organisations: [
-    {
-      // Main GitHub organisation.
-      name: "the-lupaxa-project",
-      alias: "Lupaxa/TheLupaxaProject",
-
-      repositories: [
-        {
-          name: "workflows",
-        },
-      ],
-    },
-  ],
-}
+organisations:
+  # Main GitHub organisation.
+  - name: the-lupaxa-project
+    alias: Lupaxa/TheLupaxaProject
+    repositories:
+      - name: workflows
 ```
 
 Comments are ignored by the application but are recommended for larger configurations.
@@ -176,13 +170,15 @@ Comments are ignored by the application but are recommended for larger configura
 
 When creating configuration files:
 
-- Keep organisations grouped logically.
-- Choose organisation aliases that match your local directory layout.
-- Keep repository lists alphabetically ordered where practical.
-- Add comments describing unusual configuration choices.
-- Remove obsolete repositories.
-- Validate the configuration after making changes.
-- Store configuration files under version control where appropriate.
+-   Keep organisations grouped logically.
+-   Choose organisation aliases that match your local directory layout.
+-   Keep repository lists alphabetically ordered where practical. After load,
+  organisations and repositories are sorted case-insensitively by GitHub
+  name; per-repository output follows that order, not the order in the file.
+-   Add comments describing unusual configuration choices.
+-   Remove obsolete repositories.
+-   Validate the configuration after making changes.
+-   Store configuration files under version control where appropriate.
 
 ## Examples
 

@@ -18,15 +18,20 @@ Automated jobs should always run using a dedicated service account or user accou
 
 ## Default Configuration
 
-Unless another configuration file is specified, the application automatically loads:
+Unless another configuration file is specified, the application searches the
+home directory in this order:
 
 ```text
 ~/.github-repo-sync.yaml
+~/.github-repo-sync.yml
+~/.github-repo-sync.json
+~/.github-repo-sync.json5
 ```
 
 This allows scheduled jobs to run without repeatedly specifying the configuration location.
 
-If multiple configurations are maintained, the appropriate configuration file can be supplied on the command line.
+If multiple configurations are maintained, the appropriate YAML, JSON, or
+JSON5 file can be supplied with `--config`.
 
 ## Scheduled Execution
 
@@ -48,8 +53,11 @@ Because the application is non-interactive, it is well suited to unattended exec
 The following example executes the synchronisation every morning at 02:00.
 
 ```cron
-0 2 * * * grs
+0 2 * * * grs --workers 8
 ```
+
+`--workers` defaults to the CPU count. Set it explicitly in scheduled jobs so
+the concurrency does not change if the host CPU count changes.
 
 Ensure that the scheduled environment has access to:
 

@@ -13,7 +13,7 @@
 
 # lupaxa-github-repo-sync
 
-A command-line application that **clones**, **organises**, and **safely synchronises** large collections of GitHub repositories from a single declarative JSON5 configuration.
+A command-line application that **clones**, **organises**, and **safely synchronises** large collections of GitHub repositories from a single declarative YAML, JSON, or JSON5 configuration.
 
 Unlike many repository synchronisation tools, it does not assume every repository can be updated automatically. Each repository is inspected before any Git operation, so only repositories in a safe state are modified.
 
@@ -24,8 +24,10 @@ Unlike many repository synchronisation tools, it does not assume every repositor
 - Fast-forward updates where safe
 - Protection against unsafe local states
 - HTTPS and SSH clone protocols
-- JSON5 configuration with inherited defaults
+- YAML, JSON, or JSON5 configuration with inherited defaults
 - Multiple GitHub organisations, aliases, and destination paths
+- Concurrent clone, update, and status checks (`--workers`, default: CPU count)
+- Ordered per-repository output (alphabetical by GitHub name after load)
 - Rich console output with progress reporting
 - Configuration validation and synchronisation plan preview
 - Status check (optional fetch of tracking refs)
@@ -84,8 +86,8 @@ Local layout resolves to `clone_path/<organisation-alias>/<repository-alias-or-n
 Organisation aliases may be a single directory name or a relative path under `clone_path`. Repository aliases must remain a single directory name.
 
 If `--config` is not specified, the application looks for
-`~/.github-repo-sync.yaml`, then `.yml`, `.json`, or `.json5`. Config files
-may be YAML, JSON, or JSON5.
+`~/.github-repo-sync.yaml`, then `.yml`, then `.json`, then `.json5`. Config
+files may be YAML, JSON, or JSON5.
 
 Validate the configuration:
 
@@ -116,12 +118,13 @@ Synchronisation is the default operation.
 | `grs --plan`     | Display the resolved synchronisation plan and exit.                         |
 | `grs --status`   | Check repositories for a clean, synchronised state (may fetch tracking refs). |
 
-Use `-c FILE` / `--config FILE` to point at a different JSON5 file.
+Use `-c FILE` / `--config FILE` to point at a different YAML, JSON, or JSON5 file.
 
 ```bash
-grs --config work.json5 --validate
+grs --config work.yaml --validate
 grs --status --ignore-clean --offline
 grs --recover-rewritten-history
+grs --workers 8
 grs --results-table
 ```
 

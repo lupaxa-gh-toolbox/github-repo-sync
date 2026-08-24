@@ -11,6 +11,8 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Final
 
+from .concurrency import default_worker_count
+
 __all__ = [
     "CLONE_PROTOCOL_HTTPS",
     "CLONE_PROTOCOL_SSH",
@@ -19,6 +21,7 @@ __all__ = [
     "DEFAULT_CONFIG_FILENAME",
     "DEFAULT_CONSOLE_WIDTH",
     "DEFAULT_REMOTE_NAME",
+    "DEFAULT_WORKER_COUNT",
     "EXIT_CANCELLED",
     "EXIT_CONFIGURATION_ERROR",
     "EXIT_FAILURE",
@@ -64,6 +67,7 @@ GITHUB_HTTPS_BASE_URL: Final[str] = f"https://{GITHUB_HOSTNAME}"
 GITHUB_SSH_USER: Final[str] = "git"
 
 DEFAULT_REMOTE_NAME: Final[str] = "origin"
+DEFAULT_WORKER_COUNT: Final[int] = default_worker_count()
 
 GIT_TRANSIENT_RETRY_ATTEMPTS: Final[int] = 3
 GIT_TRANSIENT_RETRY_BACKOFF_SECONDS: Final[tuple[float, ...]] = (0.5, 1.5)

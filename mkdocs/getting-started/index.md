@@ -47,12 +47,16 @@ Continue to **Installation** for the complete installation process.
 
 ## Configuration
 
-The application is configured using a JSON5 configuration file.
+The application is configured using a YAML, JSON, or JSON5 configuration file.
 
-Unless another location is specified on the command line, the default configuration file is:
+Unless another location is specified on the command line, the application
+searches the home directory in this order:
 
 ```text
 ~/.github-repo-sync.yaml
+~/.github-repo-sync.yml
+~/.github-repo-sync.json
+~/.github-repo-sync.json5
 ```
 
 The configuration file defines:
@@ -62,7 +66,9 @@ The configuration file defines:
 - The repositories that should be managed.
 - Synchronisation behaviour and application options.
 
-JSON5 has been chosen because it supports comments, trailing commas and other features that make configuration files easier to read and maintain than standard JSON.
+YAML is the default and recommended format. JSON and JSON5 remain supported.
+YAML and JSON5 allow comments; JSON5 also allows trailing commas and unquoted
+object keys.
 
 ## Typical Workflow
 

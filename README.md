@@ -10,8 +10,8 @@ Safely clone and synchronise large collections of GitHub repositories from a sin
 
 ## Overview
 
-**GitHub Repository Sync** is a command-line application that clones, organises, and safely synchronises GitHub repositories using a declarative JSON5
-configuration file.
+**GitHub Repository Sync** is a command-line application that clones, organises, and safely synchronises GitHub repositories using a declarative YAML,
+JSON, or JSON5 configuration file.
 
 Unlike many repository synchronisation tools, it does not assume every repository can be updated automatically. Instead, each repository is inspected before
 any Git operation is performed, ensuring that only repositories confirmed to be in a safe state are modified.
@@ -28,11 +28,13 @@ repository, clones any missing repositories, and safely updates existing reposit
 - Fast-forward updates where safe.
 - Protection against repositories with unsafe local states.
 - Support for HTTPS and SSH clone protocols.
-- JSON5 configuration with inherited defaults.
+- YAML, JSON, or JSON5 configuration with inherited defaults.
 - Multiple GitHub organisation support.
 - Organisation and repository aliases.
 - Relative path organisation aliases for multiple local trees under one `clone_path`.
 - Configurable repository destinations.
+- Concurrent clone, update, and status checks (`--workers`, default: CPU count).
+- Ordered per-repository output (alphabetical by GitHub name after load, even when work runs in parallel).
 - Rich console output with progress reporting.
 - Compact configuration validation.
 - Synchronisation plan preview.
@@ -135,7 +137,8 @@ audit repository cleanliness without changing working trees, branches, or commit
 > [!NOTE]
 > If `--config` is not specified, the application looks for a default
 > configuration file in the user's home directory. It accepts YAML, JSON,
-> or JSON5 (`.github-repo-sync.yaml`, then `.yml`, `.json`, or `.json5`).
+> or JSON5 (`.github-repo-sync.yaml`, then `.yml`, then `.json`, then
+> `.json5`).
 
 ### Presentation
 
@@ -152,6 +155,12 @@ audit repository cleanliness without changing working trees, branches, or commit
 | :---------------- | :----------------------------------------------------------------------- |
 | `--ignore-clean`  | With `--status`, omit fully clean repositories from per-repo output.     |
 | `--offline`       | With `--status`, skip fetching remotes; use existing tracking refs.      |
+
+### Concurrency
+
+| Option        | Description                                                                                                                                    |
+| :------------ | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--workers N` | Process this many repositories at once for sync and `--status` (default: CPU count). Output is alphabetical by GitHub name after load.         |
 
 ### Synchronisation
 
@@ -181,7 +190,7 @@ grs --validate
 Validate a different configuration file.
 
 ```bash
-grs --config repositories.json5 --validate
+grs --config repositories.yaml --validate
 ```
 
 Display the synchronisation plan.
@@ -209,10 +218,16 @@ Reset clean local clones after a remote history rewrite (`git-reset-history`).
 grs --recover-rewritten-history
 ```
 
+Synchronise with a specific number of concurrent workers.
+
+```bash
+grs --workers 8
+```
+
 Synchronise repositories using an alternative configuration.
 
 ```bash
-grs --config work.json5
+grs --config work.yaml
 ```
 
 Synchronise repositories without displaying progress.

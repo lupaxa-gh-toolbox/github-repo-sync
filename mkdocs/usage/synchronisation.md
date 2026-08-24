@@ -102,11 +102,18 @@ Further information is available in the **Safety Model** documentation.
 
 ## Processing Large Repository Collections
 
+Repositories are processed concurrently. Use `--workers` to set the thread
+count (default: the number of CPUs). Per-repository results are printed in
+the post-load sort (case-insensitive GitHub names), not file order.
+
 The application is designed to scale from small personal collections through to much larger multi-organisation environments.
 
-Repositories are processed individually, allowing progress to be reported throughout the synchronisation process.
+Each repository is still inspected and decided independently. A problem in one
+repository does not stop the others, and the summary reports every outcome.
 
-This approach also makes it easier to identify repositories that require attention without interrupting the processing of unrelated repositories.
+```bash
+grs --workers 8
+```
 
 ## Progress Reporting
 

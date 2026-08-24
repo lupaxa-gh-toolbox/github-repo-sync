@@ -12,6 +12,7 @@ from pathlib import Path
 
 from .constants import (
     DEFAULT_CONFIG_BASENAME,
+    DEFAULT_WORKER_COUNT,
     EXIT_CONFIGURATION_ERROR,
     EXIT_FAILURE,
     EXIT_SUCCESS,
@@ -79,7 +80,7 @@ def load_and_validate_configuration(
 
     Args:
         config_path:
-            Path to the JSON5, JSON, or YAML configuration file.
+            Path to the YAML, JSON, or JSON5 configuration file.
 
     Returns:
         Validated and normalised configuration.
@@ -117,13 +118,14 @@ def run_sync(
     show_failure_table: bool = True,
     show_summary_table: bool = True,
     recover_rewritten_history: bool = False,
+    workers: int | None = None,
 ) -> int:
     """
     Synchronise repositories from a configuration file.
 
     Args:
         config_path:
-            Path to the JSON5, JSON, or YAML configuration file.
+            Path to the YAML, JSON, or JSON5 configuration file.
         show_header:
             Print the application heading.
         show_configuration:
@@ -142,6 +144,8 @@ def run_sync(
             Print the final Rich summary table.
         recover_rewritten_history:
             Reset a clean local branch onto rewritten remote history.
+        workers:
+            Maximum number of repositories processed at once.
 
     Returns:
         Process exit code.
@@ -182,6 +186,7 @@ def run_sync(
         results = synchronise_repositories(
             configuration=configuration,
             recover_rewritten_history=recover_rewritten_history,
+            workers=DEFAULT_WORKER_COUNT if workers is None else workers,
             show_progress=show_progress,
             result_callback=result_callback,
         )
@@ -215,6 +220,7 @@ def run_status(
     show_repository_output: bool = True,
     show_results_table: bool = False,
     show_summary_table: bool = True,
+    workers: int | None = None,
 ) -> int:
     """Check configured repositories for clean, synchronised working trees."""
 
@@ -274,6 +280,7 @@ def run_status(
             results = collect_repository_statuses(
                 configuration,
                 offline=offline,
+                workers=DEFAULT_WORKER_COUNT if workers is None else workers,
                 result_callback=handle_result,
             )
             clean_count = sum(result["status"] == "clean" for result in results)
@@ -330,7 +337,7 @@ def run_validate(
 
     Args:
         config_path:
-            Path to the JSON5, JSON, or YAML configuration file.
+            Path to the YAML, JSON, or JSON5 configuration file.
         show_header:
             Print the application heading.
 
@@ -377,7 +384,7 @@ def run_plan(
 
     Args:
         config_path:
-            Path to the JSON5, JSON, or YAML configuration file.
+            Path to the YAML, JSON, or JSON5 configuration file.
         show_header:
             Print the application heading.
 

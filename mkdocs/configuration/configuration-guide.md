@@ -1,6 +1,7 @@
 # Configuration Guide
 
-GitHub Repository Sync is configured using a single JSON5 configuration file.
+GitHub Repository Sync is configured using a single YAML, JSON, or JSON5
+configuration file. YAML is the default and recommended format.
 
 The configuration defines which GitHub organisations and repositories should be synchronised, where they should be stored locally and how the synchronisation process should behave.
 
@@ -8,29 +9,32 @@ Using a declarative configuration makes synchronisation repeatable, easy to revi
 
 ## Configuration File Location
 
-By default, the application looks for the following file:
+By default, the application searches the home directory in this order:
 
 ```text
 ~/.github-repo-sync.yaml
+~/.github-repo-sync.yml
+~/.github-repo-sync.json
+~/.github-repo-sync.json5
 ```
 
-A different configuration file may be specified with `-c` / `--config`.
+A different YAML, JSON, or JSON5 file may be specified with `-c` / `--config`.
 
 This allows multiple configurations to be maintained for different environments, teams or projects.
 
-## Why JSON5?
+## Supported Formats
 
-The application uses JSON5 instead of standard JSON because it is considerably easier to maintain.
+The application accepts configuration files in this order of preference:
 
-JSON5 supports features including:
+- YAML (`.yaml`, then `.yml`) — default and recommended.
+- JSON (`.json`).
+- JSON5 (`.json5`).
 
-- Comments.
-- Trailing commas.
-- Unquoted property names.
-- Single-quoted strings.
-- Improved readability.
+If `--config` is omitted, the home directory is searched as
+`.github-repo-sync.yaml`, then `.yml`, then `.json`, then `.json5`.
 
-This makes configuration files significantly easier to edit, particularly as they grow larger.
+YAML and JSON5 allow comments. JSON5 also allows trailing commas, unquoted
+property names, and single-quoted strings.
 
 ## Overall Structure
 
@@ -110,11 +114,9 @@ Organisation path aliases:
 
 Repository aliases must be a single directory name. They are commonly used when the GitHub repository name is unsuitable as a local folder name, for example:
 
-```json5
-{
-  name: ".github",
-  alias: "github",
-}
+```yaml
+name: .github
+alias: github
 ```
 
 ## Validation
@@ -131,13 +133,17 @@ Validation checks include:
 - Invalid alias values.
 - Invalid configuration structure.
 
+After a successful validation, organisations and repositories are sorted
+case-insensitively by their real GitHub names. That order is what later
+output follows, not the order in the file.
+
 If validation fails, synchronisation does not begin.
 
 This ensures configuration problems are detected before any changes are made to local repositories.
 
 ## Comments
 
-One of the advantages of JSON5 is the ability to include comments.
+One of the advantages of YAML and JSON5 is the ability to include comments.
 
 Comments are strongly recommended for larger configurations as they make the purpose of organisations, repositories and configuration choices much easier to understand.
 
@@ -145,12 +151,14 @@ Comments are strongly recommended for larger configurations as they make the pur
 
 For larger environments, consider the following recommendations:
 
-- Group repositories by GitHub organisation.
-- Use organisation aliases that match your local directory layout.
-- Keep repository names alphabetically ordered where practical.
-- Remove repositories that are no longer required.
-- Add comments explaining unusual configuration choices.
-- Validate the configuration after making changes.
+-   Group repositories by GitHub organisation.
+-   Use organisation aliases that match your local directory layout.
+-   Keep repository names alphabetically ordered where practical. After load,
+  organisations and repositories are sorted case-insensitively by GitHub
+  name; per-repository output follows that order, not the order in the file.
+-   Remove repositories that are no longer required.
+-   Add comments explaining unusual configuration choices.
+-   Validate the configuration after making changes.
 
 These practices make configuration files easier to review and maintain over time.
 

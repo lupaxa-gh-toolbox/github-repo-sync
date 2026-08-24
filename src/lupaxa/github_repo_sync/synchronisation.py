@@ -11,6 +11,8 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
+from .concurrency import run_ordered_tasks
+from .constants import DEFAULT_WORKER_COUNT
 from .exceptions import RepositorySyncError
 from .git_operations import (
     build_clone_url,
@@ -339,6 +341,7 @@ def synchronise_repositories(
     *,
     configuration: ValidatedConfiguration,
     recover_rewritten_history: bool = False,
+    workers: int = DEFAULT_WORKER_COUNT,
     show_progress: bool = True,
     inspection_callback: InspectionCallback | None = None,
     result_callback: ResultCallback | None = None,
@@ -350,6 +353,8 @@ def synchronise_repositories(
         configuration: Validated application configuration.
         recover_rewritten_history:
             Reset a clean local branch onto rewritten remote history.
+        workers:
+            Maximum number of repositories processed at once.
         show_progress: Display the Rich overall progress bar.
         inspection_callback:
             Optional callback invoked after each inspection.
@@ -376,6 +381,70 @@ def synchronise_repositories(
     )
 
     total_repositories = count_repositories(configuration)
+    work: list[
+        tuple[
+            OrganisationConfiguration,
+            RepositoryConfiguration,
+            RepositoryResult | None,
+        ]
+    ] = []
+
+    for organisation in configuration["organisations"]:
+        organisation_path = clone_path / organisation["destination_name"]
+
+        try:
+            ensure_directory(
+                organisation_path,
+                "Organisation directory",
+            )
+        except RepositorySyncError as exc:
+            for repository in organisation["repositories"]:
+                repository_path = build_repository_path(
+                    clone_path=clone_path,
+                    organisation=organisation,
+                    repository=repository,
+                )
+                work.append(
+                    (
+                        organisation,
+                        repository,
+                        build_result(
+                            organisation_name=organisation["name"],
+                            repository_name=repository["name"],
+                            local_name=repository["destination_name"],
+                            repository_path=repository_path,
+                            clone_protocol=repository["clone_protocol"],
+                            action="skipped",
+                            result_status=exc.result,
+                            message=str(exc),
+                        ),
+                    )
+                )
+            continue
+
+        for repository in organisation["repositories"]:
+            work.append((organisation, repository, None))
+
+    def synchronise_one(
+        item: tuple[
+            OrganisationConfiguration,
+            RepositoryConfiguration,
+            RepositoryResult | None,
+        ],
+    ) -> RepositoryResult:
+        organisation, repository, skipped = item
+
+        if skipped is not None:
+            return skipped
+
+        return synchronise_repository(
+            organisation=organisation,
+            repository=repository,
+            clone_path=clone_path,
+            recover_rewritten_history=recover_rewritten_history,
+            inspection_callback=inspection_callback,
+        )
+
     results: list[RepositoryResult] = []
 
     with repository_progress(
@@ -384,101 +453,43 @@ def synchronise_repositories(
         detail="Preparing repositories.",
         disable=not show_progress,
     ) as (progress, progress_task):
-        for organisation in configuration["organisations"]:
-            organisation_path = clone_path / organisation["destination_name"]
 
-            try:
-                ensure_directory(
-                    organisation_path,
-                    "Organisation directory",
-                )
-            except RepositorySyncError as exc:
-                for repository in organisation["repositories"]:
-                    repository_path = build_repository_path(
-                        clone_path=clone_path,
-                        organisation=organisation,
-                        repository=repository,
-                    )
+        def handle_result(_index: int, result: RepositoryResult) -> None:
+            if result["result"] == "failed":
+                final_action = "FAILED"
+            else:
+                final_action = {
+                    "cloned": "CLONED",
+                    "updated": "UPDATED",
+                    "skipped": "SKIPPED",
+                }[result["action"]]
 
-                    set_overall_repository(
-                        progress,
-                        progress_task,
-                        action="FAILED",
-                        organisation_name=organisation["name"],
-                        repository_name=repository["name"],
-                        detail=str(exc),
-                    )
+            set_overall_repository(
+                progress,
+                progress_task,
+                action=final_action,
+                organisation_name=result["organisation"],
+                repository_name=result["repository"],
+                detail=result["message"],
+            )
 
-                    result = build_result(
-                        organisation_name=organisation["name"],
-                        repository_name=repository["name"],
-                        local_name=repository["destination_name"],
-                        repository_path=repository_path,
-                        clone_protocol=repository["clone_protocol"],
-                        action="skipped",
-                        result_status=exc.result,
-                        message=str(exc),
-                    )
+            results.append(result)
 
-                    results.append(result)
+            if result_callback is not None:
+                result_callback(result)
 
-                    if result_callback is not None:
-                        result_callback(result)
+            advance_overall_repository(
+                progress,
+                progress_task,
+                detail=result["message"],
+            )
 
-                    advance_overall_repository(
-                        progress,
-                        progress_task,
-                        detail="Organisation directory unavailable.",
-                    )
-
-                continue
-
-            for repository in organisation["repositories"]:
-                set_overall_repository(
-                    progress,
-                    progress_task,
-                    action="INSPECT",
-                    organisation_name=organisation["name"],
-                    repository_name=repository["name"],
-                    detail="Inspecting local destination.",
-                )
-
-                result = synchronise_repository(
-                    organisation=organisation,
-                    repository=repository,
-                    clone_path=clone_path,
-                    recover_rewritten_history=recover_rewritten_history,
-                    inspection_callback=inspection_callback,
-                )
-
-                results.append(result)
-
-                if result_callback is not None:
-                    result_callback(result)
-
-                if result["result"] == "failed":
-                    final_action = "FAILED"
-                else:
-                    final_action = {
-                        "cloned": "CLONED",
-                        "updated": "UPDATED",
-                        "skipped": "SKIPPED",
-                    }[result["action"]]
-
-                set_overall_repository(
-                    progress,
-                    progress_task,
-                    action=final_action,
-                    organisation_name=organisation["name"],
-                    repository_name=repository["name"],
-                    detail=result["message"],
-                )
-
-                advance_overall_repository(
-                    progress,
-                    progress_task,
-                    detail=result["message"],
-                )
+        run_ordered_tasks(
+            work,
+            synchronise_one,
+            workers=workers,
+            on_result=handle_result,
+        )
 
         finish_overall_progress(
             progress,

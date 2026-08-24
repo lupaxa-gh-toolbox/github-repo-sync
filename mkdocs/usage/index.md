@@ -49,6 +49,7 @@ Topics include:
 - Updating existing repositories.
 - Repository state inspection.
 - Safe synchronisation behaviour.
+- Concurrent processing and alphabetical output.
 - Summary reporting.
 
 ### Automation

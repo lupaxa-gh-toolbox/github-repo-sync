@@ -68,7 +68,7 @@ Configuration is loaded before any repository processing begins.
 
 The configuration layer is responsible for:
 
-- Reading the JSON5 configuration file.
+- Reading the YAML, JSON, or JSON5 configuration file.
 - Parsing configuration data.
 - Constructing internal models.
 - Reporting configuration errors.
@@ -97,10 +97,10 @@ The synchronisation engine coordinates the processing of repositories.
 Its responsibilities include:
 
 1. Processing each configured organisation.
-2. Processing each configured repository.
-3. Determining the required action.
+2. Processing configured repositories concurrently (`--workers`).
+3. Determining the required action for each repository.
 4. Calling the appropriate Git operations.
-5. Recording the outcome.
+5. Recording outcomes in the post-load sort (case-insensitive GitHub names).
 6. Producing the final summary.
 
 The synchronisation engine does not perform Git operations directly.

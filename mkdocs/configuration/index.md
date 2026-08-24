@@ -7,22 +7,26 @@ human-readable configuration file. This approach makes configurations easier to 
 
 ## Default Configuration Location
 
-Unless another configuration file is specified on the command line, the application automatically loads:
+Unless another configuration file is specified on the command line, the
+application searches the home directory in this order:
 
 ```text
 ~/.github-repo-sync.yaml
+~/.github-repo-sync.yml
+~/.github-repo-sync.json
+~/.github-repo-sync.json5
 ```
 
 A different configuration file can be specified when running the application, allowing multiple synchronisation configurations to be maintained for different environments or projects.
 
 ## Supported Formats
 
-The default configuration file is YAML (`.yaml`, then `.yml`). JSON and JSON5
-remain supported. YAML and JSON5 allow comments; JSON5 also allows trailing
-commas and unquoted object keys.
+YAML is the default and recommended format. JSON and JSON5 remain supported.
+YAML and JSON5 allow comments; JSON5 also allows trailing commas and unquoted
+object keys.
 
 If `--config` is omitted, the application searches the home directory in this
-order: `.github-repo-sync.yaml`, `.yml`, `.json`, `.json5`.
+order: `.github-repo-sync.yaml`, then `.yml`, then `.json`, then `.json5`.
 
 ## Configuration Structure
 

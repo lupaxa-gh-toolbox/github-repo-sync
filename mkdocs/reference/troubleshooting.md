@@ -28,13 +28,13 @@ Examples include:
 
 - The application exits immediately.
 - A configuration file cannot be found.
-- JSON5 parsing errors are reported.
+- YAML, JSON, or JSON5 parsing errors are reported.
 
 ### Possible Causes
 
 - The configuration file does not exist.
 - The file path is incorrect.
-- Invalid JSON5 syntax.
+- Invalid YAML, JSON, or JSON5 syntax.
 - The current user cannot read the file.
 
 ### Resolution
@@ -50,7 +50,7 @@ For the default configuration:
 If using an alternative configuration file, confirm the path is correct:
 
 ```bash
-grs --config /path/to/config.json5 --validate
+grs --config /path/to/config.yaml --validate
 ```
 
 Correct any reported validation errors before continuing.
@@ -246,13 +246,13 @@ The application reports network or remote access errors.
 - Firewall restrictions.
 - Proxy configuration.
 - Temporary GitHub outage.
-- GitHub SSH throttling during a large sequential sync (`fatal: Could not read from remote repository`).
+- GitHub SSH throttling during a large concurrent sync (`fatal: Could not read from remote repository`).
 
 ### Resolution
 
 The application retries transient SSH and transport failures with a short
 backoff. A later manual `git fetch` succeeding does not mean the earlier
-failure was a false report.
+failure was a false report. If SSH drops persist, reduce `--workers`.
 
 Confirm Internet connectivity.
 
@@ -283,10 +283,20 @@ Synchronisation appears slower than expected.
 - Large repository collections.
 - Slow network connection.
 - Large repositories.
-- GitHub rate limiting.
+- GitHub rate limiting or SSH throttling.
+- A low `--workers` value.
 - Local storage performance.
 
 ### Resolution
+
+Increase `--workers` if the host has spare CPU and the network is healthy:
+
+```bash
+grs --workers 8
+```
+
+If GitHub SSH connections start failing, reduce `--workers`. Transient SSH
+errors are retried automatically.
 
 This behaviour is generally expected when synchronising many repositories.
 
@@ -296,6 +306,7 @@ If performance changes significantly compared with previous runs, investigate:
 - Disk performance.
 - Authentication delays.
 - GitHub service status.
+- The `--workers` setting.
 
 ---
 

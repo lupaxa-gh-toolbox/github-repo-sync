@@ -69,7 +69,7 @@ Configuration-related problems return a non-zero exit code.
 
 Typical causes include:
 
-- Invalid JSON5 syntax.
+- Invalid YAML, JSON, or JSON5 syntax.
 - Missing required properties.
 - Invalid configuration values.
 - Duplicate entries.

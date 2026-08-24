@@ -21,6 +21,7 @@ from .commands import (
 )
 from .constants import (
     DEFAULT_CONFIG_FILENAME,
+    DEFAULT_WORKER_COUNT,
     EXIT_FAILURE,
     PROGRAM_ALIAS,
     PROGRAM_VERSION_STRING,
@@ -58,6 +59,7 @@ def create_parser() -> argparse.ArgumentParser:
             f"  {PROGRAM_ALIAS} --status --ignore-clean --offline\n"
             f"  {PROGRAM_ALIAS} --results-table\n"
             f"  {PROGRAM_ALIAS} --recover-rewritten-history\n"
+            f"  {PROGRAM_ALIAS} --workers 8\n"
             f"  {PROGRAM_ALIAS} --no-progress --no-repository-output\n"
             "\n"
             "Repository synchronisation is performed by default. Use "
@@ -71,6 +73,7 @@ def create_parser() -> argparse.ArgumentParser:
     _add_mode_arguments(parser)
     _add_status_arguments(parser)
     _add_sync_behaviour_arguments(parser)
+    _add_concurrency_arguments(parser)
     _add_configuration_arguments(parser)
     _add_presentation_arguments(parser)
     _add_sync_output_arguments(parser)
@@ -188,6 +191,33 @@ def _add_sync_behaviour_arguments(
     )
 
 
+def _add_concurrency_arguments(
+    parser: argparse.ArgumentParser,
+) -> None:
+    """
+    Add concurrency arguments for synchronisation and status checks.
+
+    Args:
+        parser:
+            Application argument parser.
+
+    """
+
+    group = parser.add_argument_group("concurrency")
+
+    group.add_argument(
+        "--workers",
+        type=_positive_integer,
+        default=DEFAULT_WORKER_COUNT,
+        metavar="N",
+        help=(
+            "Number of repositories to process at once during synchronisation "
+            f"or --status (default: {DEFAULT_WORKER_COUNT}, the CPU count). "
+            "Per-repository output is alphabetical by GitHub name after load."
+        ),
+    )
+
+
 def _add_configuration_arguments(
     parser: argparse.ArgumentParser,
 ) -> None:
@@ -212,7 +242,7 @@ def _add_configuration_arguments(
         help=(
             "Path to the YAML, JSON, or JSON5 configuration file "
             f"(default: {DEFAULT_CONFIG_FILENAME}, then "
-            ".yml, .json, or .json5 in the same directory)."
+            ".yml, then .json, then .json5 in the same directory)."
         ),
     )
 
@@ -403,6 +433,7 @@ def _run_selected_mode(
             show_repository_output=not arguments.no_repository_output,
             show_results_table=arguments.results_table,
             show_summary_table=not arguments.no_summary_table,
+            workers=arguments.workers,
         )
 
     return run_sync(
@@ -415,6 +446,7 @@ def _run_selected_mode(
         show_failure_table=not arguments.no_failure_table,
         show_summary_table=not arguments.no_summary_table,
         recover_rewritten_history=arguments.recover_rewritten_history,
+        workers=arguments.workers,
     )
 
 

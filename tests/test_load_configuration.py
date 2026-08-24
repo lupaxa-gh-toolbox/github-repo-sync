@@ -1,4 +1,4 @@
-"""Tests for JSON5, JSON, and YAML configuration loading."""
+"""Tests for YAML, JSON, and JSON5 configuration loading."""
 
 from __future__ import annotations
 

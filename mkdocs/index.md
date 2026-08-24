@@ -15,12 +15,14 @@ organisations managing anything from a handful of repositories to hundreds or ev
 
 Some of the key capabilities include:
 
-- Declarative JSON5 configuration.
+- Declarative YAML, JSON, or JSON5 configuration.
 - Safe repository synchronisation.
 - Automatic cloning of missing repositories.
 - Fast-forward updates of existing repositories.
 - Protection against overwriting local changes.
 - Validation before synchronisation begins.
+- Concurrent repository processing (`--workers`, default: CPU count).
+- Ordered per-repository output (alphabetical by GitHub name after load).
 - Comprehensive progress reporting.
 - Clear error messages and exit codes.
 - Cross-platform operation.

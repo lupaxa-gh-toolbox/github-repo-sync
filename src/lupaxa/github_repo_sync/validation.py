@@ -2,7 +2,7 @@
 Application-specific configuration validation.
 
 This module validates and normalises repository and organisation structures
-after the JSON5 configuration has been loaded.
+after the YAML, JSON, or JSON5 configuration has been loaded.
 """
 
 from __future__ import annotations

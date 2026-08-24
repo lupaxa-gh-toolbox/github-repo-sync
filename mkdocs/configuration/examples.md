@@ -4,34 +4,23 @@ This section contains example configuration files demonstrating common ways to u
 
 The examples are intended to illustrate the overall structure of a configuration rather than every supported option. Refer to the **Configuration Reference** for complete details of each available property.
 
-All examples use JSON5 syntax.
+All examples use YAML, the default and recommended format. Equivalent JSON and
+JSON5 files are also accepted.
 
 ## Example 1: Single Organisation
 
 This example synchronises two repositories from a single GitHub organisation.
 
-```json5
-{
-  config: {
-    clone_path: "~/Development",
-    clone_protocol: "ssh",
-  },
+```yaml
+config:
+  clone_path: ~/Development
+  clone_protocol: ssh
 
-  organisations: [
-    {
-      name: "the-lupaxa-project",
-
-      repositories: [
-        {
-          name: "workflows",
-        },
-        {
-          name: "brand-assets",
-        },
-      ],
-    },
-  ],
-}
+organisations:
+  - name: the-lupaxa-project
+    repositories:
+      - name: workflows
+      - name: brand-assets
 ```
 
 This is an ideal starting point for individual developers or small projects.
@@ -40,37 +29,21 @@ This is an ideal starting point for individual developers or small projects.
 
 The application can manage repositories from multiple GitHub organisations within a single configuration.
 
-```json5
-{
-  config: {
-    clone_path: "~/Development",
-    clone_protocol: "ssh",
-  },
+```yaml
+config:
+  clone_path: ~/Development
+  clone_protocol: ssh
 
-  organisations: [
-    {
-      name: "the-lupaxa-project",
-      alias: "TheLupaxaProject",
+organisations:
+  - name: the-lupaxa-project
+    alias: TheLupaxaProject
+    repositories:
+      - name: workflows
 
-      repositories: [
-        {
-          name: "workflows",
-        },
-      ],
-    },
-
-    {
-      name: "lupaxa-gh-toolbox",
-      alias: "GitHubToolbox",
-
-      repositories: [
-        {
-          name: "github-repo-sync",
-        },
-      ],
-    },
-  ],
-}
+  - name: lupaxa-gh-toolbox
+    alias: GitHubToolbox
+    repositories:
+      - name: github-repo-sync
 ```
 
 Repositories from each organisation are stored beneath the configured local repository root.
@@ -79,41 +52,23 @@ Repositories from each organisation are stored beneath the configured local repo
 
 Organisation aliases may include `/` so repositories nest under a shared local tree.
 
-```json5
-{
-  config: {
-    clone_path: "~/Desktop/GitMaster",
-    clone_protocol: "ssh",
-  },
+```yaml
+config:
+  clone_path: ~/Desktop/GitMaster
+  clone_protocol: ssh
 
-  organisations: [
-    {
-      name: "the-lupaxa-project",
-      alias: "Lupaxa/TheLupaxaProject",
+organisations:
+  - name: the-lupaxa-project
+    alias: Lupaxa/TheLupaxaProject
+    repositories:
+      - name: .github
+        alias: github
+      - name: workflows
 
-      repositories: [
-        {
-          name: ".github",
-          alias: "github",
-        },
-        {
-          name: "workflows",
-        },
-      ],
-    },
-
-    {
-      name: "lupaxa-gh-toolbox",
-      alias: "Lupaxa/GitHubToolbox",
-
-      repositories: [
-        {
-          name: "github-repo-sync",
-        },
-      ],
-    },
-  ],
-}
+  - name: lupaxa-gh-toolbox
+    alias: Lupaxa/GitHubToolbox
+    repositories:
+      - name: github-repo-sync
 ```
 
 This resolves to:
@@ -132,36 +87,23 @@ Repository aliases remain single directory names. Organisation aliases may be ei
 
 ## Example 4: Using Comments
 
-One advantage of JSON5 is the ability to document your configuration using comments.
+YAML and JSON5 allow comments, which is useful for documenting larger files.
 
-```json5
-{
-  config: {
-    // Root directory used to store repositories.
-    clone_path: "~/Development",
-    clone_protocol: "ssh",
-  },
+```yaml
+config:
+  # Root directory used to store repositories.
+  clone_path: ~/Development
+  clone_protocol: ssh
 
-  organisations: [
-    {
-      // Primary organisation.
-      name: "the-lupaxa-project",
-      alias: "TheLupaxaProject",
-
-      repositories: [
-        {
-          // Shared reusable workflows.
-          name: "workflows",
-        },
-
-        {
-          // Branding assets.
-          name: "brand-assets",
-        },
-      ],
-    },
-  ],
-}
+organisations:
+  # Primary organisation.
+  - name: the-lupaxa-project
+    alias: TheLupaxaProject
+    repositories:
+      # Shared reusable workflows.
+      - name: workflows
+      # Branding assets.
+      - name: brand-assets
 ```
 
 Comments are ignored by the application but make larger configurations significantly easier to understand and maintain.
@@ -170,12 +112,13 @@ Comments are ignored by the application but make larger configurations significa
 
 For larger repository collections, the following practices are recommended:
 
-- Group repositories by GitHub organisation.
-- Choose organisation aliases that match your local directory layout.
-- Keep repository names alphabetically ordered.
-- Add comments explaining unusual configuration choices.
-- Remove obsolete repositories.
-- Validate the configuration before synchronising.
+-   Group repositories by GitHub organisation.
+-   Choose organisation aliases that match your local directory layout.
+-   Keep repository names alphabetically ordered. After load, organisations
+  and repositories are sorted case-insensitively by GitHub name.
+-   Add comments explaining unusual configuration choices.
+-   Remove obsolete repositories.
+-   Validate the configuration before synchronising.
 
 These simple practices improve readability and reduce the likelihood of configuration errors.
 

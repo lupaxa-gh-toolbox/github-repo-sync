@@ -12,13 +12,18 @@ By the end of this guide you will have:
 
 ## Step 1: Create the Configuration File
 
-Unless another configuration file is specified on the command line, GitHub Repository Sync automatically loads:
+Unless another configuration file is specified on the command line, GitHub
+Repository Sync searches the home directory in this order:
 
 ```text
 ~/.github-repo-sync.yaml
+~/.github-repo-sync.yml
+~/.github-repo-sync.json
+~/.github-repo-sync.json5
 ```
 
-Create the file if it does not already exist.
+Create `~/.github-repo-sync.yaml` if it does not already exist. YAML is the
+default and recommended format.
 
 ## Step 2: Create a Basic Configuration
 
@@ -84,6 +89,12 @@ Run the synchronisation.
 
 ```bash
 grs
+```
+
+To process several repositories at once (default is the CPU count):
+
+```bash
+grs --workers 8
 ```
 
 The application will:

@@ -80,13 +80,19 @@ grs --help
 
 ## Default Configuration Location
 
-Unless another configuration file is specified on the command line, the application automatically loads:
+Unless another configuration file is specified on the command line, the
+application searches the home directory in this order:
 
 ```text
 ~/.github-repo-sync.yaml
+~/.github-repo-sync.yml
+~/.github-repo-sync.json
+~/.github-repo-sync.json5
 ```
 
-This file contains the organisations, repositories and synchronisation options used by the application.
+YAML is the default and recommended format. The file contains the
+organisations, repositories and synchronisation options used by the
+application.
 
 Detailed information about the configuration format is provided in the **Configuration** section of this documentation.
 
