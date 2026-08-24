@@ -18,6 +18,7 @@ LABEL_INFORMATION: Final[str] = "Info"
 LABEL_SUCCESS: Final[str] = "Success"
 LABEL_WARNING: Final[str] = "Warning"
 LABEL_ERROR: Final[str] = "Error"
+LABEL_SYSTEM: Final[str] = "System"
 
 
 #
@@ -37,6 +38,7 @@ STYLE_SUCCESS: Final[str] = "bold green"
 STYLE_INFORMATION: Final[str] = "bold cyan"
 STYLE_WARNING: Final[str] = "bold yellow"
 STYLE_ERROR: Final[str] = "bold red"
+STYLE_SYSTEM: Final[str] = "grey50"
 
 STYLE_TABLE_HEADER: Final[str] = "bold"
 

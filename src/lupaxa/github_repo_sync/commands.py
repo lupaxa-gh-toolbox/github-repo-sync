@@ -29,6 +29,7 @@ from .display import (
     print_section,
     print_status_check,
     print_success,
+    print_system,
     print_warning,
 )
 from .exceptions import (
@@ -194,7 +195,7 @@ def run_sync(
         print_error(str(exc))
         return EXIT_FAILURE
     except KeyboardInterrupt:
-        print_error("Synchronisation interrupted by the user.")
+        print_system("Synchronisation interrupted by the user.")
         return EXIT_FAILURE
 
     _print_sync_output(
@@ -295,7 +296,7 @@ def run_status(
         print_error(str(exc))
         return EXIT_FAILURE
     except KeyboardInterrupt:
-        print_error("Status check interrupted by the user.")
+        print_system("Status check interrupted by the user.")
         return EXIT_FAILURE
 
     displayed_results = [

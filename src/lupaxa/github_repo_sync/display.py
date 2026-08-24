@@ -37,6 +37,7 @@ from .styles import (
     LABEL_ERROR,
     LABEL_INFORMATION,
     LABEL_SUCCESS,
+    LABEL_SYSTEM,
     LABEL_WARNING,
     REPOSITORY_ACTION_LABELS,
     REPOSITORY_ACTION_STYLES,
@@ -59,6 +60,7 @@ from .styles import (
     STYLE_SUMMARY_FAILED,
     STYLE_SUMMARY_SKIPPED,
     STYLE_SUMMARY_UPDATED,
+    STYLE_SYSTEM,
     STYLE_WARNING,
 )
 from .utils import abbreviate_home_path
@@ -234,6 +236,21 @@ def print_blank_line() -> None:
     console.print()
 
 
+def format_bracket_label(label: str) -> str:
+    """
+    Format a console prompt label as ``[ <text> ]``.
+
+    Args:
+        label: Short label text.
+
+    Returns:
+        Label wrapped with spaced brackets.
+
+    """
+
+    return f"[ {label.strip()} ]"
+
+
 def print_message(
     label: str,
     message: str,
@@ -255,7 +272,7 @@ def print_message(
     output = Text()
 
     output.append(
-        f"[{label}]",
+        format_bracket_label(label),
         style=label_style,
     )
     output.append(" ")
@@ -339,6 +356,27 @@ def print_error(
         LABEL_ERROR,
         message,
         label_style=STYLE_ERROR,
+    )
+
+
+def print_system(
+    message: str,
+) -> None:
+    """
+    Print a system message.
+
+    Used for user interrupts and other non-error process notices.
+
+    Args:
+        message: Message body.
+
+    """
+
+    print_message(
+        LABEL_SYSTEM,
+        message,
+        label_style=STYLE_SYSTEM,
+        message_style=STYLE_SYSTEM,
     )
 
 
@@ -451,7 +489,7 @@ def print_repository_message(
     heading = Text()
 
     heading.append(
-        f"[{label}]",
+        format_bracket_label(label),
         style=label_style,
     )
     heading.append(" ")

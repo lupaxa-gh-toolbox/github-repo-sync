@@ -56,7 +56,7 @@ def run_ordered_tasks(
     Raises:
         ValueError:
             If ``workers`` is less than 1.
-        BaseException:
+        Exception:
             The first worker exception, after earlier results have been
             reported in order.
 
@@ -69,7 +69,7 @@ def run_ordered_tasks(
         return []
 
     values: list[object] = [_UNSET] * len(items)
-    errors: list[BaseException | None] = [None] * len(items)
+    errors: list[Exception | None] = [None] * len(items)
     next_index = 0
 
     def emit_ready() -> None:
@@ -100,11 +100,11 @@ def run_ordered_tasks(
 
                 try:
                     values[index] = future.result()
-                except BaseException as exc:
+                except Exception as exc:
                     errors[index] = exc
 
                 emit_ready()
-        except BaseException:
+        except Exception:
             executor.shutdown(wait=False, cancel_futures=True)
             raise
 

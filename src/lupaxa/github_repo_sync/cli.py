@@ -29,6 +29,7 @@ from .constants import (
 from .display import (
     configure_console,
     print_error,
+    print_system,
     print_unhandled_error,
 )
 
@@ -483,7 +484,7 @@ def main(
 
         return int(_run_selected_mode(arguments))
     except KeyboardInterrupt:
-        print_error("Operation interrupted by the user.")
+        print_system("Operation interrupted by the user.")
         return EXIT_FAILURE
     except BrokenPipeError:
         return EXIT_FAILURE

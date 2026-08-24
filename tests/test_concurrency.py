@@ -42,6 +42,16 @@ def test_run_ordered_tasks_emits_in_submission_order() -> None:
     assert emitted == ["first", "second", "third"]
 
 
+def test_run_ordered_tasks_does_not_store_keyboard_interrupt() -> None:
+    def work(name: str) -> str:
+        if name == "second":
+            raise KeyboardInterrupt
+        return name
+
+    with pytest.raises(KeyboardInterrupt):
+        run_ordered_tasks(["first", "second", "third"], work, workers=3)
+
+
 def test_run_ordered_tasks_raises_after_emitting_prior_results() -> None:
     emitted: list[str] = []
 
