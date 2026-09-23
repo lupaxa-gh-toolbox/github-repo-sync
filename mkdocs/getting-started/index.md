@@ -92,7 +92,6 @@ Once you have completed this section, the remainder of the documentation is orga
 - **Usage** describes the available commands and synchronisation behaviour.
 - **Concepts** explains the application's internal design and safety model.
 - **Reference** contains troubleshooting guidance, exit codes and frequently asked questions.
-- **Development** provides information for contributors and maintainers.
 
 ## Safety First
 

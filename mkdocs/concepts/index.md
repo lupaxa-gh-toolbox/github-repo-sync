@@ -68,7 +68,6 @@ The documentation is organised so that each section builds upon the previous one
 - **Usage** explains how synchronisation works.
 - **Concepts** explains why the application behaves as it does.
 - **Reference** provides detailed technical information.
-- **Development** describes how the application is developed and maintained.
 
 ## Recommended Reading
 

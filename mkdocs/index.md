@@ -56,10 +56,6 @@ Background information explaining how the application works internally, includin
 
 Reference material including exit codes, troubleshooting guidance and answers to frequently asked questions.
 
-### Development
-
-Information for contributors, including development setup, testing and contribution guidelines.
-
 ## Requirements
 
 GitHub Repository Sync requires:
