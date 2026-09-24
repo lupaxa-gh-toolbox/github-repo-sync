@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://github.com/lupaxa-gh-toolbox" target="_blank" rel="noopener noreferrer">
+    <a href="https://github.com/lupaxa-gh-toolbox">
         <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/organisations/gh-toolbox/readme-logo.png" alt="Organisation Logo" />
     </a>
 </p>
@@ -8,8 +8,7 @@
 
 **The Lupaxa Project** maintains a single organisation-wide Projects Overview to help contributors and users navigate the ecosystem of organisations, repositories and shared projects.
 
-The authoritative Projects Overview is available here:
-<a href="https://github.com/the-lupaxa-project/.github/blob/master/docs/PROJECTS.md" target="_blank" rel="noopener noreferrer">The Lupaxa Project: Projects Overview</a>
+The authoritative Projects Overview is available here: [The Lupaxa Project: Projects Overview][1]
 
 It includes guidance on:
 
@@ -22,6 +21,8 @@ Unless explicitly stated otherwise, this Projects Overview applies to every repo
 
 Repository-specific exceptions or additional guidance, where applicable, should be documented separately within the repository itself.
 
-<a href="https://github.com/the-lupaxa-project" target="_blank" rel="noopener noreferrer">
+[1]: https://github.com/the-lupaxa-project/.github/blob/master/docs/PROJECTS.md
+
+<a href="https://github.com/the-lupaxa-project">
     <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/components/footer-for-child-orgs.svg" alt="The Lupaxa Project Footer" width="100%" />
 </a>

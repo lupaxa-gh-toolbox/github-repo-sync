@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://github.com/lupaxa-gh-toolbox" target="_blank" rel="noopener noreferrer">
+    <a href="https://github.com/lupaxa-gh-toolbox">
         <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/organisations/gh-toolbox/readme-logo.png" alt="Organisation Logo" />
     </a>
 </p>
@@ -8,8 +8,7 @@
 
 **The Lupaxa Project** maintains a single organisation-wide Engineering Principles document to provide a consistent set of values that guide engineering decisions across every repository and organisation.
 
-The authoritative Engineering Principles document is available here:
-<a href="https://github.com/the-lupaxa-project/.github/blob/master/docs/PRINCIPLES.md" target="_blank" rel="noopener noreferrer">The Lupaxa Project: Engineering Principles</a>
+The authoritative Engineering Principles document is available here: [The Lupaxa Project: Engineering Principles][1]
 
 It describes the principles that guide how we design, build, document, and maintain our projects, including:
 
@@ -23,6 +22,8 @@ Unless explicitly stated otherwise, these Engineering Principles apply to every 
 
 Repository-specific principles or additional guidance, where applicable, should be documented separately within the repository itself.
 
-<a href="https://github.com/the-lupaxa-project" target="_blank" rel="noopener noreferrer">
+[1]: https://github.com/the-lupaxa-project/.github/blob/master/docs/PRINCIPLES.md
+
+<a href="https://github.com/the-lupaxa-project">
     <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/components/footer-for-child-orgs.svg" alt="The Lupaxa Project Footer" width="100%" />
 </a>

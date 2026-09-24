@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://github.com/lupaxa-gh-toolbox" target="_blank" rel="noopener noreferrer">
+    <a href="https://github.com/lupaxa-gh-toolbox">
         <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/organisations/gh-toolbox/readme-logo.png" alt="Organisation Logo" />
     </a>
 </p>
@@ -269,6 +269,6 @@ Lint, type-check, and test:
 make python-check
 ```
 
-<a href="https://github.com/the-lupaxa-project" target="_blank" rel="noopener noreferrer">
+<a href="https://github.com/the-lupaxa-project">
     <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/components/footer-for-child-orgs.svg" alt="The Lupaxa Project Footer" width="100%" />
 </a>
