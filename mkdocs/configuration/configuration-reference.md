@@ -1,8 +1,6 @@
 # Configuration Reference
 
-This section provides a complete reference for every configuration property supported by **GitHub Repository Sync**.
-
-The configuration file is written in YAML, JSON, or JSON5 and is validated
+The configuration file is YAML, JSON, or JSON5. It is validated
 before any synchronisation operations begin. YAML is the default and
 recommended format.
 
@@ -182,10 +180,4 @@ When creating configuration files:
 
 ## Examples
 
-Practical configuration examples are provided in the **Examples** section.
-
-These demonstrate common configurations ranging from a single organisation through to larger multi-organisation environments with path aliases.
-
-## Next Steps
-
-Continue to **Examples** to see complete configuration files for common deployment scenarios.
+Complete files are in [Examples](examples.md).

@@ -60,6 +60,9 @@ strict: true
 theme:
   name: material
   custom_dir: overrides
+  font:
+    text: IBM Plex Sans
+    code: IBM Plex Mono
   language: en
   logo: assets/images/logo.png
   favicon: assets/images/favicon.png
@@ -99,7 +102,7 @@ hooks:
 nav:
   - Home: index.md
 
-  - Getting started:
+  - Getting Started:
       - getting-started/index.md
       - Installation: getting-started/installation.md
       - Quick Start: getting-started/quick-start.md
@@ -114,13 +117,9 @@ nav:
       - usage/index.md
       - Commands: usage/commands.md
       - Synchronisation: usage/synchronisation.md
+      - Safety Model: usage/safety-model.md
+      - Repository States: usage/repository-states.md
       - Automation: usage/automation.md
-
-  - Concepts:
-      - concepts/index.md
-      - Safety Model: concepts/safety-model.md
-      - Repository States: concepts/repository-states.md
-      - Architecture: concepts/architecture.md
 
   - Reference:
       - reference/index.md
@@ -128,6 +127,7 @@ nav:
       - Exit Codes: reference/exit-codes.md
       - Troubleshooting: reference/troubleshooting.md
       - Frequently Asked Questions: reference/faq.md
+      - Architecture: reference/architecture.md
 
 markdown_extensions:
   - abbr

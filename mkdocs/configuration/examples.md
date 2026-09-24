@@ -1,8 +1,6 @@
 # Configuration Examples
 
-This section contains example configuration files demonstrating common ways to use **GitHub Repository Sync**.
-
-The examples are intended to illustrate the overall structure of a configuration rather than every supported option. Refer to the **Configuration Reference** for complete details of each available property.
+These files show structure. Every property is defined in the [Configuration Reference](configuration-reference.md).
 
 All examples use YAML, the default and recommended format. Equivalent JSON and
 JSON5 files are also accepted.
@@ -121,7 +119,3 @@ For larger repository collections, the following practices are recommended:
 -   Validate the configuration before synchronising.
 
 These simple practices improve readability and reduce the likelihood of configuration errors.
-
-## Next Steps
-
-Once you have created your configuration, continue to the **Usage** section to learn how to validate it, inspect planned operations and synchronise your repositories.

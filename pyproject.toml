@@ -8,7 +8,7 @@ build-backend = "setuptools.build_meta"
 name = "lupaxa-github-repo-sync"
 version = "0.1.4"
 description = "Safely clone and update large collections of GitHub repositories from a declarative JSON5 configuration."
-readme = "README-PYPI.md"
+readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
 license-files = [

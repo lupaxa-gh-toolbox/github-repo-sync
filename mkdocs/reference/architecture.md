@@ -1,22 +1,6 @@
 # Architecture
 
-GitHub Repository Sync has been designed around a modular architecture that separates configuration, validation, repository processing and user interaction into distinct components.
-
-This separation makes the application easier to understand, maintain and extend whilst ensuring that each component has a clearly defined responsibility.
-
-## Design Goals
-
-The architecture is based on several core principles:
-
-- Separation of responsibilities.
-- Strong typing throughout the codebase.
-- Predictable execution.
-- Non-destructive operation.
-- Clear error reporting.
-- Extensibility.
-- Testability.
-
-These principles help keep the codebase maintainable as new features are introduced.
+Configuration loading, validation, repository processing, Git operations, and presentation are separate components.
 
 ## High-Level Architecture
 
@@ -147,31 +131,4 @@ Where practical:
 
 ## Extensibility
 
-The modular design allows new functionality to be introduced with minimal impact on existing components.
-
-Future enhancements may include:
-
-- Additional configuration options.
-- Alternative Git hosting providers.
-- Additional reporting formats.
-- Extended automation capabilities.
-- New validation rules.
-
-Because responsibilities are clearly separated, new functionality can usually be added by extending existing components rather than modifying unrelated parts of the application.
-
-## Summary
-
-The architecture of GitHub Repository Sync has been designed to be:
-
-- Modular.
-- Predictable.
-- Maintainable.
-- Extensible.
-- Testable.
-
-By separating configuration, validation, synchronisation, Git operations and presentation into dedicated components, the application remains straightforward to
-understand whilst providing a solid foundation for future development.
-
-## Next Steps
-
-Continue to the **Reference** section for detailed technical information, including exit codes, troubleshooting guidance and answers to frequently asked questions.
+A new behaviour belongs in the component that already owns that responsibility.

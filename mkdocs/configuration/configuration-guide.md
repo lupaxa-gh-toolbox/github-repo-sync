@@ -3,9 +3,7 @@
 GitHub Repository Sync is configured using a single YAML, JSON, or JSON5
 configuration file. YAML is the default and recommended format.
 
-The configuration defines which GitHub organisations and repositories should be synchronised, where they should be stored locally and how the synchronisation process should behave.
-
-Using a declarative configuration makes synchronisation repeatable, easy to review and suitable for both interactive and automated use.
+The file lists the GitHub organisations and repositories to synchronise, the local `clone_path`, and the synchronisation options.
 
 ## Configuration File Location
 
@@ -67,7 +65,7 @@ Configuration
         └── repositories
 ```
 
-The exact configuration properties are documented in the **Configuration Reference**.
+Every property is defined in the [Configuration Reference](configuration-reference.md).
 
 ## Local Directory Layout
 
@@ -162,12 +160,4 @@ For larger environments, consider the following recommendations:
 
 These practices make configuration files easier to review and maintain over time.
 
-## Configuration Reference
-
-This guide introduces the overall configuration structure.
-
-For detailed information about every supported configuration property, including data types, defaults and validation rules, continue to the **Configuration Reference**.
-
-## Next Steps
-
-Continue to the **Configuration Reference** for a complete description of every supported configuration option.
+Every property, type, and default is in the [Configuration Reference](configuration-reference.md).

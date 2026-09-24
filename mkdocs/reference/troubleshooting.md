@@ -1,12 +1,6 @@
 # Troubleshooting
 
-This guide provides solutions to the most common issues encountered when installing, configuring and running **GitHub Repository Sync**.
-
-Many problems can be resolved by carefully reviewing the error message reported by the application and verifying the configuration, Git environment and authentication.
-
 ## General Troubleshooting Process
-
-When an issue occurs, work through the following steps:
 
 1. Read the complete error message.
 2. Verify the configuration file.
@@ -17,8 +11,6 @@ When an issue occurs, work through the following steps:
 7. Enable verbose output if additional information is required.
 
 Following this sequence resolves the majority of common issues.
-
----
 
 ## Configuration Could Not Be Loaded
 
@@ -55,8 +47,6 @@ grs --config /path/to/config.yaml --validate
 
 Correct any reported validation errors before continuing.
 
----
-
 ## Configuration Validation Failed
 
 ### Symptoms
@@ -81,8 +71,6 @@ grs --validate
 
 Correct all reported validation errors before running synchronisation.
 
----
-
 ## Git Is Not Installed
 
 ### Symptoms
@@ -100,8 +88,6 @@ git --version
 If Git is not installed, install it using your operating system's preferred package manager.
 
 After installation, ensure that the `git` executable is available on your system `PATH`.
-
----
 
 ## Authentication Failed
 
@@ -140,8 +126,6 @@ git ls-remote https://github.com/organisation/repository.git
 
 Correct any authentication issues before retrying synchronisation.
 
----
-
 ## Repository Cannot Be Cloned
 
 ### Symptoms
@@ -164,8 +148,6 @@ Verify:
 - Repository URL.
 - Repository permissions.
 - Internet connectivity.
-
----
 
 ## Repository Update Failed
 
@@ -200,8 +182,6 @@ git branch
 
 Resolve any reported Git issues before running synchronisation again.
 
----
-
 ## Remote History Was Rewritten
 
 ### Symptoms
@@ -230,8 +210,6 @@ grs --recover-rewritten-history
 ```
 
 If the working tree is dirty, commit, stash, or move those changes first. The recover flag never overrides a dirty repository.
-
----
 
 ## Network Problems
 
@@ -270,8 +248,6 @@ curl https://github.com
 
 Retry the operation once connectivity has been restored.
 
----
-
 ## Slow Synchronisation
 
 ### Symptoms
@@ -308,8 +284,6 @@ If performance changes significantly compared with previous runs, investigate:
 - GitHub service status.
 - The `--workers` setting.
 
----
-
 ## Unexpected Application Error
 
 ### Symptoms
@@ -330,8 +304,6 @@ Collect the following information before reporting the issue:
 
 This information greatly assists with diagnosis.
 
----
-
 ## Enabling Verbose Output
 
 If additional diagnostic information is required, enable verbose mode.
@@ -342,25 +314,18 @@ grs --verbose sync
 
 Verbose output provides additional information about configuration loading, repository processing and synchronisation progress.
 
----
-
 ## Still Need Help?
 
-If the issue cannot be resolved:
+If the issue is still open:
 
-- Confirm you are using the latest version of the application.
-- Validate the configuration.
-- Verify Git authentication independently.
-- Review the error message carefully.
-- Gather diagnostic information before reporting the issue.
-
-Providing clear reproduction steps and relevant diagnostic information will significantly reduce the time required to identify and resolve the problem.
+- Confirm the installed version (`grs --version`).
+- Validate the configuration (`grs --validate`).
+- Verify Git authentication outside `grs`.
+- Keep the full error text, the command, and the configuration (with secrets removed).
 
 ## Related Documentation
 
-See also:
-
-- **Configuration Guide**
-- **Command Reference**
-- **Exit Codes**
-- **Safety Model**
+- [Configuration Guide](../configuration/configuration-guide.md)
+- [Command Reference](command-reference.md)
+- [Exit Codes](exit-codes.md)
+- [Safety Model](../usage/safety-model.md)

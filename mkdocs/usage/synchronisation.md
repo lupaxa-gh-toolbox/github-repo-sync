@@ -1,10 +1,6 @@
 # Synchronisation
 
-Synchronisation is the core function of **GitHub Repository Sync**.
-
-During a synchronisation run, the application compares your local repository collection with the configuration file and safely performs the operations required to bring the two into alignment.
-
-Every repository is processed independently, allowing problems affecting one repository to be reported without necessarily preventing the remaining repositories from being processed.
+A run compares the local tree with the configuration file. Each repository is cloned, fast-forwarded, or skipped on its own. A failure on one repository does not stop the others.
 
 ## Synchronisation Workflow
 
@@ -96,9 +92,7 @@ Before updating a repository, the application performs a series of safety checks
 
 Repositories requiring manual intervention are skipped rather than modified automatically.
 
-This helps prevent accidental loss of local work.
-
-Further information is available in the **Safety Model** documentation.
+The checks are in the [Safety Model](safety-model.md).
 
 ## Processing Large Repository Collections
 
@@ -160,7 +154,3 @@ For reliable synchronisation:
 - Review warnings and errors after each run.
 
 Following these recommendations helps ensure consistent and predictable synchronisation results.
-
-## Next Steps
-
-If you intend to run GitHub Repository Sync unattended or as part of a scheduled workflow, continue to **Automation**.

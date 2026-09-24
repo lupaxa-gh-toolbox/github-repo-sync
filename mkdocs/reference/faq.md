@@ -1,8 +1,6 @@
 # Frequently Asked Questions
 
-This guide answers some of the questions most commonly asked by users of **GitHub Repository Sync**.
-
-If you cannot find the answer to your question here, refer to the **Troubleshooting** guide or the command-line help.
+Operational failures are in [Troubleshooting](troubleshooting.md). Installed options are in `grs --help`.
 
 ## General
 
@@ -11,8 +9,6 @@ If you cannot find the answer to your question here, refer to the **Troubleshoot
 GitHub Repository Sync is a command-line application for managing and synchronising collections of GitHub repositories from a single configuration file.
 
 It is designed to simplify the management of large numbers of repositories whilst providing safe, predictable and repeatable synchronisation.
-
----
 
 ### Who is the application intended for?
 
@@ -25,15 +21,11 @@ The application is suitable for:
 - System administrators.
 - Organisations managing multiple GitHub repositories.
 
----
-
 ### Does the application only work with GitHub?
 
 The current version is designed specifically for GitHub.
 
 Future versions may introduce support for additional Git hosting platforms.
-
----
 
 ## Configuration
 
@@ -51,16 +43,12 @@ By default, the application searches the home directory in this order:
 An alternative YAML, JSON, or JSON5 file can be specified using the `--config`
 option.
 
----
-
 ### Which configuration formats are supported?
 
 YAML, JSON, or JSON5. YAML is the default and recommended format.
 
 YAML and JSON5 allow comments. JSON5 also allows trailing commas and unquoted
 object keys. Strict JSON does not allow comments.
-
----
 
 ### Can I maintain multiple configurations?
 
@@ -74,8 +62,6 @@ For example:
 grs --config work.yaml
 ```
 
----
-
 ## Synchronisation
 
 ### Will the application overwrite my local work?
@@ -86,8 +72,6 @@ Protecting existing repositories is a fundamental design goal of the application
 
 Repositories are inspected before synchronisation, and operations that could result in unintended data loss are intentionally avoided.
 
----
-
 ### Does the application delete repositories?
 
 No.
@@ -96,15 +80,11 @@ Repositories are never deleted automatically during synchronisation.
 
 Repository removal remains a manual operation.
 
----
-
 ### What happens if one repository fails?
 
 Repositories are processed independently.
 
 Where possible, synchronisation continues with the remaining repositories, and a summary is displayed when processing has completed.
-
----
 
 ### Why was a repository skipped?
 
@@ -118,8 +98,6 @@ Common reasons include:
 - Network failures.
 
 The application reports the reason whenever possible.
-
----
 
 ## Authentication
 
@@ -136,8 +114,6 @@ This may include:
 - Git Credential Manager.
 - Operating system credential stores.
 
----
-
 ### Can I use SSH instead of HTTPS?
 
 Yes.
@@ -145,8 +121,6 @@ Yes.
 The application supports whichever repository URLs are defined in your configuration.
 
 If your configuration uses SSH repository URLs, Git will authenticate using your configured SSH credentials.
-
----
 
 ## Automation
 
@@ -162,8 +136,6 @@ The application has been designed for unattended execution and integrates well w
 - Continuous Integration systems.
 - Automation platforms.
 
----
-
 ### Can I use the application in CI pipelines?
 
 Yes.
@@ -171,8 +143,6 @@ Yes.
 The application returns meaningful exit codes, making it suitable for automation and Continuous Integration workflows.
 
 Automation should evaluate exit codes rather than parsing console output.
-
----
 
 ## Performance
 
@@ -191,8 +161,6 @@ The overall execution time depends primarily on:
 - GitHub responsiveness.
 - Local storage performance.
 
----
-
 ### Why does synchronisation sometimes take longer?
 
 Longer execution times are usually caused by external factors, such as:
@@ -204,8 +172,6 @@ Longer execution times are usually caused by external factors, such as:
 - A low `--workers` value, or GitHub SSH throttling at a high one.
 
 This behaviour is generally expected. If SSH errors increase, reduce `--workers`.
-
----
 
 ## Troubleshooting
 
@@ -219,8 +185,6 @@ grs --validate
 
 Correct all reported validation errors before attempting synchronisation.
 
----
-
 ### The application cannot access GitHub.
 
 Verify:
@@ -232,24 +196,18 @@ Verify:
 
 You can also verify authentication independently using standard Git commands.
 
----
-
 ### Where can I get more help?
 
 If the documentation does not answer your question:
 
-1. Review the **Troubleshooting** guide.
-2. Check the command-line help.
-3. Confirm you are using the latest version.
-4. Gather diagnostic information before reporting an issue.
-
-Providing clear reproduction steps and complete error messages makes issues much easier to diagnose.
+1. Review [Troubleshooting](troubleshooting.md).
+2. Check `grs --help`.
+3. Confirm the installed version with `grs --version`.
+4. Keep the command, the full error text, and the configuration (with secrets removed).
 
 ## Related Documentation
 
-See also:
-
-- **Troubleshooting**
-- **Command Reference**
-- **Exit Codes**
-- **Configuration Guide**
+- [Troubleshooting](troubleshooting.md)
+- [Command Reference](command-reference.md)
+- [Exit Codes](exit-codes.md)
+- [Configuration Guide](../configuration/configuration-guide.md)

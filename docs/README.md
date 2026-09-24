@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://github.com/lupaxa-gh-toolbox">
+    <a href="https://github.com/lupaxa-gh-toolbox" target="_blank" rel="noopener noreferrer">
         <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/organisations/gh-toolbox/readme-logo.png" alt="Organisation Logo" />
     </a>
 </p>
@@ -18,6 +18,6 @@ The following documents define the standards that apply across **The Lupaxa Proj
 | [Security Policy](SECURITY.md)        | Responsible disclosure and secure development practices.          |
 | [Support Guide](SUPPORT.md)           | How to obtain help and support.                                   |
 
-<a href="https://github.com/the-lupaxa-project">
+<a href="https://github.com/the-lupaxa-project" target="_blank" rel="noopener noreferrer">
     <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/components/footer-for-child-orgs.svg" alt="The Lupaxa Project Footer" width="100%" />
 </a>

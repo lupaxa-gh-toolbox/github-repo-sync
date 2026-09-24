@@ -10,8 +10,6 @@ Every command follows the same high-level workflow:
 4. Display a summary.
 5. Return an appropriate exit code.
 
-The application has been designed to provide predictable behaviour, clear feedback and meaningful exit codes suitable for both interactive use and automation.
-
 > **Important**
 >
 > The commands shown in this document reflect the current release of the application. Use `grs --help` to display the commands and options available in your installed version.
@@ -158,8 +156,8 @@ grs --recover-rewritten-history
 This flag is only valid during synchronisation. Dirty working trees are still skipped.
 
 Synchronisation and `--status` process repositories concurrently. The default
-worker count is the number of CPUs. Per-repository output stays in configuration
-order:
+worker count is the number of CPUs. Per-repository output is alphabetical by
+GitHub name after load:
 
 ```bash
 grs --workers 8
@@ -176,7 +174,7 @@ Typical outcomes include:
 - Synchronisation failure.
 - Unexpected internal error.
 
-A complete list of exit codes is available in the **Reference** section.
+The codes are in [Exit Codes](../reference/exit-codes.md).
 
 ## Command Output
 
@@ -203,8 +201,4 @@ If a command does not behave as expected:
 2. Confirm that Git is installed.
 3. Ensure that GitHub authentication is correctly configured.
 4. Review any error messages displayed by the application.
-5. Consult the **Troubleshooting** guide.
-
-## Next Steps
-
-Continue to **Synchronisation** to learn how GitHub Repository Sync inspects repositories, determines the required actions and performs safe updates.
+5. Consult [Troubleshooting](../reference/troubleshooting.md).

@@ -1,25 +1,6 @@
 # Repository States
 
-Before any synchronisation takes place, **GitHub Repository Sync** inspects each configured repository to determine its current state.
-
-The state of a repository determines what action, if any, the application will perform. This process ensures that repositories are only modified when it is safe to do so.
-
-Every repository is evaluated independently, allowing the application to make the most appropriate decision for each repository without affecting the processing of others.
-
-## Why Repository States Matter
-
-Not every repository requires the same action.
-
-For example, a repository may:
-
-- Not exist locally.
-- Already be up to date.
-- Require an update.
-- Contain local changes.
-- Be inaccessible.
-- Require manual intervention.
-
-Rather than applying the same operation to every repository, GitHub Repository Sync determines the current state before deciding what to do.
+`grs` inspects each configured repository and picks one action from that state: clone, fast-forward, skip, or report an error. Repositories are evaluated independently. The checks that make an update safe are in the [Safety Model](safety-model.md).
 
 ## Repository Processing Workflow
 
@@ -101,17 +82,9 @@ Instead, it means the application determined that automatic synchronisation coul
 
 Skipping one repository does not prevent the remaining repositories from being processed.
 
-## Repository Processing Is Independent
+## Independent Processing
 
-Each repository is processed independently from every other repository.
-
-This provides several advantages:
-
-- A failure affecting one repository does not necessarily stop the synchronisation.
-- Progress continues wherever possible.
-- The final summary accurately reflects the state of every repository.
-
-This behaviour is particularly important when synchronising large collections of repositories.
+A failure on one repository does not stop the others. The summary lists every repository.
 
 ## Summary Reporting
 
@@ -125,16 +98,4 @@ Depending on the synchronisation, the summary may include:
 - Errors encountered.
 - Overall success or failure.
 
-This provides a clear overview of the synchronisation without requiring the user to inspect every individual repository.
-
-## Relationship to the Safety Model
-
-Repository states form part of the application's overall safety model.
-
-The current state of a repository is used to determine whether synchronisation can proceed safely or whether manual intervention is required.
-
-Further information is available in the **Safety Model** documentation.
-
-## Next Steps
-
-Continue to **Architecture** for an overview of the application's internal structure and the components responsible for configuration, validation and synchronisation.
+The checks behind those states are in the [Safety Model](safety-model.md).

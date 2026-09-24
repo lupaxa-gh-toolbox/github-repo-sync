@@ -1,9 +1,5 @@
 # Command Reference
 
-This document provides a complete reference for the commands supported by **GitHub Repository Sync**.
-
-The command-line interface has been designed to provide a consistent and predictable experience, with each command performing a single well-defined task.
-
 ## Command Syntax
 
 The general command syntax is:
@@ -21,16 +17,36 @@ Where:
 
 The following options are available regardless of the command being executed.
 
-| Option            | Description                                                          |
-| :---------------- | :------------------------------------------------------------------- |
-| `--config <file>` | Specify an alternative YAML, JSON, or JSON5 configuration file.      |
-| `--no-colour`     | Disable coloured console output.                                     |
-| `--version`       | Display the application version.                                     |
-| `--help`          | Display command-line help.                                           |
+| Option                | Description                                                     |
+| :-------------------- | :-------------------------------------------------------------- |
+| `-c`, `--config FILE` | Path to a YAML, JSON, or JSON5 configuration file.              |
+| `--version`           | Print the version and exit.                                     |
+| `--help`              | Print command-line help and exit.                               |
+
+## Presentation
+
+| Option                      | Description                                                               |
+| :-------------------------- | :------------------------------------------------------------------------ |
+| `--no-header`               | Do not print the application heading.                                     |
+| `--no-colour`, `--no-color` | Disable coloured console output.                                          |
+| `--console-width COLUMNS`   | Set the console width. Values are clamped to 80-300. The default is 180.  |
+
+## Synchronisation Output
+
+These options apply to a synchronisation run. They are ignored for `--validate` and `--plan`.
+
+| Option                    | Description                                                    |
+| :------------------------ | :------------------------------------------------------------- |
+| `--no-configuration`      | Do not print the configuration summary before synchronising.   |
+| `--no-progress`           | Disable the synchronisation progress display.                  |
+| `--no-repository-output`  | Do not print a result line for each repository.                |
+| `--results-table`         | Print a table of every repository result.                      |
+| `--no-failure-table`      | Do not print the repository failure table.                     |
+| `--no-summary-table`      | Do not print the synchronisation summary table.                |
 
 > **Note**
 >
-> The exact set of global options may evolve between releases. Always refer to `grs --help` for the version you are using.
+> The exact set of options may change between releases. Use `grs --help` for the installed version.
 
 ## Operating Modes
 
@@ -215,15 +231,9 @@ All commands follow the same general execution model.
 5. Report the outcome.
 6. Return an appropriate exit code.
 
-This consistent behaviour makes the application suitable for both interactive use and automation.
-
 ## Command Exit Status
 
-Every command returns an exit code indicating whether it completed successfully.
-
-Automation systems should always use the exit code rather than parsing console output to determine success or failure.
-
-Complete details are provided in the **Exit Codes** guide.
+Every command returns an exit code. Scripts and CI should use that status, not stdout. The codes are in [Exit Codes](exit-codes.md).
 
 ## Getting Help
 
@@ -239,9 +249,7 @@ The built-in help always reflects the capabilities of the installed version and 
 
 ## Related Documentation
 
-For additional information, see:
-
-- **Configuration Guide**
-- **Commands**
-- **Automation**
-- **Exit Codes**
+- [Configuration Guide](../configuration/configuration-guide.md)
+- [Commands](../usage/commands.md)
+- [Automation](../usage/automation.md)
+- [Exit Codes](exit-codes.md)

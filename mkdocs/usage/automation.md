@@ -1,8 +1,6 @@
 # Automation
 
-GitHub Repository Sync has been designed to operate reliably in both interactive and unattended environments.
-
-Its predictable behaviour, comprehensive validation and meaningful exit codes make it well suited for scheduled execution, Continuous Integration (CI) systems and other automated workflows.
+`grs` is safe to run unattended. Use the process exit status in cron, scheduled tasks, and CI. Exit codes are listed in [Exit Codes](../reference/exit-codes.md).
 
 ## Before Automating
 
@@ -92,7 +90,7 @@ Typical outcomes include:
 - Synchronisation failure.
 - Unexpected application error.
 
-A complete list of exit codes is provided in the **Reference** section.
+The codes are in [Exit Codes](../reference/exit-codes.md).
 
 ## Authentication
 
@@ -133,8 +131,3 @@ Typical uses include:
 - Supporting scheduled maintenance tasks.
 
 The application's predictable behaviour makes it suitable for integration with a wide range of automation platforms.
-
-## Next Steps
-
-Once you are familiar with the command-line interface and synchronisation process, continue to the **Concepts** section to learn more about the application's
-safety model, repository processing and internal architecture.

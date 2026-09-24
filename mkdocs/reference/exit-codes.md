@@ -1,18 +1,6 @@
 # Exit Codes
 
-Every command executed by **GitHub Repository Sync** returns an exit code when it finishes.
-
-Exit codes provide a reliable way for shell scripts, automation platforms and Continuous Integration (CI) systems to determine whether an operation completed successfully.
-
-Unlike console output, exit codes are intended for machine-readable processing and should always be used when automating the application.
-
-## Why Exit Codes Matter
-
-Automation should never rely on parsing console output.
-
-Instead, scripts should check the exit code returned by the application.
-
-For example:
+`grs` reports success or failure through its process exit status. Scripts and CI should use that status. Do not parse stdout.
 
 ```bash
 grs
@@ -24,11 +12,7 @@ else
 fi
 ```
 
-Most automation systems provide native support for evaluating command exit codes.
-
 ## Standard Exit Codes
-
-The following exit codes are reserved by the application.
 
 | Exit Code | Meaning                             |
 | :-------: | :---------------------------------- |
@@ -164,8 +148,6 @@ Following these recommendations helps ensure reliable and predictable automated 
 
 ## Related Documentation
 
-For more information, see:
-
-- **Automation**
-- **Troubleshooting**
-- **Command Reference**
+- [Automation](../usage/automation.md)
+- [Troubleshooting](troubleshooting.md)
+- [Command Reference](command-reference.md)

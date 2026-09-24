@@ -1,11 +1,12 @@
 # Installation
 
-This guide explains how to install **GitHub Repository Sync**, verify your installation and ensure your environment is correctly configured before
-performing your first synchronisation.
+```bash
+python3 -m pip install lupaxa-github-repo-sync
+```
+
+`python3 -m pip` installs the package for that interpreter. The console script is `grs`.
 
 ## System Requirements
-
-Before installing the application, ensure that your system meets the following requirements.
 
 ### Python
 
@@ -33,9 +34,7 @@ If Git is not installed, refer to the official Git documentation for installatio
 
 ### GitHub Access
 
-You should ensure that you can access any repositories you intend to synchronise.
-
-For private repositories, configure Git authentication before using the application. Supported authentication methods include:
+Private repositories need Git authentication before `grs` runs. Supported methods:
 
 - SSH keys.
 - Personal Access Tokens (PATs).
@@ -43,16 +42,6 @@ For private repositories, configure Git authentication before using the applicat
 - Operating system credential stores.
 
 The application uses your existing Git configuration and does not implement its own authentication mechanism.
-
-## Installing from PyPI
-
-Install the latest stable release using `pip`:
-
-```bash
-python3 -m pip install lupaxa-github-repo-sync
-```
-
-Using `python3 -m pip` ensures that the package is installed for the intended Python interpreter.
 
 ## Upgrading
 
@@ -64,17 +53,8 @@ python3 -m pip install --upgrade lupaxa-github-repo-sync
 
 ## Verifying the Installation
 
-Confirm that the application has been installed successfully:
-
 ```bash
 grs --version
-```
-
-The command should display the installed version of **GitHub Repository Sync**.
-
-You can also display the available command-line options:
-
-```bash
 grs --help
 ```
 
@@ -90,17 +70,9 @@ application searches the home directory in this order:
 ~/.github-repo-sync.json5
 ```
 
-YAML is the default and recommended format. The file contains the
-organisations, repositories and synchronisation options used by the
-application.
+YAML is the default. The file format is specified in [Configuration](../configuration/index.md).
 
-Detailed information about the configuration format is provided in the **Configuration** section of this documentation.
-
-## Installing in a Virtual Environment
-
-Although not required, installing the application inside a Python virtual environment is recommended when working on development systems.
-
-Create a virtual environment:
+## Virtual Environment
 
 ```bash
 python3 -m venv .venv
@@ -144,8 +116,4 @@ If installation fails:
 - Confirm that the `grs` command is available after installation.
 - Verify that your GitHub authentication is working if you intend to synchronise private repositories.
 
-Further troubleshooting guidance is available in the **Reference** section of this documentation.
-
-## Next Steps
-
-Once the application has been installed successfully, continue to **Quick Start** to create your first configuration file and perform your first synchronisation.
+Other failures are listed in [Troubleshooting](../reference/troubleshooting.md).

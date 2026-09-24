@@ -1,25 +1,14 @@
 <p align="center">
-    <a href="https://github.com/lupaxa-gh-toolbox">
+    <a href="https://github.com/lupaxa-gh-toolbox" target="_blank" rel="noopener noreferrer">
         <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/organisations/gh-toolbox/readme-logo.png" alt="Organisation Logo" />
     </a>
 </p>
 
 <h1 align="center">GitHub Repository Sync</h1>
 
-Safely clone and synchronise large collections of GitHub repositories from a single declarative configuration.
+**GitHub Repository Sync** clones and fast-forwards the GitHub repositories listed in one YAML, JSON, or JSON5 configuration file.
 
-## Overview
-
-**GitHub Repository Sync** is a command-line application that clones, organises, and safely synchronises GitHub repositories using a declarative YAML,
-JSON, or JSON5 configuration file.
-
-Unlike many repository synchronisation tools, it does not assume every repository can be updated automatically. Instead, each repository is inspected before
-any Git operation is performed, ensuring that only repositories confirmed to be in a safe state are modified.
-
-The application is suitable for managing anything from a handful of repositories to several hundred repositories across multiple GitHub organisations.
-
-Synchronisation is the default operation. Running the application without an alternative operating mode validates the configuration, inspects each configured
-repository, clones any missing repositories, and safely updates existing repositories where appropriate.
+Missing repositories are cloned. An existing repository is inspected first and fast-forwarded only when that update is safe.
 
 ## Features
 
@@ -28,7 +17,7 @@ repository, clones any missing repositories, and safely updates existing reposit
 - Fast-forward updates where safe.
 - Protection against repositories with unsafe local states.
 - Support for HTTPS and SSH clone protocols.
-- YAML, JSON, or JSON5 configuration with inherited defaults.
+- YAML, JSON, or JSON5 configuration. A repository that omits `clone_protocol` uses `config.clone_protocol`.
 - Multiple GitHub organisation support.
 - Organisation and repository aliases.
 - Relative path organisation aliases for multiple local trees under one `clone_path`.
@@ -134,20 +123,19 @@ audit repository cleanliness without changing working trees, branches, or commit
 | :------------------------- | :--------------------------------------------------------- |
 | `-c FILE`, `--config FILE` | Use the specified YAML, JSON, or JSON5 configuration file. |
 
-> [!NOTE]
-> If `--config` is not specified, the application looks for a default
+> **Note:** If `--config` is not specified, the application looks for a default
 > configuration file in the user's home directory. It accepts YAML, JSON,
 > or JSON5 (`.github-repo-sync.yaml`, then `.yml`, then `.json`, then
 > `.json5`).
 
 ### Presentation
 
-| Option                    | Description                            |
-| :------------------------ | :------------------------------------- |
-| `--no-header`             | Do not display the application header. |
-| `--no-colour`             | Disable coloured console output.       |
-| `--console-width COLUMNS` | Override the console width.            |
-| `--version`               | Display the application version.       |
+| Option                      | Description                                                               |
+| :-------------------------- | :------------------------------------------------------------------------ |
+| `--no-header`               | Do not display the application header.                                    |
+| `--no-colour`, `--no-color` | Disable coloured console output.                                          |
+| `--console-width COLUMNS`   | Set the console width. Values are clamped to 80-300. The default is 180.  |
+| `--version`                 | Display the application version.                                          |
 
 ### Status Check
 
@@ -164,11 +152,15 @@ audit repository cleanliness without changing working trees, branches, or commit
 
 ### Synchronisation
 
-| Option                        | Description                                                                                          |
-| :---------------------------- | :--------------------------------------------------------------------------------------------------- |
-| `--recover-rewritten-history` | Reset a clean local branch onto rewritten remote history. Without this flag those repos are skipped. |
+| Option                        | Description                                                                                                    |
+| :---------------------------- | :------------------------------------------------------------------------------------------------------------- |
+| `--recover-rewritten-history` | Synchronisation only. Reset a clean local branch onto rewritten remote history. A dirty tree is still skipped. |
+
+Rejected with `--validate`, `--plan`, or `--status`. Without this flag, rewritten history is skipped.
 
 ### Synchronisation Output
+
+These options apply to a synchronisation run. They are ignored for `--validate` and `--plan`.
 
 | Option                   | Description                                    |
 | :----------------------- | :--------------------------------------------- |
@@ -250,24 +242,33 @@ grs --no-configuration --no-progress
 
 ## Documentation
 
-Complete documentation is available in the `docs` directory and can also be published using MkDocs.
+Online documentation:
 
-The documentation includes:
+[https://github-repo-sync.thelupaxaproject.org/](https://github-repo-sync.thelupaxaproject.org/)
 
-- Getting Started
-- Installation
-- Configuration Guide
-- Configuration Reference
-- Configuration Examples
-- Command Reference
-- Synchronisation Guide
-- Repository Safety Model
-- Automation
-- Architecture
-- Troubleshooting
-- Frequently Asked Questions
-- Development Guide
+Serve the docs locally:
 
-<a href="https://github.com/the-lupaxa-project">
+```bash
+make init
+make python-install-dev
+make mkdocs-serve
+```
+
+## Development
+
+Install makefile skills, then the development extra:
+
+```bash
+make init
+make python-install-dev
+```
+
+Lint, type-check, and test:
+
+```bash
+make python-check
+```
+
+<a href="https://github.com/the-lupaxa-project" target="_blank" rel="noopener noreferrer">
     <img src="https://raw.githubusercontent.com/the-lupaxa-project/brand-assets/master/logos/components/footer-for-child-orgs.svg" alt="The Lupaxa Project Footer" width="100%" />
 </a>

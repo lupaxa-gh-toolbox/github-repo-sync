@@ -1,10 +1,6 @@
 # Safety Model
 
-One of the primary design goals of **GitHub Repository Sync** is to protect your repositories from unintended or destructive changes.
-
-Unlike tools that blindly execute Git commands, GitHub Repository Sync evaluates the state of every repository before deciding whether it is safe to perform a synchronisation.
-
-If the application cannot safely determine what action should be taken, it will stop processing that repository and report the reason to the user.
+`grs` inspects each repository before it runs Git. If it cannot decide on a safe action, it skips that repository and reports why. Other repositories in the same run continue.
 
 ## Design Principles
 
@@ -103,13 +99,9 @@ Examples include:
 - Network failures.
 - Git operation failures.
 
-Providing clear feedback helps users resolve problems without having to investigate the application's internal behaviour.
+## Skipped Repositories
 
-## Why Repositories May Be Skipped
-
-Skipping a repository should not be considered a failure.
-
-Instead, it indicates that the application determined that automatic synchronisation could not be completed safely.
+A skip means automatic synchronisation was not safe. It is not by itself a failed run.
 
 Typical reasons include:
 
@@ -119,14 +111,3 @@ Typical reasons include:
 - An operation could not be completed safely.
 
 Once the underlying issue has been resolved, the repository can be synchronised during the next run.
-
-## Summary
-
-The safety model is central to the design of GitHub Repository Sync.
-
-By validating configuration, inspecting every repository and avoiding destructive Git operations, the application provides a predictable and reliable way to
-manage large collections of GitHub repositories while protecting existing local work.
-
-## Next Steps
-
-Continue to **Repository States** to learn how the application classifies repositories and how those classifications influence synchronisation decisions.
