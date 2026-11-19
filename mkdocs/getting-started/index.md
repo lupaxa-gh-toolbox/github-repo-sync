@@ -12,9 +12,13 @@ Install the package, write a configuration file, validate it, then run `grs`.
 
 ## Configuration File
 
-If `--config` is omitted, `grs` searches the home directory in this order:
+If `--config` is omitted, `grs` searches `~/.config/github-repo-sync/` and then the home directory:
 
 ```text
+~/.config/github-repo-sync/github-repo-sync.yaml
+~/.config/github-repo-sync/github-repo-sync.yml
+~/.config/github-repo-sync/github-repo-sync.json
+~/.config/github-repo-sync/github-repo-sync.json5
 ~/.github-repo-sync.yaml
 ~/.github-repo-sync.yml
 ~/.github-repo-sync.json
@@ -23,7 +27,10 @@ If `--config` is omitted, `grs` searches the home directory in this order:
 
 YAML is the default. JSON and JSON5 are accepted. YAML and JSON5 allow comments. JSON5 also allows trailing commas and unquoted keys.
 
-The file sets `clone_path`, the GitHub organisations, and the repositories to manage. An organisation alias is a single directory name or a relative path under `clone_path`. A repository alias is a single directory name.
+The file sets `clone_path` and `clone_protocol`, the GitHub organisations, and the repositories to
+manage. A repository `clone_path` overrides the organisation `clone_path`, which overrides
+`config.clone_path`. An organisation alias is a directory name, a relative path under the effective
+`clone_path`, or `.`. A repository alias is a single directory name.
 
 Property definitions are in the [Configuration Guide](../configuration/configuration-guide.md) and the [Configuration Reference](../configuration/configuration-reference.md).
 

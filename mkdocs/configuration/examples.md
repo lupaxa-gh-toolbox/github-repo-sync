@@ -81,7 +81,9 @@ GitMaster
         └── github-repo-sync
 ```
 
-Repository aliases remain single directory names. Organisation aliases may be either a directory name or a relative path under `clone_path`.
+Repository aliases remain single directory names. Organisation aliases may be a directory name, a
+relative path under the effective `clone_path`, or `.` to place repositories directly under that
+path. An organisation or repository may set its own `clone_path`.
 
 ## Example 4: Using Comments
 

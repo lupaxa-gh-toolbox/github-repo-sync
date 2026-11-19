@@ -46,11 +46,39 @@ def resolve_configured_path(path: Path) -> Path:
     return Path(expanded_path).expanduser()
 
 
+def resolve_clone_path_setting(
+    value: object,
+    location: str,
+) -> Path:
+    """
+    Resolve a clone path override.
+
+    Args:
+        value: Raw override.
+        location: Configuration location used in error messages.
+
+    Returns:
+        Expanded path.
+
+    Raises:
+        ConfigurationError: If the override is not a non-empty path.
+
+    """
+
+    raw_clone_path = require_non_empty_string(
+        value,
+        location,
+    )
+
+    return resolve_configured_path(Path(raw_clone_path))
+
+
 def validate_repository(
     repository: object,
     organisation_index: int,
     repository_index: int,
     global_protocol: CloneProtocol,
+    clone_path: Path,
 ) -> RepositoryConfiguration:
     """
     Validate and normalise one repository configuration.
@@ -60,6 +88,7 @@ def validate_repository(
         organisation_index: Parent organisation list index.
         repository_index: Repository list index.
         global_protocol: Default clone protocol.
+        clone_path: Effective clone path before a repository override.
 
     Returns:
         Validated repository configuration.
@@ -81,6 +110,7 @@ def validate_repository(
         {
             "name",
             "alias",
+            "clone_path",
             "clone_protocol",
         },
         location,
@@ -107,10 +137,19 @@ def validate_repository(
     else:
         clone_protocol = global_protocol
 
+    if "clone_path" in repository_object:
+        repository_clone_path = resolve_clone_path_setting(
+            repository_object["clone_path"],
+            f"{location}.clone_path",
+        )
+    else:
+        repository_clone_path = clone_path
+
     return {
         "name": name,
         "alias": alias,
         "destination_name": alias or name,
+        "clone_path": str(repository_clone_path),
         "clone_protocol": clone_protocol,
     }
 
@@ -119,6 +158,7 @@ def validate_organisation(
     organisation: object,
     organisation_index: int,
     global_protocol: CloneProtocol,
+    global_clone_path: Path,
 ) -> OrganisationConfiguration:
     """
     Validate and normalise one organisation configuration.
@@ -127,6 +167,7 @@ def validate_organisation(
         organisation: Raw organisation configuration.
         organisation_index: Organisation list index.
         global_protocol: Default clone protocol.
+        global_clone_path: Default clone path.
 
     Returns:
         Validated organisation configuration.
@@ -148,6 +189,7 @@ def validate_organisation(
         {
             "name",
             "alias",
+            "clone_path",
             "repositories",
         },
         location,
@@ -169,6 +211,14 @@ def validate_organisation(
         f"{location}.alias",
     )
 
+    if "clone_path" in organisation_object:
+        organisation_clone_path = resolve_clone_path_setting(
+            organisation_object["clone_path"],
+            f"{location}.clone_path",
+        )
+    else:
+        organisation_clone_path = global_clone_path
+
     raw_repositories = require_list(
         organisation_object["repositories"],
         f"{location}.repositories",
@@ -182,6 +232,7 @@ def validate_organisation(
     repository_names: dict[str, int] = {}
     repository_destinations: dict[str, int] = {}
     repositories: list[RepositoryConfiguration] = []
+    organisation_destination = alias or name
 
     for repository_index, raw_repository in enumerate(raw_repositories):
         repository = validate_repository(
@@ -189,10 +240,15 @@ def validate_organisation(
             organisation_index=organisation_index,
             repository_index=repository_index,
             global_protocol=global_protocol,
+            clone_path=organisation_clone_path,
         )
 
         repository_name_key = repository["name"].casefold()
-        repository_destination_key = repository["destination_name"].casefold()
+        repository_destination_key = str(
+            Path(repository["clone_path"])
+            / organisation_destination
+            / repository["destination_name"]
+        ).casefold()
 
         if repository_name_key in repository_names:
             previous_index = repository_names[repository_name_key]
@@ -209,7 +265,7 @@ def validate_organisation(
             raise ConfigurationError(
                 f"{location}.repositories[{repository_index}] resolves to "
                 f"the same local directory as repositories[{previous_index}]: "
-                f"{repository['destination_name']!r}."
+                f"{repository_destination_key!r}."
             )
 
         repository_names[repository_name_key] = repository_index
@@ -303,8 +359,8 @@ def validate_configuration(
             "organisations must contain at least one organisation."
         )
 
-    organisation_names: dict[str, int] = {}
     organisation_destinations: dict[str, int] = {}
+    repository_identities: dict[str, int] = {}
     organisations: list[OrganisationConfiguration] = []
 
     for organisation_index, raw_organisation in enumerate(raw_organisations):
@@ -312,32 +368,46 @@ def validate_configuration(
             organisation=raw_organisation,
             organisation_index=organisation_index,
             global_protocol=clone_protocol,
+            global_clone_path=clone_path,
         )
 
-        organisation_name_key = organisation["name"].casefold()
-        organisation_destination_key = organisation["destination_name"].casefold()
-
-        if organisation_name_key in organisation_names:
-            previous_index = organisation_names[organisation_name_key]
-
-            raise ConfigurationError(
-                f"organisations[{organisation_index}].name duplicates "
-                f"organisations[{previous_index}].name: "
-                f"{organisation['name']!r}."
+        for repository in organisation["repositories"]:
+            repository_identity = (
+                f"{organisation['name']}/{repository['name']}".casefold()
             )
 
-        if organisation_destination_key in organisation_destinations:
-            previous_index = organisation_destinations[organisation_destination_key]
+            if repository_identity in repository_identities:
+                previous_index = repository_identities[repository_identity]
+
+                raise ConfigurationError(
+                    f"organisations[{organisation_index}] duplicates "
+                    f"{organisation['name']}/{repository['name']} already "
+                    f"listed on organisations[{previous_index}]."
+                )
+
+            repository_identities[repository_identity] = organisation_index
+
+            organisation_directory_key = str(
+                Path(repository["clone_path"]) / organisation["destination_name"]
+            ).casefold()
+
+            if organisation_directory_key not in organisation_destinations:
+                organisation_destinations[organisation_directory_key] = (
+                    organisation_index
+                )
+                continue
+
+            previous_index = organisation_destinations[organisation_directory_key]
+
+            if previous_index == organisation_index:
+                continue
 
             raise ConfigurationError(
                 f"organisations[{organisation_index}] resolves to the same "
                 f"local directory as organisations[{previous_index}]: "
-                f"{organisation['destination_name']!r}."
+                f"{organisation['destination_name']!r} under "
+                f"{repository['clone_path']!r}."
             )
-
-        organisation_names[organisation_name_key] = organisation_index
-
-        organisation_destinations[organisation_destination_key] = organisation_index
 
         organisations.append(organisation)
 

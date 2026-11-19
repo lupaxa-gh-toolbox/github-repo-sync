@@ -1,21 +1,24 @@
 # Quick Start
 
-Create `~/.github-repo-sync.yaml`, validate it, then run `grs`.
+Create `~/.config/github-repo-sync/github-repo-sync.yaml`, validate it, then run `grs`.
 
 ## Step 1: Create the Configuration File
 
 Unless another configuration file is specified on the command line, GitHub
-Repository Sync searches the home directory in this order:
+Repository Sync searches `~/.config/github-repo-sync/` and then the home directory:
 
 ```text
+~/.config/github-repo-sync/github-repo-sync.yaml
+~/.config/github-repo-sync/github-repo-sync.yml
+~/.config/github-repo-sync/github-repo-sync.json
+~/.config/github-repo-sync/github-repo-sync.json5
 ~/.github-repo-sync.yaml
 ~/.github-repo-sync.yml
 ~/.github-repo-sync.json
 ~/.github-repo-sync.json5
 ```
 
-Create `~/.github-repo-sync.yaml` if it does not already exist. YAML is the
-default and recommended format.
+Create `~/.config/github-repo-sync/github-repo-sync.yaml` if it does not already exist. A file already in the home directory is still used when that directory has none. YAML is the default and recommended format.
 
 ## Step 2: Create a Basic Configuration
 
@@ -37,7 +40,9 @@ organisations:
       - name: brand-assets
 ```
 
-Organisation aliases may be a single directory name or a relative path under `clone_path`. Repository aliases must be a single directory name.
+Organisation aliases may be a directory name, a relative path under the effective `clone_path`, or
+`.` to place repositories directly under that path. An organisation or repository may set
+`clone_path`. Repository aliases must be a single directory name.
 
 ## Step 3: Verify the Installation
 

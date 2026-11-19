@@ -11,7 +11,6 @@ from __future__ import annotations
 from pathlib import Path
 
 from .constants import (
-    DEFAULT_CONFIG_BASENAME,
     DEFAULT_WORKER_COUNT,
     EXIT_CONFIGURATION_ERROR,
     EXIT_FAILURE,
@@ -22,7 +21,6 @@ from .display import (
     print_configuration_summary,
     print_error,
     print_info,
-    print_path_detail,
     print_program_header,
     print_repository_failure,
     print_repository_result,
@@ -36,7 +34,7 @@ from .exceptions import (
     ConfigurationError,
     RepositorySyncError,
 )
-from .loader import load_configuration, resolve_default_configuration_path
+from .loader import load_configuration, select_configuration_path
 from .models import (
     RepositoryInspection,
     RepositoryResult,
@@ -92,16 +90,7 @@ def load_and_validate_configuration(
 
     """
 
-    resolved_config_path = resolve_path(config_path)
-
-    if (
-        not resolved_config_path.is_file()
-        and resolved_config_path.name == f"{DEFAULT_CONFIG_BASENAME}.yaml"
-    ):
-        resolved_config_path = resolve_default_configuration_path(
-            resolved_config_path.parent,
-        )
-
+    resolved_config_path = select_configuration_path(config_path)
     raw_configuration = load_configuration(resolved_config_path)
 
     return validate_configuration(raw_configuration)
@@ -164,13 +153,10 @@ def run_sync(
         print_error(str(exc))
         return EXIT_CONFIGURATION_ERROR
 
-    clone_path = Path(configuration["config"]["clone_path"])
-
     if show_configuration:
         _print_configuration_summary(
             configuration=configuration,
             config_path=resolved_config_path,
-            clone_path=clone_path,
         )
 
     if show_configuration_table:
@@ -178,7 +164,6 @@ def run_sync(
 
         print_configuration_table(
             organisations=configuration["organisations"],
-            clone_path=clone_path,
         )
 
     result_callback = _print_repository_result if show_repository_output else None
@@ -236,10 +221,8 @@ def run_status(
         print_error(str(exc))
         return EXIT_CONFIGURATION_ERROR
 
-    clone_path = Path(configuration["config"]["clone_path"])
     mode = "offline" if offline else "online"
     print_section(f"Status check ({mode})")
-    print_path_detail("Clone path", clone_path)
 
     total_repositories = count_repositories(configuration)
 
@@ -405,19 +388,15 @@ def run_plan(
         print_error(str(exc))
         return EXIT_CONFIGURATION_ERROR
 
-    clone_path = Path(configuration["config"]["clone_path"])
-
     _print_configuration_summary(
         configuration=configuration,
         config_path=resolved_config_path,
-        clone_path=clone_path,
     )
 
     print_section("Synchronisation Plan")
 
     print_configuration_table(
         organisations=configuration["organisations"],
-        clone_path=clone_path,
     )
 
     return EXIT_SUCCESS
@@ -427,7 +406,6 @@ def _print_configuration_summary(
     *,
     configuration: ValidatedConfiguration,
     config_path: Path,
-    clone_path: Path,
 ) -> None:
     """
     Print the common validated configuration summary.
@@ -437,14 +415,11 @@ def _print_configuration_summary(
             Validated application configuration.
         config_path:
             Resolved configuration file path.
-        clone_path:
-            Resolved repository clone root.
 
     """
 
     print_configuration_summary(
         config_path=config_path,
-        clone_path=clone_path,
         clone_protocol=configuration["config"]["clone_protocol"],
         organisation_count=len(configuration["organisations"]),
         repository_count=count_repositories(configuration),

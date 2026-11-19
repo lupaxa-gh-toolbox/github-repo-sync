@@ -31,9 +31,13 @@ Future versions may introduce support for additional Git hosting platforms.
 
 ### Where is the configuration file stored?
 
-By default, the application searches the home directory in this order:
+By default, the application searches `~/.config/github-repo-sync/` and then the home directory:
 
 ```text
+~/.config/github-repo-sync/github-repo-sync.yaml
+~/.config/github-repo-sync/github-repo-sync.yml
+~/.config/github-repo-sync/github-repo-sync.json
+~/.config/github-repo-sync/github-repo-sync.json5
 ~/.github-repo-sync.yaml
 ~/.github-repo-sync.yml
 ~/.github-repo-sync.json

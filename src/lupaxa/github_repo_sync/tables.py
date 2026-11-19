@@ -159,7 +159,6 @@ def format_repository_path(
 
 def create_configuration_table(
     organisations: Sequence[OrganisationConfiguration],
-    clone_path: Path,
 ) -> Table:
     """
     Create a table showing the validated repository configuration.
@@ -167,8 +166,6 @@ def create_configuration_table(
     Args:
         organisations:
             Validated organisation configurations.
-        clone_path:
-            Root clone directory.
 
     Returns:
         Configuration table.
@@ -209,7 +206,9 @@ def create_configuration_table(
             repository_destination = repository["destination_name"]
 
             destination_path = (
-                clone_path / organisation_destination / repository_destination
+                Path(repository["clone_path"])
+                / organisation_destination
+                / repository_destination
             )
 
             table.add_row(
@@ -224,7 +223,6 @@ def create_configuration_table(
 
 def print_configuration_table(
     organisations: Sequence[OrganisationConfiguration],
-    clone_path: Path,
 ) -> None:
     """
     Print the validated repository configuration table.
@@ -232,15 +230,12 @@ def print_configuration_table(
     Args:
         organisations:
             Validated organisation configurations.
-        clone_path:
-            Root clone directory.
 
     """
 
     display.console.print(
         create_configuration_table(
             organisations=organisations,
-            clone_path=clone_path,
         )
     )
 

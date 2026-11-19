@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from pathlib import Path
 from typing import TypedDict
 
 from .concurrency import run_ordered_tasks
@@ -40,7 +39,6 @@ def collect_repository_statuses(
     """Collect status checks for all repositories in a configuration."""
 
     ensure_git_available()
-    clone_path = Path(configuration["config"]["clone_path"])
     work: list[tuple[OrganisationConfiguration, RepositoryConfiguration]] = [
         (organisation, repository)
         for organisation in configuration["organisations"]
@@ -51,7 +49,7 @@ def collect_repository_statuses(
         item: tuple[OrganisationConfiguration, RepositoryConfiguration],
     ) -> RepositoryStatusResult:
         organisation, repository = item
-        path = build_repository_path(clone_path, organisation, repository)
+        path = build_repository_path(organisation, repository)
 
         try:
             check = check_repository_status(

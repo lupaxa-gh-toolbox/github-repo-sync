@@ -54,7 +54,6 @@ InspectionCallback = Callable[
 
 
 def build_repository_path(
-    clone_path: Path,
     organisation: OrganisationConfiguration,
     repository: RepositoryConfiguration,
 ) -> Path:
@@ -62,7 +61,6 @@ def build_repository_path(
     Build the local destination for a configured repository.
 
     Args:
-        clone_path: Root clone directory.
         organisation: Organisation configuration.
         repository: Repository configuration.
 
@@ -72,8 +70,65 @@ def build_repository_path(
     """
 
     return (
-        clone_path / organisation["destination_name"] / repository["destination_name"]
+        Path(repository["clone_path"])
+        / organisation["destination_name"]
+        / repository["destination_name"]
     )
+
+
+def organisation_directory(
+    organisation: OrganisationConfiguration,
+    repository: RepositoryConfiguration,
+) -> Path:
+    """
+    Build the local organisation directory for one repository.
+
+    Args:
+        organisation: Organisation configuration.
+        repository: Repository configuration.
+
+    Returns:
+        Organisation directory that contains the repository.
+
+    """
+
+    return Path(repository["clone_path"]) / organisation["destination_name"]
+
+
+def _prepare_organisation_directories(
+    organisation: OrganisationConfiguration,
+) -> dict[Path, RepositorySyncError]:
+    """
+    Create each organisation directory used by the organisation's repositories.
+
+    Args:
+        organisation: Organisation configuration.
+
+    Returns:
+        Directories that could not be created, keyed by path.
+
+    """
+
+    failures: dict[Path, RepositorySyncError] = {}
+    prepared: set[Path] = set()
+
+    for repository in organisation["repositories"]:
+        directory = organisation_directory(organisation, repository)
+
+        if directory in prepared or directory in failures:
+            continue
+
+        try:
+            ensure_directory(
+                directory,
+                "Organisation directory",
+            )
+        except RepositorySyncError as exc:
+            failures[directory] = exc
+        else:
+            prepared.add(directory)
+
+    return failures
 
 
 def build_result(
@@ -121,7 +176,6 @@ def synchronise_repository(
     *,
     organisation: OrganisationConfiguration,
     repository: RepositoryConfiguration,
-    clone_path: Path,
     recover_rewritten_history: bool = False,
     inspection_callback: InspectionCallback | None = None,
 ) -> RepositoryResult:
@@ -136,7 +190,6 @@ def synchronise_repository(
     Args:
         organisation: Parent organisation configuration.
         repository: Repository configuration.
-        clone_path: Root clone directory.
         recover_rewritten_history:
             Reset a clean local branch onto rewritten remote history.
         inspection_callback:
@@ -153,7 +206,6 @@ def synchronise_repository(
     clone_protocol = repository["clone_protocol"]
 
     repository_path = build_repository_path(
-        clone_path=clone_path,
         organisation=organisation,
         repository=repository,
     )
@@ -260,7 +312,6 @@ def synchronise_repository(
 def synchronise_organisation(
     *,
     organisation: OrganisationConfiguration,
-    clone_path: Path,
     recover_rewritten_history: bool = False,
     inspection_callback: InspectionCallback | None = None,
     result_callback: ResultCallback | None = None,
@@ -270,7 +321,6 @@ def synchronise_organisation(
 
     Args:
         organisation: Organisation configuration.
-        clone_path: Root clone directory.
         recover_rewritten_history:
             Reset a clean local branch onto rewritten remote history.
         inspection_callback:
@@ -283,51 +333,35 @@ def synchronise_organisation(
 
     """
 
-    organisation_path = clone_path / organisation["destination_name"]
+    directory_errors = _prepare_organisation_directories(organisation)
+    results: list[RepositoryResult] = []
 
-    try:
-        ensure_directory(
-            organisation_path,
-            "Organisation directory",
+    for repository in organisation["repositories"]:
+        directory_error = directory_errors.get(
+            organisation_directory(organisation, repository)
         )
-    except RepositorySyncError as exc:
-        skipped_results: list[RepositoryResult] = []
 
-        for repository in organisation["repositories"]:
-            repository_path = build_repository_path(
-                clone_path=clone_path,
-                organisation=organisation,
-                repository=repository,
-            )
-
+        if directory_error is not None:
             result = build_result(
                 organisation_name=organisation["name"],
                 repository_name=repository["name"],
                 local_name=repository["destination_name"],
-                repository_path=repository_path,
+                repository_path=build_repository_path(
+                    organisation=organisation,
+                    repository=repository,
+                ),
                 clone_protocol=repository["clone_protocol"],
                 action="skipped",
-                result_status=exc.result,
-                message=str(exc),
+                result_status=directory_error.result,
+                message=str(directory_error),
             )
-
-            skipped_results.append(result)
-
-            if result_callback is not None:
-                result_callback(result)
-
-        return skipped_results
-
-    results: list[RepositoryResult] = []
-
-    for repository in organisation["repositories"]:
-        result = synchronise_repository(
-            organisation=organisation,
-            repository=repository,
-            clone_path=clone_path,
-            recover_rewritten_history=recover_rewritten_history,
-            inspection_callback=inspection_callback,
-        )
+        else:
+            result = synchronise_repository(
+                organisation=organisation,
+                repository=repository,
+                recover_rewritten_history=recover_rewritten_history,
+                inspection_callback=inspection_callback,
+            )
 
         results.append(result)
 
@@ -390,40 +424,36 @@ def synchronise_repositories(
     ] = []
 
     for organisation in configuration["organisations"]:
-        organisation_path = clone_path / organisation["destination_name"]
-
-        try:
-            ensure_directory(
-                organisation_path,
-                "Organisation directory",
-            )
-        except RepositorySyncError as exc:
-            for repository in organisation["repositories"]:
-                repository_path = build_repository_path(
-                    clone_path=clone_path,
-                    organisation=organisation,
-                    repository=repository,
-                )
-                work.append(
-                    (
-                        organisation,
-                        repository,
-                        build_result(
-                            organisation_name=organisation["name"],
-                            repository_name=repository["name"],
-                            local_name=repository["destination_name"],
-                            repository_path=repository_path,
-                            clone_protocol=repository["clone_protocol"],
-                            action="skipped",
-                            result_status=exc.result,
-                            message=str(exc),
-                        ),
-                    )
-                )
-            continue
+        directory_errors = _prepare_organisation_directories(organisation)
 
         for repository in organisation["repositories"]:
-            work.append((organisation, repository, None))
+            directory_error = directory_errors.get(
+                organisation_directory(organisation, repository)
+            )
+
+            if directory_error is None:
+                work.append((organisation, repository, None))
+                continue
+
+            work.append(
+                (
+                    organisation,
+                    repository,
+                    build_result(
+                        organisation_name=organisation["name"],
+                        repository_name=repository["name"],
+                        local_name=repository["destination_name"],
+                        repository_path=build_repository_path(
+                            organisation=organisation,
+                            repository=repository,
+                        ),
+                        clone_protocol=repository["clone_protocol"],
+                        action="skipped",
+                        result_status=directory_error.result,
+                        message=str(directory_error),
+                    ),
+                )
+            )
 
     def synchronise_one(
         item: tuple[
@@ -440,7 +470,6 @@ def synchronise_repositories(
         return synchronise_repository(
             organisation=organisation,
             repository=repository,
-            clone_path=clone_path,
             recover_rewritten_history=recover_rewritten_history,
             inspection_callback=inspection_callback,
         )

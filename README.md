@@ -17,7 +17,7 @@ Missing repositories are cloned. An existing repository is inspected first and f
 - Fast-forward updates where safe.
 - Protection against repositories with unsafe local states.
 - Support for HTTPS and SSH clone protocols.
-- YAML, JSON, or JSON5 configuration. A repository that omits `clone_protocol` uses `config.clone_protocol`.
+- YAML, JSON, or JSON5 configuration. `config.clone_path` and `config.clone_protocol` are required. A repository may override `clone_protocol`. A repository `clone_path` overrides the organisation `clone_path`, which overrides `config.clone_path`.
 - Multiple GitHub organisation support.
 - Organisation and repository aliases.
 - Relative path organisation aliases for multiple local trees under one `clone_path`.
@@ -55,7 +55,7 @@ The shorter `grs` command is used throughout the remainder of this document.
 
 ## Quick Start
 
-Create `~/.github-repo-sync.yaml`.
+Create `~/.config/github-repo-sync/github-repo-sync.yaml`.
 
 ```yaml
 config:
@@ -77,11 +77,12 @@ organisations:
       - name: github-repo-sync
 ```
 
-Local layout resolves to `clone_path/<organisation-alias>/<repository-alias-or-name>`.
+Local layout resolves to `<effective-clone-path>/<organisation-alias>/<repository-alias-or-name>`. The effective clone path is the repository `clone_path`, otherwise the organisation `clone_path`, otherwise `config.clone_path`.
 
 Organisation aliases may be a single directory name or a relative path under
-`clone_path` (for example `Lupaxa/TheLupaxaProject`). Repository aliases must
-remain a single directory name.
+`clone_path` (for example `Lupaxa/TheLupaxaProject`). An alias of `.` places
+repositories directly under `clone_path`. Repository aliases must remain a
+single directory name.
 
 Validate the configuration.
 
@@ -123,10 +124,11 @@ audit repository cleanliness without changing working trees, branches, or commit
 | :------------------------- | :--------------------------------------------------------- |
 | `-c FILE`, `--config FILE` | Use the specified YAML, JSON, or JSON5 configuration file. |
 
-> **Note:** If `--config` is not specified, the application looks for a default
-> configuration file in the user's home directory. It accepts YAML, JSON,
-> or JSON5 (`.github-repo-sync.yaml`, then `.yml`, then `.json`, then
-> `.json5`).
+> **Note:** If `--config` is not specified, the application looks in
+> `~/.config/github-repo-sync/` first (`github-repo-sync.yaml`, then `.yml`,
+> then `.json`, then `.json5`), then the home directory (the same names with
+> a leading dot). A file in the home directory is used when the config
+> directory has none.
 
 ### Presentation
 

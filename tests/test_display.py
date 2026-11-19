@@ -4,12 +4,37 @@ from __future__ import annotations
 
 from io import StringIO
 
+import pytest
+
 from lupaxa.github_repo_sync.display import (
     configure_console,
     format_bracket_label,
+    get_command_name,
     print_error,
     print_system,
 )
+
+
+def test_get_command_name_includes_arguments(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "sys.argv",
+        ["/Users/wolf/.pyenv/shims/grs", "--status", "--ignore-clean"],
+    )
+
+    assert get_command_name() == "grs --status --ignore-clean"
+
+
+def test_get_command_name_quotes_arguments_with_spaces(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(
+        "sys.argv",
+        ["grs", "--config", "my config.yaml"],
+    )
+
+    assert get_command_name() == "grs --config 'my config.yaml'"
 
 
 def test_format_bracket_label_adds_spaces() -> None:

@@ -16,10 +16,14 @@ Automated jobs should always run using a dedicated service account or user accou
 
 ## Default Configuration
 
-Unless another configuration file is specified, the application searches the
-home directory in this order:
+Unless another configuration file is specified, the application searches
+`~/.config/github-repo-sync/` and then the home directory:
 
 ```text
+~/.config/github-repo-sync/github-repo-sync.yaml
+~/.config/github-repo-sync/github-repo-sync.yml
+~/.config/github-repo-sync/github-repo-sync.json
+~/.config/github-repo-sync/github-repo-sync.json5
 ~/.github-repo-sync.yaml
 ~/.github-repo-sync.yml
 ~/.github-repo-sync.json

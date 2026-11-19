@@ -7,9 +7,13 @@ The file lists the GitHub organisations and repositories to synchronise, the loc
 
 ## Configuration File Location
 
-By default, the application searches the home directory in this order:
+By default, the application searches `~/.config/github-repo-sync/` and then the home directory:
 
 ```text
+~/.config/github-repo-sync/github-repo-sync.yaml
+~/.config/github-repo-sync/github-repo-sync.yml
+~/.config/github-repo-sync/github-repo-sync.json
+~/.config/github-repo-sync/github-repo-sync.json5
 ~/.github-repo-sync.yaml
 ~/.github-repo-sync.yml
 ~/.github-repo-sync.json
@@ -28,8 +32,7 @@ The application accepts configuration files in this order of preference:
 - JSON (`.json`).
 - JSON5 (`.json5`).
 
-If `--config` is omitted, the home directory is searched as
-`.github-repo-sync.yaml`, then `.yml`, then `.json`, then `.json5`.
+If `--config` is omitted, `~/.config/github-repo-sync/` is searched first for `github-repo-sync.yaml`, then `.yml`, then `.json`, then `.json5`. The home directory is searched next for those names with a leading dot.
 
 YAML and JSON5 allow comments. JSON5 also allows trailing commas, unquoted
 property names, and single-quoted strings.
@@ -38,7 +41,7 @@ property names, and single-quoted strings.
 
 At a high level, a configuration consists of:
 
-- Global settings under `config` (including `clone_path` and optional `clone_protocol`).
+- Global settings under `config` (`clone_path` and `clone_protocol` are both required).
 - One or more GitHub organisations.
 - One or more repositories within each organisation.
 - Optional organisation and repository aliases.
@@ -57,11 +60,13 @@ Configuration
     ├── Organisation
     │   ├── name
     │   ├── alias (optional)
+    │   ├── clone_path (optional)
     │   └── repositories
     │
     └── Organisation
         ├── name
         ├── alias (optional)
+        ├── clone_path (optional)
         └── repositories
 ```
 
@@ -72,8 +77,10 @@ Every property is defined in the [Configuration Reference](configuration-referen
 Each repository is stored at:
 
 ```text
-<clone_path>/<organisation-destination>/<repository-destination>
+<effective-clone-path>/<organisation-destination>/<repository-destination>
 ```
+
+`effective-clone-path` is the repository `clone_path` when set, otherwise the organisation `clone_path` when set, otherwise `config.clone_path`.
 
 Where:
 
@@ -107,6 +114,10 @@ Organisation path aliases:
 - Must not contain `..` segments.
 - Must use `/` as the separator.
 - Must not have empty segments or a trailing `/`.
+
+An alias of `.` places that organisation's repositories directly under its effective `clone_path`.
+With `clone_path: "~"` and repository `bin`, the destination is `~/bin`. The same GitHub organisation
+may be listed again with a different alias and `clone_path`.
 
 ### Repository aliases
 

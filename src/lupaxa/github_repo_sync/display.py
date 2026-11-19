@@ -12,6 +12,7 @@ and progress modules.
 from __future__ import annotations
 
 from pathlib import Path
+import shlex
 import sys
 from typing import TextIO
 
@@ -156,10 +157,13 @@ def configure_console(
 
 def get_command_name() -> str:
     """
-    Return the executable name used to launch the application.
+    Return the command used to launch the application.
+
+    The executable path is reduced to its filename. Later arguments are kept
+    and quoted when they contain spaces.
 
     Returns:
-        Executable name, such as ``github-repo-sync`` or ``grs``.
+        Invoked command, such as ``grs --status``.
 
     """
 
@@ -172,12 +176,11 @@ def get_command_name() -> str:
         "-c",
         "__main__.py",
     }:
-        return PROGRAM_ALIAS
+        executable_name = PROGRAM_ALIAS
 
-    if executable_name.startswith("python"):
-        return f"python -m {PROGRAM_NAME}"
+    arguments = [executable_name, *sys.argv[1:]]
 
-    return executable_name
+    return " ".join(shlex.quote(argument) for argument in arguments)
 
 
 def print_program_header() -> None:
@@ -203,8 +206,6 @@ def print_program_header() -> None:
         justify="center",
     )
 
-    console.print()
-
 
 def print_section(
     title: str,
@@ -216,8 +217,6 @@ def print_section(
         title: Section title.
 
     """
-
-    console.print()
 
     console.rule(
         Text(
@@ -716,8 +715,6 @@ def print_organisation_header(
             style=STYLE_MUTED,
         )
 
-    console.print()
-
     console.rule(
         heading,
         style=STYLE_RULE_PRIMARY,
@@ -727,7 +724,6 @@ def print_organisation_header(
 def print_configuration_summary(
     *,
     config_path: Path,
-    clone_path: Path,
     clone_protocol: str,
     organisation_count: int,
     repository_count: int,
@@ -737,7 +733,6 @@ def print_configuration_summary(
 
     Args:
         config_path: Loaded configuration file.
-        clone_path: Root repository clone path.
         clone_protocol: Default clone protocol.
         organisation_count: Number of configured organisations.
         repository_count: Number of configured repositories.
@@ -749,10 +744,6 @@ def print_configuration_summary(
     print_path_detail(
         "Configuration file",
         config_path,
-    )
-    print_path_detail(
-        "Clone path",
-        clone_path,
     )
     print_detail(
         "Default clone protocol",

@@ -172,6 +172,8 @@ class RepositoryConfiguration(TypedDict):
             Optional local repository alias.
         destination_name:
             Effective local repository directory name.
+        clone_path:
+            Effective root directory for this repository.
         clone_protocol:
             Effective clone protocol for the repository.
 
@@ -180,6 +182,7 @@ class RepositoryConfiguration(TypedDict):
     name: str
     alias: str | None
     destination_name: str
+    clone_path: str
     clone_protocol: CloneProtocol
 
 

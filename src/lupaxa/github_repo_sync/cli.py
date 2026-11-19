@@ -20,6 +20,7 @@ from .commands import (
     run_validate,
 )
 from .constants import (
+    DEFAULT_CONFIG_DIRECTORY,
     DEFAULT_CONFIG_FILENAME,
     DEFAULT_WORKER_COUNT,
     EXIT_FAILURE,
@@ -242,8 +243,10 @@ def _add_configuration_arguments(
         metavar="FILE",
         help=(
             "Path to the YAML, JSON, or JSON5 configuration file "
-            f"(default: {DEFAULT_CONFIG_FILENAME}, then "
-            ".yml, then .json, then .json5 in the same directory)."
+            f"(default: {DEFAULT_CONFIG_DIRECTORY}/github-repo-sync.yaml, "
+            "then .yml, .json, and .json5 in that directory, then "
+            ".github-repo-sync.yaml, .yml, .json, and .json5 in the home "
+            "directory)."
         ),
     )
 

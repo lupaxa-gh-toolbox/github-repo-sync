@@ -15,22 +15,52 @@ from typing import IO, Any
 import json5
 import yaml
 
-from .constants import DEFAULT_CONFIG_BASENAME, DEFAULT_CONFIG_EXTENSIONS
+from .constants import (
+    DEFAULT_CONFIG_BASENAME,
+    DEFAULT_CONFIG_DIRECTORY,
+    DEFAULT_CONFIG_DIRECTORY_BASENAME,
+    DEFAULT_CONFIG_EXTENSIONS,
+    DEFAULT_CONFIG_FILENAME,
+    DEFAULT_CONFIG_HOME,
+)
 from .exceptions import ConfigurationError
+from .utils import resolve_path
+
+
+def _configuration_candidates(directory: Path, basename: str) -> list[Path]:
+    """
+    Build the configuration filenames for one directory.
+
+    Args:
+        directory: Directory to search.
+        basename: Filename without an extension.
+
+    Returns:
+        Candidates in extension order: ``.yaml``, ``.yml``, ``.json``,
+        ``.json5``.
+
+    """
+
+    return [
+        directory / f"{basename}{extension}" for extension in DEFAULT_CONFIG_EXTENSIONS
+    ]
 
 
 def resolve_default_configuration_path(
     search_dir: Path | None = None,
 ) -> Path:
     """
-    Find the default configuration file in a directory.
+    Find the default configuration file.
 
-    Candidates are tried in this order: ``.yaml``, ``.yml``, ``.json``,
-    ``.json5``.
+    When no directory is given, ``~/.config/github-repo-sync`` is searched
+    for ``github-repo-sync.yaml``, then ``.yml``, ``.json``, and ``.json5``.
+    The home directory is searched next for the same names with a leading
+    dot. A single directory is searched for the hidden names only.
 
     Args:
         search_dir:
-            Directory to search. Defaults to the user's home directory.
+            Directory to search for hidden configuration names. Defaults to
+            ``~/.config/github-repo-sync`` and then the home directory.
 
     Returns:
         Path of the first matching configuration file.
@@ -41,11 +71,22 @@ def resolve_default_configuration_path(
 
     """
 
-    directory = Path.home() if search_dir is None else search_dir
-    candidates = [
-        directory / f"{DEFAULT_CONFIG_BASENAME}{extension}"
-        for extension in DEFAULT_CONFIG_EXTENSIONS
-    ]
+    if search_dir is None:
+        candidates = [
+            *_configuration_candidates(
+                DEFAULT_CONFIG_DIRECTORY,
+                DEFAULT_CONFIG_DIRECTORY_BASENAME,
+            ),
+            *_configuration_candidates(
+                DEFAULT_CONFIG_HOME,
+                DEFAULT_CONFIG_BASENAME,
+            ),
+        ]
+    else:
+        candidates = _configuration_candidates(
+            search_dir,
+            DEFAULT_CONFIG_BASENAME,
+        )
 
     for candidate in candidates:
         if candidate.is_file():
@@ -53,6 +94,42 @@ def resolve_default_configuration_path(
 
     listed = ", ".join(str(candidate) for candidate in candidates)
     raise ConfigurationError(f"Configuration file does not exist: {listed}")
+
+
+def select_configuration_path(config_path: Path) -> Path:
+    """
+    Resolve the configuration file that should be loaded.
+
+    An explicit file is used as given. When the default
+    ``~/.config/github-repo-sync/github-repo-sync.yaml`` is missing, the
+    remaining names in that directory are tried, then the hidden names in
+    the home directory. Any other missing ``.github-repo-sync.yaml`` falls
+    back to the other hidden extensions in that same directory.
+
+    Args:
+        config_path: Requested configuration path.
+
+    Returns:
+        Configuration file to load.
+
+    Raises:
+        ConfigurationError:
+            If a default-name lookup finds no configuration file.
+
+    """
+
+    resolved_config_path = resolve_path(config_path)
+
+    if resolved_config_path.is_file():
+        return resolved_config_path
+
+    if resolved_config_path == resolve_path(DEFAULT_CONFIG_FILENAME):
+        return resolve_default_configuration_path()
+
+    if resolved_config_path.name != f"{DEFAULT_CONFIG_BASENAME}.yaml":
+        return resolved_config_path
+
+    return resolve_default_configuration_path(resolved_config_path.parent)
 
 
 def load_configuration(config_path: Path) -> dict[str, Any]:

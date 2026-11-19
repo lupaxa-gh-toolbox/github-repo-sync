@@ -238,7 +238,8 @@ def validate_optional_organisation_alias(
 
     Organisation aliases may be a single directory name or a relative path
     under ``config.clone_path`` (for example ``Lupaxa/GitHubToolbox``), so
-    multiple top-level trees can share one configuration file.
+    multiple top-level trees can share one configuration file. ``.`` places
+    the repositories directly under the effective clone path.
 
     Args:
         value: Alias value.
@@ -272,6 +273,9 @@ def validate_optional_organisation_alias(
         raise ConfigurationError(
             f"{location} must be a relative path without a leading or trailing '/'."
         )
+
+    if alias == ".":
+        return alias
 
     segments = alias.split("/")
 

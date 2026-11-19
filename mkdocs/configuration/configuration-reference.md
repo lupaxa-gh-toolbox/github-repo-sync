@@ -5,9 +5,13 @@ before any synchronisation operations begin. YAML is the default and
 recommended format.
 
 Unless another configuration file is specified on the command line, the
-application searches the home directory in this order:
+application searches `~/.config/github-repo-sync/` and then the home directory:
 
 ```text
+~/.config/github-repo-sync/github-repo-sync.yaml
+~/.config/github-repo-sync/github-repo-sync.yml
+~/.config/github-repo-sync/github-repo-sync.json
+~/.config/github-repo-sync/github-repo-sync.json5
 ~/.github-repo-sync.yaml
 ~/.github-repo-sync.yml
 ~/.github-repo-sync.json
@@ -39,6 +43,7 @@ Configuration
     ├── Organisation
     │   ├── name
     │   ├── alias
+    │   ├── clone_path
     │   └── repositories
     │
     └── Organisation
@@ -57,7 +62,7 @@ Configuration
 | Property          | Required | Description                                                                 |
 | ----------------- | -------- | --------------------------------------------------------------------------- |
 | `clone_path`      | Yes      | Local root directory under which organisations and repositories are stored. |
-| `clone_protocol`  | No       | Default clone protocol for repositories (`ssh` or `https`).                 |
+| `clone_protocol`  | Yes      | Default clone protocol for repositories (`ssh` or `https`).                 |
 
 `clone_path` supports `~` expansion and environment variables.
 
@@ -68,10 +73,11 @@ Each organisation represents a GitHub organisation whose repositories should be 
 | Property        | Required | Description                                                                 |
 | --------------- | -------- | --------------------------------------------------------------------------- |
 | `name`          | Yes      | GitHub organisation login.                                                  |
-| `alias`         | No       | Local destination under `clone_path`.                                       |
+| `alias`         | No       | Local destination under the effective `clone_path`.                         |
+| `clone_path`    | No       | Root for this organisation. Overrides `config.clone_path`.                  |
 | `repositories`  | Yes      | One or more repository definitions.                                         |
 
-Organisation names must be unique.
+The same GitHub organisation may be listed more than once. Each repository may appear only once for that organisation.
 
 ### Organisation `alias`
 
@@ -91,19 +97,21 @@ Alias validation rules:
 - Must not end with `/`.
 - Must not contain `\` separators.
 - Must not contain empty path segments.
-- Must not contain `.` or `..` path segments.
+- Must not contain `..` path segments.
+- `.` is allowed only as the whole alias. Repositories are then placed directly under the effective `clone_path`.
 
-Duplicate organisations (by GitHub name or resolved local destination) are reported as validation errors.
+A repeated repository for one GitHub organisation, and organisations that resolve to the same local directory, are reported as validation errors.
 
 ## Repository Properties
 
 Each repository entry describes a single GitHub repository.
 
-| Property          | Required | Description                                                       |
-| ----------------- | -------- | ----------------------------------------------------------------- |
-| `name`            | Yes      | GitHub repository name.                                           |
-| `alias`           | No       | Local directory name for the repository.                          |
-| `clone_protocol`  | No       | Per-repository protocol override (`ssh` or `https`).              |
+| Property          | Required | Description                                                                   |
+| ----------------- | -------- | ----------------------------------------------------------------------------- |
+| `name`            | Yes      | GitHub repository name.                                                       |
+| `alias`           | No       | Local directory name for the repository.                                      |
+| `clone_path`      | No       | Root for this repository. Overrides the organisation and `config.clone_path`. |
+| `clone_protocol`  | No       | Per-repository protocol override (`ssh` or `https`).                          |
 
 Repository names must be unique within an organisation.
 
@@ -125,8 +133,12 @@ Duplicate repository entries, or repositories that resolve to the same local dir
 For each repository, the local path is:
 
 ```text
-<config.clone_path>/<organisation alias or name>/<repository alias or name>
+<effective clone path>/<organisation alias or name>/<repository alias or name>
 ```
+
+The effective clone path is the repository `clone_path`, otherwise the organisation `clone_path`,
+otherwise `config.clone_path`. A repository `clone_path` is the same kind of override as
+`clone_protocol`: omit it to keep the inherited value. `~` and environment variables are expanded.
 
 ## Validation Rules
 

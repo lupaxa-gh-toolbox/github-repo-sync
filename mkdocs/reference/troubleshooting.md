@@ -36,6 +36,7 @@ Verify that the configuration file exists.
 For the default configuration:
 
 ```text
+~/.config/github-repo-sync/github-repo-sync.yaml
 ~/.github-repo-sync.yaml
 ```
 
