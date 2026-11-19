@@ -22,6 +22,14 @@ By default, the application searches `~/.config/github-repo-sync/` and then the 
 
 A different YAML, JSON, or JSON5 file may be specified with `-c` / `--config`.
 
+When the file is the default lookup, or already lives in `~/.config/github-repo-sync`, and that directory is a Git repository, `grs` fast-forwards it before the file is read. The synchronisation list is then taken from the updated file.
+
+Do not add that checkout to the file. `grs` and `grs --status` show it first, ahead of the sorted list, and include it in the progress total.
+
+A dirty tree, a branch with no upstream, or history that is not a fast-forward is left unchanged. `grs --validate` and `grs --plan` do not update it or show it.
+
+`grs --status` does not update it. It reports the checkout with the other repositories.
+
 This allows multiple configurations to be maintained for different environments, teams or projects.
 
 ## Supported Formats
@@ -136,15 +144,16 @@ Validation checks include:
 
 - Required properties.
 - Property types.
-- Duplicate organisations.
+- The same organisation and repository listed twice.
 - Duplicate repositories.
 - Duplicate local destinations.
 - Invalid alias values.
 - Invalid configuration structure.
 
 After a successful validation, organisations and repositories are sorted
-case-insensitively by their real GitHub names. That order is what later
-output follows, not the order in the file.
+case-insensitively by their real GitHub names. Later output follows that
+order, not the order in the file. The configuration checkout, when it is
+shown, stays first.
 
 If validation fails, synchronisation does not begin.
 
@@ -164,7 +173,8 @@ For larger environments, consider the following recommendations:
 -   Use organisation aliases that match your local directory layout.
 -   Keep repository names alphabetically ordered where practical. After load,
   organisations and repositories are sorted case-insensitively by GitHub
-  name; per-repository output follows that order, not the order in the file.
+  name. Per-repository output follows that order, not the file. The
+  configuration checkout, when shown, stays first.
 -   Remove repositories that are no longer required.
 -   Add comments explaining unusual configuration choices.
 -   Validate the configuration after making changes.

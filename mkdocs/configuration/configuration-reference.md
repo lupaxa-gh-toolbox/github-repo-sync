@@ -146,7 +146,7 @@ Before synchronisation begins, the configuration is checked for:
 
 - Missing required properties.
 - Invalid property types.
-- Duplicate organisations.
+- The same organisation and repository listed twice.
 - Duplicate repositories.
 - Duplicate local destinations.
 - Invalid alias values.
@@ -184,7 +184,8 @@ When creating configuration files:
 -   Choose organisation aliases that match your local directory layout.
 -   Keep repository lists alphabetically ordered where practical. After load,
   organisations and repositories are sorted case-insensitively by GitHub
-  name; per-repository output follows that order, not the order in the file.
+  name. Per-repository output follows that order, not the file. The
+  configuration checkout, when shown, stays first.
 -   Add comments describing unusual configuration choices.
 -   Remove obsolete repositories.
 -   Validate the configuration after making changes.

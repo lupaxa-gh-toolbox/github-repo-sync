@@ -77,7 +77,7 @@ Validation checks the entire configuration for problems including:
 - Missing required properties.
 - Invalid values.
 - Invalid property types.
-- Duplicate organisations.
+- The same organisation and repository listed twice.
 - Duplicate repositories.
 - Invalid configuration structure.
 
@@ -91,6 +91,8 @@ Check whether configured repositories are clean and synchronised with their upst
 ```bash
 grs --status
 ```
+
+When `~/.config/github-repo-sync` is the Git checkout in use, it is reported first and counted in the progress total. Status does not update it.
 
 A repository is considered **clean** when it has a healthy local layout, a clean working tree, and its current branch matches the configured upstream tracking branch (neither ahead nor behind).
 
@@ -140,13 +142,14 @@ grs
 
 The application performs the following steps:
 
-1. Loads the configuration.
-2. Validates the configuration.
-3. Inspects each configured repository.
-4. Clones repositories that do not already exist.
-5. Updates repositories where it is safe to do so.
-6. Skips repositories that require manual intervention.
-7. Displays a summary of the results.
+1. Fast-forwards `~/.config/github-repo-sync` when that directory is the Git checkout in use.
+2. Loads the configuration.
+3. Validates the configuration.
+4. Inspects each configured repository.
+5. Clones repositories that do not already exist.
+6. Updates repositories where it is safe to do so.
+7. Skips repositories that require manual intervention.
+8. Displays a summary of the results.
 
 If a remote branch was rewritten (for example with `git-reset-history`) and the
 local clone shares no ancestor with the new history, the repository is skipped as
@@ -161,7 +164,7 @@ This flag is only valid during synchronisation. Dirty working trees are still sk
 
 Synchronisation and `--status` process repositories concurrently. The default
 worker count is the number of CPUs. Per-repository output is alphabetical by
-GitHub name after load:
+GitHub name after load. The configuration checkout, when shown, stays first:
 
 ```bash
 grs --workers 8

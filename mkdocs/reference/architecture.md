@@ -67,7 +67,7 @@ Typical validation includes:
 
 - Required properties.
 - Property types.
-- Duplicate organisations.
+- The same organisation and repository listed twice.
 - Duplicate repositories.
 - Invalid values.
 - Configuration hierarchy.
@@ -80,12 +80,13 @@ The synchronisation engine coordinates the processing of repositories.
 
 Its responsibilities include:
 
-1. Processing each configured organisation.
-2. Processing configured repositories concurrently (`--workers`).
-3. Determining the required action for each repository.
-4. Calling the appropriate Git operations.
-5. Recording outcomes in the post-load sort (case-insensitive GitHub names).
-6. Producing the final summary.
+1. Fast-forwarding `~/.config/github-repo-sync` when that directory is the Git checkout in use, then showing it first.
+2. Processing each configured organisation.
+3. Processing configured repositories concurrently (`--workers`).
+4. Determining the required action for each repository.
+5. Calling the appropriate Git operations.
+6. Recording outcomes in the post-load sort (case-insensitive GitHub names).
+7. Producing the final summary.
 
 The synchronisation engine does not perform Git operations directly.
 

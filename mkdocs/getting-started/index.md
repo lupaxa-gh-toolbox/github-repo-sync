@@ -45,3 +45,5 @@ grs
 ```
 
 `grs` validates the configuration, inspects each repository, clones those that are missing, fast-forwards those that are safe to update, and skips the rest. Skip rules are in the [Safety Model](../usage/safety-model.md).
+
+When `~/.config/github-repo-sync` is the Git checkout in use, `grs` fast-forwards it before reading the file. Do not add it to the file. `grs` and `grs --status` show it first and include it in the progress total.

@@ -47,6 +47,12 @@ By default, the application searches `~/.config/github-repo-sync/` and then the 
 An alternative YAML, JSON, or JSON5 file can be specified using the `--config`
 option.
 
+### Should `~/.config/github-repo-sync` be listed in the file?
+
+No. When that directory is a Git repository and it is the checkout in use, `grs` fast-forwards it before reading the file.
+
+`grs` and `grs --status` show it first and include it in the progress total. Status does not update it. `grs --validate` and `grs --plan` leave it alone.
+
 ### Which configuration formats are supported?
 
 YAML, JSON, or JSON5. YAML is the default and recommended format.
@@ -154,7 +160,7 @@ Automation should evaluate exit codes rather than parsing console output.
 
 Yes. Repositories are processed concurrently (default: one worker per CPU). Use
 `--workers` to raise or lower the thread count. Per-repository output is
-alphabetical by GitHub name after load, not file order.
+alphabetical by GitHub name after load, not file order. The configuration checkout, when shown, stays first.
 
 The overall execution time depends primarily on:
 

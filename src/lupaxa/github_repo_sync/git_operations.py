@@ -986,6 +986,351 @@ def update_repository(
         ) from exc
 
 
+def _configuration_repository_identity(
+    repository: Repo,
+    repository_path: Path,
+) -> tuple[str, str, CloneProtocol]:
+    """
+    Read the GitHub name and clone protocol from the configuration checkout.
+
+    Args:
+        repository: Open configuration repository.
+        repository_path: Configuration repository root.
+
+    Returns:
+        Organisation name, repository name, and clone protocol.
+
+    """
+
+    try:
+        remote_url = str(repository.remote(DEFAULT_REMOTE_NAME).url)
+    except (ValueError, GitCommandError):
+        return (repository_path.name, repository_path.name, "ssh")
+
+    identity = parse_github_remote_identity(remote_url)
+    protocol: CloneProtocol = "https" if remote_url.startswith("http") else "ssh"
+
+    if identity is None:
+        return (repository_path.name, repository_path.name, protocol)
+
+    return (identity[0], identity[1], protocol)
+
+
+def configuration_repository_status(
+    repository_path: Path,
+    *,
+    offline: bool = False,
+) -> dict[str, str | int] | None:
+    """
+    Report when the configuration repository is behind its upstream.
+
+    An online check fetches first. Nothing is merged or reset.
+
+    Args:
+        repository_path: Configuration repository root.
+        offline: Skip the fetch and use the existing upstream ref.
+
+    Returns:
+        Status fields for the configuration repository, or None when it is
+        not a Git checkout.
+
+    """
+
+    repository: Repo | None = None
+
+    try:
+        repository = Repo(
+            repository_path,
+            search_parent_directories=False,
+        )
+    except (InvalidGitRepositoryError, NoSuchPathError):
+        return None
+
+    try:
+        organisation_name, repository_name, _protocol = (
+            _configuration_repository_identity(
+                repository,
+                repository_path,
+            )
+        )
+
+        def described(
+            status: str,
+            message: str,
+            *,
+            ahead: int = 0,
+            behind: int = 0,
+        ) -> dict[str, str | int]:
+            return {
+                "organisation": organisation_name,
+                "repository": repository_name,
+                "path": str(repository_path),
+                "status": status,
+                "message": message,
+                "ahead": ahead,
+                "behind": behind,
+            }
+
+        if repository.is_dirty(
+            untracked_files=True,
+            submodules=True,
+        ):
+            return described(
+                "dirty",
+                (
+                    "Repository contains staged, modified, untracked, "
+                    "or submodule changes."
+                ),
+            )
+
+        if not offline:
+            try:
+                origin = repository.remote(DEFAULT_REMOTE_NAME)
+
+                def fetch() -> None:
+                    origin.fetch(prune=True)
+
+                run_with_transient_retry(fetch)
+            except GitCommandError as exc:
+                return described(
+                    "fetch-failed",
+                    (
+                        f"Could not fetch from '{DEFAULT_REMOTE_NAME}': "
+                        f"{format_git_error(exc)}"
+                    ),
+                )
+            except OSError as exc:
+                return described(
+                    "fetch-failed",
+                    f"Could not fetch from '{DEFAULT_REMOTE_NAME}': {exc}",
+                )
+
+        try:
+            active_branch = repository.active_branch
+        except TypeError:
+            return described(
+                "detached",
+                "Repository is not on a branch.",
+            )
+
+        tracking_branch = active_branch.tracking_branch()
+
+        if tracking_branch is None:
+            return described(
+                "no-upstream",
+                (
+                    f"Active branch '{active_branch.name}' does not have "
+                    "an upstream branch."
+                ),
+            )
+
+        try:
+            upstream_commit = tracking_branch.commit
+        except ValueError:
+            return described(
+                "no-upstream",
+                (
+                    f"Upstream branch '{tracking_branch.name}' does not exist "
+                    "in the local remote-tracking refs."
+                ),
+            )
+
+        behind = len(
+            list(
+                repository.iter_commits(
+                    f"HEAD..{upstream_commit.hexsha}",
+                ),
+            ),
+        )
+        ahead = len(
+            list(
+                repository.iter_commits(
+                    f"{upstream_commit.hexsha}..HEAD",
+                ),
+            ),
+        )
+
+        if not _histories_share_ancestor(
+            repository,
+            "HEAD",
+            tracking_branch.name,
+        ):
+            return described(
+                "history-rewritten",
+                (
+                    "Remote history has no shared ancestor with HEAD "
+                    f"({ahead} local / {behind} remote commit(s) on "
+                    f"'{tracking_branch.name}')."
+                ),
+                ahead=ahead,
+                behind=behind,
+            )
+
+        if ahead and behind:
+            return described(
+                "diverged",
+                (
+                    f"{ahead} commit(s) ahead and {behind} commit(s) behind "
+                    f"'{tracking_branch.name}'."
+                ),
+                ahead=ahead,
+                behind=behind,
+            )
+
+        if ahead:
+            return described(
+                "ahead",
+                f"{ahead} commit(s) ahead of '{tracking_branch.name}'.",
+                ahead=ahead,
+            )
+
+        if behind:
+            return described(
+                "behind",
+                f"{behind} commit(s) behind '{tracking_branch.name}'.",
+                behind=behind,
+            )
+
+        return described(
+            "clean",
+            f"Repository matches '{tracking_branch.name}' with a clean working tree.",
+        )
+    finally:
+        if repository is not None:
+            repository.close()
+
+
+def fast_forward_configuration_repository(
+    repository_path: Path,
+) -> dict[str, str] | None:
+    """
+    Fast-forward the Git repository that holds the configuration file.
+
+    A clean repository with an upstream is fetched and merged fast-forward
+    only. A dirty tree, a missing upstream, or unrelated history is left
+    unchanged.
+
+    Args:
+        repository_path: Configuration repository root.
+
+    Returns:
+        Repository fields for the configuration checkout, or None when it
+        is not a Git repository. A current repository is still returned so
+        it can be shown with the other repositories.
+
+    """
+
+    repository: Repo | None = None
+
+    try:
+        repository = Repo(
+            repository_path,
+            search_parent_directories=False,
+        )
+    except (InvalidGitRepositoryError, NoSuchPathError):
+        return None
+
+    try:
+        organisation_name, repository_name, clone_protocol = (
+            _configuration_repository_identity(
+                repository,
+                repository_path,
+            )
+        )
+
+        def described(result: str, message: str) -> dict[str, str]:
+            return {
+                "organisation": organisation_name,
+                "repository": repository_name,
+                "path": str(repository_path),
+                "clone_protocol": clone_protocol,
+                "result": result,
+                "message": message,
+            }
+
+        if repository.is_dirty(
+            untracked_files=True,
+            submodules=True,
+        ):
+            return described(
+                "dirty",
+                (
+                    "Repository contains staged, modified, untracked, "
+                    "or submodule changes."
+                ),
+            )
+
+        try:
+            active_branch = repository.active_branch
+        except TypeError:
+            return described(
+                "detached",
+                "Repository is not on a branch.",
+            )
+
+        if active_branch.tracking_branch() is None:
+            return described(
+                "no-upstream",
+                (
+                    f"Active branch '{active_branch.name}' does not have "
+                    "an upstream branch."
+                ),
+            )
+
+        origin = repository.remote(DEFAULT_REMOTE_NAME)
+
+        def fetch() -> None:
+            origin.fetch(prune=True)
+
+        run_with_transient_retry(fetch)
+
+        tracking_branch = active_branch.tracking_branch()
+
+        if tracking_branch is None:
+            return described(
+                "no-upstream",
+                (
+                    f"Active branch '{active_branch.name}' does not have "
+                    "an upstream branch."
+                ),
+            )
+
+        if repository.head.commit.hexsha == tracking_branch.commit.hexsha:
+            return described(
+                "success",
+                "Fetched and fast-forwarded from the upstream branch.",
+            )
+
+        if not _histories_share_ancestor(
+            repository,
+            "HEAD",
+            tracking_branch.name,
+        ):
+            return described(
+                "history-rewritten",
+                (f"Remote history has no shared ancestor with '{active_branch.name}'."),
+            )
+
+        repository.git.merge("--ff-only", tracking_branch.name)
+        return described(
+            "success",
+            "Fetched and fast-forwarded from the upstream branch.",
+        )
+    except GitCommandError as exc:
+        return described(
+            "failed",
+            f"Git update failed: {format_git_error(exc)}",
+        )
+    except OSError as exc:
+        return described(
+            "failed",
+            f"Could not update repository: {exc}",
+        )
+    finally:
+        if repository is not None:
+            repository.close()
+
+
 def remove_incomplete_clone(
     repository_path: Path,
 ) -> str | None:

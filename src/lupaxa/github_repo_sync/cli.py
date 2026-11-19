@@ -215,7 +215,8 @@ def _add_concurrency_arguments(
         help=(
             "Number of repositories to process at once during synchronisation "
             f"or --status (default: {DEFAULT_WORKER_COUNT}, the CPU count). "
-            "Per-repository output is alphabetical by GitHub name after load."
+            "Listed repositories are alphabetical by GitHub name. "
+            "A Git checkout at ~/.config/github-repo-sync is shown first."
         ),
     )
 

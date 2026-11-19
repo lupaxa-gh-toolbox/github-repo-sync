@@ -1,6 +1,8 @@
 # Repository States
 
-`grs` inspects each configured repository and picks one action from that state: clone, fast-forward, skip, or report an error. Repositories are evaluated independently. The checks that make an update safe are in the [Safety Model](safety-model.md).
+`grs` inspects each configured repository and picks one action from that state: clone, fast-forward, skip, or report an error. Repositories are evaluated independently.
+
+The checks that make an update safe are in the [Safety Model](safety-model.md).
 
 ## Repository Processing Workflow
 
@@ -70,7 +72,9 @@ Examples may include:
 - Rewritten remote history with no shared ancestor.
 - Repository-specific Git errors.
 
-A rewritten remote (for example after `git-reset-history`) is reported as **history-rewritten**. Default synchronisation skips it. Use `--recover-rewritten-history` only when you intend to discard the old local history on a clean working tree.
+A rewritten remote (for example after `git-reset-history`) is reported as **history-rewritten**. Default synchronisation skips it.
+
+Use `--recover-rewritten-history` only when you intend to discard the old local history on a clean working tree.
 
 In these situations, the application skips the repository and reports the reason.
 

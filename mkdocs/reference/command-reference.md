@@ -65,6 +65,8 @@ The exact set of modes may evolve between releases. Always refer to `grs --help`
 
 Synchronises the configured repositories when no operating mode flag is selected.
 
+When `~/.config/github-repo-sync` is the Git checkout in use, it is fast-forwarded before the file is read, shown first, and counted in the progress total. Do not add that checkout to the file.
+
 ### Syntax
 
 ```bash
@@ -99,10 +101,10 @@ grs --recover-rewritten-history
 
 ### Synchronisation Options
 
-| Option                        | Description                                                                                          |
-| :---------------------------- | :--------------------------------------------------------------------------------------------------- |
-| `--recover-rewritten-history` | Reset a clean local branch onto rewritten remote history. Without this flag those repos are skipped. |
-| `--workers N`                 | Process this many repositories at once (default: CPU count). Output is alphabetical after load.      |
+| Option                        | Description                                                                                                                      |
+| :---------------------------- | :------------------------------------------------------------------------------------------------------------------------------- |
+| `--recover-rewritten-history` | Reset a clean local branch onto rewritten remote history. Without this flag those repos are skipped.                             |
+| `--workers N`                 | Process this many repositories at once (default: CPU count). Listed output is alphabetical. The configuration checkout is first. |
 
 `--recover-rewritten-history` is only valid during synchronisation. A dirty
 working tree is still skipped. `--workers` also applies to `--status`.
@@ -164,6 +166,8 @@ grs --config custom.yaml --plan
 ## Status
 
 Checks configured repositories for clean, synchronised working trees. This mode does not change working trees, branches, or commits.
+
+When `~/.config/github-repo-sync` is the Git checkout in use, it is reported first and counted in the progress total. Status does not update it.
 
 In online mode (the default), it may `git fetch` from each repository's `origin` remote to update remote-tracking refs before comparing local commits with the upstream branch.
 

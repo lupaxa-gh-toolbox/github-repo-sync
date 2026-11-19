@@ -115,7 +115,8 @@ For larger repository collections, the following practices are recommended:
 -   Group repositories by GitHub organisation.
 -   Choose organisation aliases that match your local directory layout.
 -   Keep repository names alphabetically ordered. After load, organisations
-  and repositories are sorted case-insensitively by GitHub name.
+  and repositories are sorted case-insensitively by GitHub name. The
+  configuration checkout, when shown, stays first.
 -   Add comments explaining unusual configuration choices.
 -   Remove obsolete repositories.
 -   Validate the configuration before synchronising.

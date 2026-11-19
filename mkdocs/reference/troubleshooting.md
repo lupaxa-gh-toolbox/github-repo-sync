@@ -57,7 +57,7 @@ Validation reports one or more errors before synchronisation begins.
 ### Possible Causes
 
 - Missing required properties.
-- Duplicate organisations.
+- The same organisation and repository listed twice.
 - Duplicate repositories.
 - Invalid property values.
 - Incorrect configuration structure.

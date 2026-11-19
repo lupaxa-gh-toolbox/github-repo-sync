@@ -12,24 +12,28 @@ Missing repositories are cloned. An existing repository is inspected first and f
 
 ## Features
 
-- Safe repository inspection before synchronisation.
-- Automatic cloning of missing repositories.
-- Fast-forward updates where safe.
-- Protection against repositories with unsafe local states.
-- Support for HTTPS and SSH clone protocols.
-- YAML, JSON, or JSON5 configuration. `config.clone_path` and `config.clone_protocol` are required. A repository may override `clone_protocol`. A repository `clone_path` overrides the organisation `clone_path`, which overrides `config.clone_path`.
-- Multiple GitHub organisation support.
-- Organisation and repository aliases.
-- Relative path organisation aliases for multiple local trees under one `clone_path`.
-- Configurable repository destinations.
-- Concurrent clone, update, and status checks (`--workers`, default: CPU count).
-- Ordered per-repository output (alphabetical by GitHub name after load, even when work runs in parallel).
-- Rich console output with progress reporting.
-- Compact configuration validation.
-- Synchronisation plan preview.
-- Detailed synchronisation result tables.
-- Cross-platform support for macOS, Linux, and Windows.
-- Suitable for interactive use, automation, and scheduled execution.
+-   Safe repository inspection before synchronisation.
+-   Automatic cloning of missing repositories.
+-   Fast-forward updates where safe.
+-   Protection against repositories with unsafe local states.
+-   Support for HTTPS and SSH clone protocols.
+-   YAML, JSON, or JSON5 configuration. `config.clone_path` and
+  `config.clone_protocol` are required. A repository may override
+  `clone_protocol`. A repository `clone_path` overrides the organisation
+  `clone_path`, which overrides `config.clone_path`.
+-   Multiple GitHub organisation support.
+-   Organisation and repository aliases.
+-   Relative path organisation aliases for multiple local trees under one `clone_path`.
+-   Configurable repository destinations.
+-   Concurrent clone, update, and status checks (`--workers`, default: CPU count).
+-   Ordered per-repository output. The configuration checkout is first, then
+  alphabetical by GitHub name, even when work runs in parallel.
+-   Rich console output with progress reporting.
+-   Compact configuration validation.
+-   Synchronisation plan preview.
+-   Detailed synchronisation result tables.
+-   Cross-platform support for macOS, Linux, and Windows.
+-   Suitable for interactive use, automation, and scheduled execution.
 
 ## Installation
 
@@ -128,7 +132,10 @@ audit repository cleanliness without changing working trees, branches, or commit
 > `~/.config/github-repo-sync/` first (`github-repo-sync.yaml`, then `.yml`,
 > then `.json`, then `.json5`), then the home directory (the same names with
 > a leading dot). A file in the home directory is used when the config
-> directory has none.
+> directory has none. When that directory is a Git repository and it is
+> the checkout in use, `grs` fast-forwards it before reading the file.
+> `grs` and `grs --status` show it first and include it in the progress
+> total. Status does not update it. Do not add it to the file.
 
 ### Presentation
 
@@ -148,9 +155,9 @@ audit repository cleanliness without changing working trees, branches, or commit
 
 ### Concurrency
 
-| Option        | Description                                                                                                                                    |
-| :------------ | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `--workers N` | Process this many repositories at once for sync and `--status` (default: CPU count). Output is alphabetical by GitHub name after load.         |
+| Option        | Description                                                                                                                                                             |
+| :------------ | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--workers N` | Process this many repositories at once for sync and `--status` (default: CPU count). Listed output is alphabetical by GitHub name. The configuration checkout is first. |
 
 ### Synchronisation
 

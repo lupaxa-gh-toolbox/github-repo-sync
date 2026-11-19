@@ -2,11 +2,20 @@
 
 A run compares the local tree with the configuration file. Each repository is cloned, fast-forwarded, or skipped on its own. A failure on one repository does not stop the others.
 
+When the file is the default lookup, or already lives in `~/.config/github-repo-sync`, and that directory is a Git repository, `grs` fast-forwards it before the file is read.
+
+It is not an entry in the file. `grs` and `grs --status` show it first and include it in the progress total.
+
+A dirty tree, a branch with no upstream, or history that is not a fast-forward is left unchanged. `grs --validate` and `grs --plan` do not update it or show it. `grs --status` does not update it.
+
 ## Synchronisation Workflow
 
 Each synchronisation follows the same sequence of operations.
 
 ```text
+Fast-Forward Configuration Repository
+        │
+        ▼
 Load Configuration
         │
         ▼
@@ -31,7 +40,7 @@ Record Result
 Display Summary
 ```
 
-Each stage must complete successfully before the next begins.
+Each stage must complete successfully before the next begins. The configuration-repository step runs only when that directory is the Git checkout in use, and a dirty or non-fast-forward checkout is left unchanged.
 
 ## Configuration Validation
 
@@ -41,7 +50,7 @@ Validation includes checks such as:
 
 - Required properties.
 - Invalid property types.
-- Duplicate organisations.
+- The same organisation and repository listed twice.
 - Duplicate repositories.
 - Invalid configuration structure.
 - Unsupported values.

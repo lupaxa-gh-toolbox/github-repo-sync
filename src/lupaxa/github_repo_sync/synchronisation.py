@@ -11,6 +11,8 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from pathlib import Path
 
+from rich.progress import Progress, TaskID
+
 from .concurrency import run_ordered_tasks
 from .constants import DEFAULT_WORKER_COUNT
 from .exceptions import RepositorySyncError
@@ -371,6 +373,56 @@ def synchronise_organisation(
     return results
 
 
+def without_repository_path(
+    configuration: ValidatedConfiguration,
+    repository_path: Path,
+) -> ValidatedConfiguration:
+    """
+    Drop a configured repository that uses one local path.
+
+    The configuration checkout is handled on its own and is not listed in
+    the configuration file. A matching entry is ignored so it is not shown
+    twice.
+
+    Args:
+        configuration: Validated application configuration.
+        repository_path: Local path to omit.
+
+    Returns:
+        Configuration without repositories that resolve to that path.
+
+    """
+
+    resolved_path = repository_path.resolve()
+    organisations: list[OrganisationConfiguration] = []
+
+    for organisation in configuration["organisations"]:
+        repositories = [
+            repository
+            for repository in organisation["repositories"]
+            if build_repository_path(
+                organisation=organisation,
+                repository=repository,
+            ).resolve()
+            != resolved_path
+        ]
+
+        if not repositories:
+            continue
+
+        organisations.append(
+            {
+                **organisation,
+                "repositories": repositories,
+            },
+        )
+
+    return {
+        **configuration,
+        "organisations": organisations,
+    }
+
+
 def synchronise_repositories(
     *,
     configuration: ValidatedConfiguration,
@@ -379,6 +431,7 @@ def synchronise_repositories(
     show_progress: bool = True,
     inspection_callback: InspectionCallback | None = None,
     result_callback: ResultCallback | None = None,
+    already_completed: Sequence[RepositoryResult] = (),
 ) -> list[RepositoryResult]:
     """
     Synchronise all repositories in a validated configuration.
@@ -394,6 +447,10 @@ def synchronise_repositories(
             Optional callback invoked after each inspection.
         result_callback:
             Optional callback invoked after each final result.
+        already_completed:
+            Repositories already processed before this call. They are
+            included in the progress total and marked complete when the
+            display starts. They are not returned again.
 
     Returns:
         Repository results.
@@ -414,7 +471,7 @@ def synchronise_repositories(
         "Clone directory",
     )
 
-    total_repositories = count_repositories(configuration)
+    total_repositories = count_repositories(configuration) + len(already_completed)
     work: list[
         tuple[
             OrganisationConfiguration,
@@ -482,36 +539,24 @@ def synchronise_repositories(
         detail="Preparing repositories.",
         disable=not show_progress,
     ) as (progress, progress_task):
-
-        def handle_result(_index: int, result: RepositoryResult) -> None:
-            if result["result"] == "failed":
-                final_action = "FAILED"
-            else:
-                final_action = {
-                    "cloned": "CLONED",
-                    "updated": "UPDATED",
-                    "skipped": "SKIPPED",
-                }[result["action"]]
-
-            set_overall_repository(
+        for completed in already_completed:
+            _record_repository_progress(
                 progress,
                 progress_task,
-                action=final_action,
-                organisation_name=result["organisation"],
-                repository_name=result["repository"],
-                detail=result["message"],
+                completed,
+            )
+
+        def handle_result(_index: int, result: RepositoryResult) -> None:
+            _record_repository_progress(
+                progress,
+                progress_task,
+                result,
             )
 
             results.append(result)
 
             if result_callback is not None:
                 result_callback(result)
-
-            advance_overall_repository(
-                progress,
-                progress_task,
-                detail=result["message"],
-            )
 
         run_ordered_tasks(
             work,
@@ -523,10 +568,43 @@ def synchronise_repositories(
         finish_overall_progress(
             progress,
             progress_task,
-            detail=_build_progress_completion_message(results),
+            detail=_build_progress_completion_message(
+                [*already_completed, *results],
+            ),
         )
 
     return results
+
+
+def _record_repository_progress(
+    progress: Progress,
+    progress_task: TaskID,
+    result: RepositoryResult,
+) -> None:
+    """Count one repository on the overall progress display."""
+
+    if result["result"] == "failed":
+        final_action = "FAILED"
+    else:
+        final_action = {
+            "cloned": "CLONED",
+            "updated": "UPDATED",
+            "skipped": "SKIPPED",
+        }[result["action"]]
+
+    set_overall_repository(
+        progress,
+        progress_task,
+        action=final_action,
+        organisation_name=result["organisation"],
+        repository_name=result["repository"],
+        detail=result["message"],
+    )
+    advance_overall_repository(
+        progress,
+        progress_task,
+        detail=result["message"],
+    )
 
 
 def _build_progress_completion_message(

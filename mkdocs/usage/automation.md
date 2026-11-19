@@ -30,7 +30,7 @@ Unless another configuration file is specified, the application searches
 ~/.github-repo-sync.json5
 ```
 
-This allows scheduled jobs to run without repeatedly specifying the configuration location.
+This allows scheduled jobs to run without repeatedly specifying the configuration location. When `~/.config/github-repo-sync` is a Git checkout, `grs` fast-forwards it before reading the file.
 
 If multiple configurations are maintained, the appropriate YAML, JSON, or
 JSON5 file can be supplied with `--config`.

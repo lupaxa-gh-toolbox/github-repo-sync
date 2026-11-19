@@ -24,6 +24,10 @@ from .constants import (
     DEFAULT_CONFIG_HOME,
 )
 from .exceptions import ConfigurationError
+from .git_operations import (
+    configuration_repository_status,
+    fast_forward_configuration_repository,
+)
 from .utils import resolve_path
 
 
@@ -94,6 +98,93 @@ def resolve_default_configuration_path(
 
     listed = ", ".join(str(candidate) for candidate in candidates)
     raise ConfigurationError(f"Configuration file does not exist: {listed}")
+
+
+def configuration_repository_directory(
+    requested_path: Path,
+) -> Path | None:
+    """
+    Return ``~/.config/github-repo-sync`` when it is the active checkout.
+
+    Args:
+        requested_path: Configuration path from the command line.
+
+    Returns:
+        The configuration repository root, or None when this command is
+        not using that directory.
+
+    """
+
+    directory = DEFAULT_CONFIG_DIRECTORY
+    resolved_request = resolve_path(requested_path)
+    default_request = resolve_path(DEFAULT_CONFIG_FILENAME)
+
+    if resolved_request != default_request:
+        try:
+            resolved_request.resolve().relative_to(directory.resolve())
+        except ValueError:
+            return None
+
+    if not directory.is_dir() or not (directory / ".git").exists():
+        return None
+
+    return directory
+
+
+def refresh_default_configuration_repository(
+    requested_path: Path,
+) -> dict[str, str] | None:
+    """
+    Fast-forward ``~/.config/github-repo-sync`` before the file is read.
+
+    This runs only for the default configuration lookup, or when the
+    requested file already lives in that directory. ``--config`` pointing
+    somewhere else does not update it.
+
+    Args:
+        requested_path: Configuration path from the command line.
+
+    Returns:
+        Fields for the configuration repository, or None when that
+        directory is not the active Git checkout.
+
+    """
+
+    directory = configuration_repository_directory(requested_path)
+
+    if directory is None:
+        return None
+
+    return fast_forward_configuration_repository(directory)
+
+
+def configuration_repository_status_message(
+    requested_path: Path,
+    *,
+    offline: bool,
+) -> dict[str, str | int] | None:
+    """
+    Inspect the configuration repository without modifying it.
+
+    Args:
+        requested_path: Configuration path from the command line.
+        offline: Skip the fetch and use the existing upstream ref.
+
+    Returns:
+        Status fields, or None when that directory is not the active
+        Git checkout.
+
+    """
+
+    directory = configuration_repository_directory(requested_path)
+
+    if directory is None:
+        return None
+
+    return configuration_repository_status(
+        directory,
+        offline=offline,
+    )
 
 
 def select_configuration_path(config_path: Path) -> Path:

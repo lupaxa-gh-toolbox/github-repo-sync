@@ -8,9 +8,11 @@
 - Missing repositories are cloned.
 - Existing repositories are fast-forwarded.
 - Local changes are not overwritten.
-- The configuration is validated before any Git operation.
+- When `~/.config/github-repo-sync` is the Git checkout in use, `grs` fast-forwards it before the file is read. It is not listed in the file.
+- `grs` and `grs --status` show that checkout first and include it in the progress total. Status does not update it.
+- The configuration is validated before the listed repositories are changed.
 - Repositories are processed concurrently (`--workers`, default: CPU count).
-- Per-repository output is alphabetical by GitHub name after load.
+- After that checkout, per-repository output is alphabetical by GitHub name.
 - The process exit code reports the outcome.
 
 ## Requirements
